@@ -35,8 +35,11 @@
 #include "stm32f1xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
+#include "i2c.h"
+#include "usart.h"
+#include "delay.h"
+#include "sys.h"
+#include "i2c.h"/* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
@@ -79,13 +82,13 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  uint32_t time;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
-
+  delay_init(72);
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  //HAL_Init();
+  HAL_Init();
 
   /* Configure the system clock */
   SystemClock_Config();
@@ -103,7 +106,7 @@ int main(void)
   HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
 
-
+  IIC_Init();
 
   /* USER CODE END 2 */
 
@@ -111,6 +114,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+
+	  IIC_Start();
+
+	  IIC_Send_Byte(0x55);
+		
+	  IIC_Stop();
+
+	  delay_ms(1);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */

@@ -31,7 +31,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x585F3DCA)
 F (startup_stm32f103xb.s)(0x5860D117)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1"-I D:\code\GITpro\littleDrone\MDK-ARM\RTE-I D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include--list startup_stm32f103xb.lst --xref -o littledrone\startup_stm32f103xb.o --depend littledrone\startup_stm32f103xb.d)
-F (../Src/main.c)(0x5861E1B6)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I..\Src\drivers -I..\Src\data_protocols --C99-I D:\code\GITpro\littleDrone\MDK-ARM\RTE-I D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include-D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o littledrone\main.o --omf_browse littledrone\main.crf --depend littledrone\main.d)
+F (../Src/main.c)(0x58621E6A)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I..\Src\drivers -I..\Src\data_protocols --C99-I D:\code\GITpro\littleDrone\MDK-ARM\RTE-I D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include-D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o littledrone\main.o --omf_browse littledrone\main.crf --depend littledrone\main.d)
 I (../Inc/main.h)(0x5860D113)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x585F3DCA)
 I (../Inc/stm32f1xx_hal_conf.h)(0x5860D113)
@@ -62,9 +62,10 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x585F3DCA)
-I (../Inc/delay.h)(0x5861D2B0)
-I (../Inc/sys.h)(0x5861DEA2)
+I (..\Src\drivers\i2c.h)(0x5861D292)
 I (../Inc/usart.h)(0x5861DE0E)
+I (../Inc/sys.h)(0x5861DEA2)
+I (../Inc/delay.h)(0x5861D2B0)
 F (../Src/stm32f1xx_hal_msp.c)(0x5860D112)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I..\Src\drivers -I..\Src\data_protocols --C99-I D:\code\GITpro\littleDrone\MDK-ARM\RTE-I D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include-D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o littledrone\stm32f1xx_hal_msp.o --omf_browse littledrone\stm32f1xx_hal_msp.crf --depend littledrone\stm32f1xx_hal_msp.d)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x585F3DCA)
 I (../Inc/stm32f1xx_hal_conf.h)(0x5860D113)
@@ -96,7 +97,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x585F3DCA)
-F (../Src/stm32f1xx_it.c)(0x5861DFFD)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I..\Src\drivers -I..\Src\data_protocols --C99-I D:\code\GITpro\littleDrone\MDK-ARM\RTE-I D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include-D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o littledrone\stm32f1xx_it.o --omf_browse littledrone\stm32f1xx_it.crf --depend littledrone\stm32f1xx_it.d)
+F (../Src/stm32f1xx_it.c)(0x5861E502)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I..\Src\drivers -I..\Src\data_protocols --C99-I D:\code\GITpro\littleDrone\MDK-ARM\RTE-I D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include-D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o littledrone\stm32f1xx_it.o --omf_browse littledrone\stm32f1xx_it.crf --depend littledrone\stm32f1xx_it.d)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x585F3DCA)
 I (../Inc/stm32f1xx_hal_conf.h)(0x5860D113)
 I (../Inc/main.h)(0x5860D113)
@@ -719,7 +720,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x585F3DCA)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x585F3DCA)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c)(0x5861D11E)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I..\Src\drivers -I..\Src\data_protocols --C99-I D:\code\GITpro\littleDrone\MDK-ARM\RTE-I D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include-D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o littledrone\stm32f1xx_hal.o --omf_browse littledrone\stm32f1xx_hal.crf --depend littledrone\stm32f1xx_hal.d)
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c)(0x5861E314)(-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I..\Src\drivers -I..\Src\data_protocols --C99-I D:\code\GITpro\littleDrone\MDK-ARM\RTE-I D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include-D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o littledrone\stm32f1xx_hal.o --omf_browse littledrone\stm32f1xx_hal.crf --depend littledrone\stm32f1xx_hal.d)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x585F3DCA)
 I (../Inc/stm32f1xx_hal_conf.h)(0x5860D113)
 I (../Inc/main.h)(0x5860D113)

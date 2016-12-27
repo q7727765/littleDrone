@@ -30,6 +30,7 @@ littledrone\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h
 littledrone\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 littledrone\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 littledrone\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
-littledrone\main.o: ../Inc/delay.h
-littledrone\main.o: ../Inc/sys.h
+littledrone\main.o: ..\Src\drivers\i2c.h
 littledrone\main.o: ../Inc/usart.h
+littledrone\main.o: ../Inc/sys.h
+littledrone\main.o: ../Inc/delay.h
