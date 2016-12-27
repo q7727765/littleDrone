@@ -1,0 +1,33 @@
+--cpu Cortex-M3
+"littledrone\system_stm32f1xx.o"
+"littledrone\startup_stm32f103xb.o"
+"littledrone\main.o"
+"littledrone\stm32f1xx_hal_msp.o"
+"littledrone\stm32f1xx_it.o"
+"littledrone\delay.o"
+"littledrone\i2.o"
+"littledrone\sys.o"
+"littledrone\system_stm32f1xx.o"
+"littledrone\usart.o"
+"littledrone\stm32f1xx_hal_pwr.o"
+"littledrone\stm32f1xx_hal_spi.o"
+"littledrone\stm32f1xx_hal_spi_ex.o"
+"littledrone\stm32f1xx_hal_rcc_ex.o"
+"littledrone\stm32f1xx_hal_cortex.o"
+"littledrone\stm32f1xx_hal_gpio_ex.o"
+"littledrone\stm32f1xx_hal_gpio.o"
+"littledrone\stm32f1xx_hal_adc_ex.o"
+"littledrone\stm32f1xx_hal_flash.o"
+"littledrone\stm32f1xx_hal_flash_ex.o"
+"littledrone\stm32f1xx_hal_rcc.o"
+"littledrone\stm32f1xx_hal_adc.o"
+"littledrone\stm32f1xx_hal_tim.o"
+"littledrone\stm32f1xx_hal_dma.o"
+"littledrone\stm32f1xx_hal_tim_ex.o"
+"littledrone\stm32f1xx_hal_uart.o"
+"littledrone\stm32f1xx_hal.o"
+--library_type=microlib --strict --scatter "littleDrone\littleDrone.sct"
+
+--diag_suppress=L6329 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "littleDrone.map" -o littleDrone\littleDrone.axf

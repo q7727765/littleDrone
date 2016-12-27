@@ -1,0 +1,9 @@
+littledrone\ano_dt.o: ..\Src\data_protocols\ANO_DT.c
+littledrone\ano_dt.o: ..\Src\data_protocols\ANO_DT.h
+littledrone\ano_dt.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h
+littledrone\ano_dt.o: ../Drivers/CMSIS/Include/core_cm3.h
+littledrone\ano_dt.o: D:\Work\Keil_5\ARM\ARMCC\bin\..\include\stdint.h
+littledrone\ano_dt.o: ../Drivers/CMSIS/Include/core_cmInstr.h
+littledrone\ano_dt.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+littledrone\ano_dt.o: ../Drivers/CMSIS/Include/core_cmFunc.h
+littledrone\ano_dt.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h

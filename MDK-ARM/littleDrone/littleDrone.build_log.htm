@@ -1,0 +1,133 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+D:\code\GITpro\littleDrone\MDK-ARM\littleDrone.uvprojx
+Project File Date:  12/26/2016
+
+<h2>Output:</h2>
+Build target 'littleDrone'
+compiling main.c...
+../Inc/usart.h(48): warning:  #1295-D: Deprecated declaration _n - give arg types
+  void _n();
+../Src/main.c(84): warning:  #177-D: variable "str" was declared but never referenced
+    char str[20] = "nihao a ?";
+../Src/main.c: 2 warnings, 0 errors
+linking...
+littleDrone\littleDrone.axf: Warning: L6304W: Duplicate input file littledrone\system_stm32f1xx.o ignored.
+Program Size: Code=8836 RO-data=312 RW-data=16 ZI-data=1352  
+Finished: 0 information, 1 warning and 0 error messages.
+FromELF: creating hex file...
+"littleDrone\littleDrone.axf" - 0 Error(s), 3 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.4.1.1.pack
+                ARM::CMSIS:CORE:3.30.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 3.30.0
+
+<h2>Collection of Component include folders:</h2>
+  D:\code\GITpro\littleDrone\MDK-ARM\RTE
+  D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:3.30.0
+      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
+Load "littleDrone\\littleDrone.axf" 
+Set JLink Project File to "D:\code\GITpro\littleDrone\MDK-ARM\JLinkSettings.ini"
+* JLink Info: Device "STM32F103C8" selected.
+ 
+JLink info:
+------------
+DLL: V6.00g, compiled Aug 17 2016 13:23:29
+Firmware: J-Link ARM V8 compiled Nov 28 2014 13:44:46
+Hardware: V8.00
+S/N : 799713843 
+Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFULL 
+ 
+* JLink Info: Found SWD-DP with ID 0x1BA01477
+* JLink Info: Found SWD-DP with ID 0x1BA01477
+* JLink Info: AP-IDR: 0x14770011, Type: AHB-AP
+* JLink Info: Found Cortex-M3 r1p1, Little endian.
+* JLink Info: FPUnit: 6 code (BP) slots and 2 literal slots
+* JLink Info: CoreSight components:
+* JLink Info: ROMTbl 0 @ E00FF000
+* JLink Info: ROMTbl 0 [0]: FFF0F000, CID: B105E00D, PID: 001BB000 SCS
+* JLink Info: ROMTbl 0 [1]: FFF02000, CID: B105E00D, PID: 001BB002 DWT
+* JLink Info: ROMTbl 0 [2]: FFF03000, CID: B105E00D, PID: 000BB003 FPB
+* JLink Info: ROMTbl 0 [3]: FFF01000, CID: B105E00D, PID: 001BB001 ITM
+* JLink Info: ROMTbl 0 [4]: FFF41000, CID: B105900D, PID: 001BB923 TPIU-Lite
+ROMTableAddr = 0xE00FF003
+ 
+Target info:
+------------
+Device: STM32F103C8
+VTarget = 3.325V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
+Hardware-Breakpoints: 6
+Software-Breakpoints: 8192
+Watchpoints:          4
+JTAG speed: 4000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+\Src\data_protocols\ANO_DT.c: 0 warnings, 12 errors
+"littleDrone\littleDrone.axf" - 12 Error(s), 2 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.4.1.1.pack
+                ARM::CMSIS:CORE:3.30.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 3.30.0
+
+<h2>Collection of Component include folders:</h2>
+  D:\code\GITpro\littleDrone\MDK-ARM\RTE
+  D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:3.30.0
+      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
+Target not created
+fly_model, u8 armed);
+..\Src\data_protocols\ANO_DT.h(32): error:  #20: identifier "u8" is undefined
+  void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, s32 alt, u8 fly_model, u8 armed);
+..\Src\data_protocols\ANO_DT.h(33): error:  #20: identifier "s16" is undefined
+  void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,s16 m_y,s16 m_z,s32 bar);
+..\Src\data_protocols\ANO_DT.h(33): error:  #20: identifier "s16" is undefined
+  void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,s16 m_y,s16 m_z,s32 bar);
+..\Src\data_protocols\ANO_DT.h(33): error:  #20: identifier "s16" is undefined
+  void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,s16 m_y,s16 m_z,s32 bar);
+..\Src\data_protocols\ANO_DT.h(33): error:  #20: identifier "s16" is undefined
+  void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,s16 m_y,s16 m_z,s32 bar);
+..\Src\data_protocols\ANO_DT.h(33): error:  #20: identifier "s16" is undefined
+  void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,s16 m_y,s16 m_z,s32 bar);
+..\Src\data_protocols\ANO_DT.c: 0 warnings, 30 errors
+"littleDrone\littleDrone.axf" - 30 Error(s), 0 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.4.1.1.pack
+                ARM::CMSIS:CORE:3.30.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 3.30.0
+
+<h2>Collection of Component include folders:</h2>
+  D:\code\GITpro\littleDrone\MDK-ARM\RTE
+  D:\Work\Keil_5\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:3.30.0
+      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
+Target not created
