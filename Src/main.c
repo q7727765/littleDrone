@@ -41,6 +41,7 @@
 #include "sys.h"
 #include "i2c.h"/* USER CODE END Includes */
 #include "mpu6050.h"
+#include "fc_tasks.h"
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
@@ -76,68 +77,69 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE BEGIN 0 */
 
+void init(void)
+{
+	while(MPU_Init()){
+
+	delay_ms(500);
+	SendChar("Initing MPU\n");
+	}
+}
+
+void configureScheduler(void)
+{
+    schedulerInit();
+    setTaskEnabled(TASK_SYSTEM, 1);
+    setTaskEnabled(TASK_UPDATEMPU6050, 1);
+
+}
 /* USER CODE END 0 */
 
 int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  uint32_t time;
+	uint32_t time;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
-  delay_init(72);
+	delay_init();
   //uart_init(72,115200);
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	HAL_Init();
 
   /* Configure the system clock */
-  SystemClock_Config();
+	SystemClock_Config();
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_ADC1_Init();
-  MX_TIM2_Init();
-  MX_USART1_UART_Init();
-  MX_USART3_UART_Init();
-  MX_SPI2_Init();
+	MX_GPIO_Init();
+	MX_ADC1_Init();
+	MX_TIM2_Init();
+	MX_USART1_UART_Init();
+	MX_USART3_UART_Init();
+	MX_SPI2_Init();
 
   /* USER CODE BEGIN 2 */
 
 //  HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
 //  HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
 
-  while(MPU_Init()){
+	init();
 
-	delay_ms(500);
-	SendChar("Initing MPU\n");
-  }
+	//configureScheduler();
 
-  //IIC_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+	while (1) {
+//		scheduler();
+//		processLoopback();
+		SendInt(micros());
+		_n();
+		delay_ms(500);
 
-	  SendChar("asdad\n");
-	  delay_ms(1000);
-
-
-//	  IIC_Start();
-//
-//	  IIC_Send_Byte(0x55);
-//
-//	  IIC_Stop();
-//
-//	  delay_ms(1);
-  /* USER CODE END WHILE */
-
-  /* USER CODE BEGIN 3 */
-
-  }
-  /* USER CODE END 3 */
+	}
 
 }
 
