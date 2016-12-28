@@ -16,6 +16,7 @@ void IIC_Init(void)
 	GPIO_InitTypeDef GPIO_InitStruct;
 
 	/*Configure GPIO pins : SDA_Pin SCL_Pin */
+
 	GPIO_InitStruct.Pin = SDA_Pin|SCL_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;

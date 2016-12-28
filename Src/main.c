@@ -33,14 +33,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_hal.h"
-
+#include <stdio.h>
 /* USER CODE BEGIN Includes */
 #include "i2c.h"
 #include "usart.h"
 #include "delay.h"
 #include "sys.h"
 #include "i2c.h"/* USER CODE END Includes */
-
+#include "mpu6050.h"
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
@@ -87,6 +87,7 @@ int main(void)
 
   /* MCU Configuration----------------------------------------------------------*/
   delay_init(72);
+  //uart_init(72,115200);
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
@@ -103,11 +104,16 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
-  HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
 
-  IIC_Init();
+  while(MPU_Init()){
 
+	delay_ms(500);
+	SendChar("Initing MPU\n");
+  }
+
+  //IIC_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -115,14 +121,17 @@ int main(void)
   while (1)
   {
 
+	  SendChar("asdad\n");
+	  delay_ms(1000);
 
-	  IIC_Start();
 
-	  IIC_Send_Byte(0x55);
-		
-	  IIC_Stop();
-
-	  delay_ms(1);
+//	  IIC_Start();
+//
+//	  IIC_Send_Byte(0x55);
+//
+//	  IIC_Stop();
+//
+//	  delay_ms(1);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
