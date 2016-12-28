@@ -42,6 +42,7 @@
 #include "i2c.h"/* USER CODE END Includes */
 #include "mpu6050.h"
 #include "fc_tasks.h"
+#include "scheduler\scheduler.h"
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
@@ -95,6 +96,7 @@ void configureScheduler(void)
 }
 /* USER CODE END 0 */
 
+
 int main(void)
 {
 
@@ -126,18 +128,16 @@ int main(void)
 
 	init();
 
-	//configureScheduler();
+	configureScheduler();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-//		scheduler();
-//		processLoopback();
-		SendInt(micros());
-		_n();
-		delay_ms(500);
+
+		scheduler();
+
 
 	}
 
