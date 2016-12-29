@@ -28,4 +28,9 @@ uint8_t IIC_Wait_Ack(void); 				//IIC等待ACK信号
 void IIC_Ack(void);					//IIC发送ACK信号
 void IIC_NAck(void);				//IIC不发送ACK信号
 
+u8 IIC_Read_Reg(u8 addr,u8 reg);
+u8 IIC_Write_Reg(u8 addr,u8 reg,u8 data);
+u8 IIC_Write_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf);
+u8 IIC_Read_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf);
+
 #endif /* SRC_DRIVERS_I2C_H_ */

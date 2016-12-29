@@ -128,3 +128,102 @@ uint8_t IIC_Read_Byte(unsigned char ack)
         IIC_Ack(); //发送ACK
     return receive;
 }
+
+
+u8 IIC_Read_Reg(u8 addr,u8 reg)
+{
+	u8 res;
+    IIC_Start();
+	IIC_Send_Byte((addr<<1)|0);//发送器件地址+写命令
+	IIC_Wait_Ack();		//等待应答
+    IIC_Send_Byte(reg);	//写寄存器地址
+    IIC_Wait_Ack();		//等待应答
+    IIC_Start();
+	IIC_Send_Byte((addr<<1)|1);//发送器件地址+读命令
+    IIC_Wait_Ack();		//等待应答
+	res=IIC_Read_Byte(0);//读取数据,发送nACK
+    IIC_Stop();			//产生一个停止条件
+	return res;
+}
+
+u8 IIC_Write_Reg(u8 addr,u8 reg,u8 data)
+{
+    IIC_Start();
+	IIC_Send_Byte((addr<<1)|0);//发送器件地址+写命令
+	if(IIC_Wait_Ack())	//等待应答
+	{
+		IIC_Stop();
+		return 1;
+	}
+    IIC_Send_Byte(reg);	//写寄存器地址
+    IIC_Wait_Ack();		//等待应答
+	IIC_Send_Byte(data);//发送数据
+	if(IIC_Wait_Ack())	//等待ACK
+	{
+		IIC_Stop();
+		return 1;
+	}
+    IIC_Stop();
+	return 0;
+}
+
+u8 IIC_Write_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf)
+{
+	u8 i;
+    IIC_Start();
+	IIC_Send_Byte((addr<<1)|0);//发送器件地址+写命令
+	if(IIC_Wait_Ack())	//等待应答
+	{
+		IIC_Stop();
+		return 1;
+	}
+    IIC_Send_Byte(reg);	//写寄存器地址
+    IIC_Wait_Ack();		//等待应答
+	for(i=0;i<len;i++)
+	{
+		IIC_Send_Byte(buf[i]);	//发送数据
+		if(IIC_Wait_Ack())		//等待ACK
+		{
+			IIC_Stop();
+			return 1;
+		}
+	}
+    IIC_Stop();
+	return 0;
+}
+
+u8 IIC_Read_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf)
+{
+	addr =addr;
+	while(len--)
+	{
+		*buf=MPU_Read_Byte(reg);
+		buf++;
+		reg++;
+	}
+	return 0;//+++++
+
+// 	IIC_Start();
+//	IIC_Send_Byte((addr<<1)|0);//发送器件地址+写命令
+//	if(IIC_Wait_Ack())	//等待应答
+//	{
+//		IIC_Stop();
+//		return 1;
+//	}
+//    IIC_Send_Byte(reg);	//写寄存器地址
+//    IIC_Wait_Ack();		//等待应答
+//    IIC_Start();
+//	IIC_Send_Byte((addr<<1)|1);//发送器件地址+读命令
+//    IIC_Wait_Ack();		//等待应答
+//	delay_us(4);//+++++++
+//	while(len)
+//	{
+//		if(len==1)*buf=IIC_Read_Byte(0);//读数据,发送nACK
+//		else *buf=IIC_Read_Byte(1);		//读数据,发送ACK
+//		delay_us(4);
+//		len--;
+//		buf++;
+//	}
+//    IIC_Stop();	//产生一个停止条件
+//	return 0;
+}

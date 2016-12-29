@@ -76,8 +76,10 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE END PFP */
 
-/* USER CODE BEGIN 0 */
+#define MAG_ADDRESS 0x1E
 
+/* USER CODE BEGIN 0 */
+char id;
 void init(void)
 {
 	while(MPU_Init()){
@@ -85,6 +87,14 @@ void init(void)
 	delay_ms(500);
 	SendChar("Initing MPU\n");
 	}
+
+	while(id!=72){
+		id=IIC_Read_Reg(MAG_ADDRESS,0x0a);
+		delay_ms(500);
+		SendChar("Initing HMC\n");
+		SendInt(id);
+		_n();
+		}
 }
 
 void configureScheduler(void)
