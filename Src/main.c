@@ -42,7 +42,8 @@
 #include "i2c.h"/* USER CODE END Includes */
 #include "mpu6050.h"
 #include "fc_tasks.h"
-#include "scheduler\scheduler.h"
+#include "scheduler.h"
+#include "hmc5883l.h"
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
@@ -82,19 +83,22 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 char id;
 void init(void)
 {
+//
+//	while(id!=72){
+//		id=IIC_Read_Reg(MAG_ADDRESS,0x0a);
+//		delay_ms(500);
+//		SendChar("Initing HMC\n");
+//		SendInt(id);
+//		_n();
+//		}
+
 	while(MPU_Init()){
 
-	delay_ms(500);
+	delay_ms(1000);
 	SendChar("Initing MPU\n");
 	}
 
-	while(id!=72){
-		id=IIC_Read_Reg(MAG_ADDRESS,0x0a);
-		delay_ms(500);
-		SendChar("Initing HMC\n");
-		SendInt(id);
-		_n();
-		}
+
 }
 
 void configureScheduler(void)
@@ -106,7 +110,8 @@ void configureScheduler(void)
 }
 /* USER CODE END 0 */
 
-
+mag_t mag;
+hmc5883Config_t hmc_config;
 int main(void)
 {
 
@@ -116,7 +121,7 @@ int main(void)
 
   /* MCU Configuration----------------------------------------------------------*/
 	delay_init();
-  //uart_init(72,115200);
+  uart_init(72,115200);
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
@@ -125,21 +130,25 @@ int main(void)
 
   /* Initialize all configured peripherals */
 	MX_GPIO_Init();
-	MX_ADC1_Init();
-	MX_TIM2_Init();
+	//MX_ADC1_Init();
+	//MX_TIM2_Init();
 	MX_USART1_UART_Init();
 	MX_USART3_UART_Init();
-	MX_SPI2_Init();
+	//MX_SPI2_Init();
 
   /* USER CODE BEGIN 2 */
 
 //  HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
 //  HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
+
 
 	init();
 
 	configureScheduler();
 
+	hmc5883lDetect(&mag,&hmc_config);
+	mag.init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -147,7 +156,6 @@ int main(void)
 	while (1) {
 
 		scheduler();
-
 
 	}
 

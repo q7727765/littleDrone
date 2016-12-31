@@ -25,17 +25,20 @@
 
 #pragma once
 
+#include "stdbool.h"
+
+#define MAG_ADDRESS 0x1E
+#define MAG_DATA_REGISTER 0x03
+
+
 typedef void (*sensorInitFuncPtr)(void);                    // sensor init prototype
 typedef bool (*sensorReadFuncPtr)(int16_t *data);           // sensor read prototype
 
 
 typedef struct hmc5883Config_s {
-#ifdef STM32F303
-    uint32_t gpioAHBPeripherals;
-#endif
-#ifdef STM32F10X
+
     uint32_t gpioAPB2Peripherals;
-#endif
+
     uint16_t gpioPin;
     GPIO_TypeDef *gpioPort;
 

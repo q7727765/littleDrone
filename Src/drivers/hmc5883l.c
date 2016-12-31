@@ -28,11 +28,11 @@
 #include <stdlib.h>
 
 #include <math.h>
-
+#include "i2c.h"
 //#include <platform.h>
 //#include "build/debug.h"
 
-//#include "common/axis.h"
+#include "axis.h"
 #include "maths.h"
 #include "delay.h"
 //#include "config/parameter_group.h"
@@ -112,8 +112,7 @@
  *              1  |  1   |  Sleep Mode
  */
 
-#define MAG_ADDRESS 0x1E
-#define MAG_DATA_REGISTER 0x03
+
 
 #define HMC58X3_R_CONFA 0
 #define HMC58X3_R_CONFB 1
@@ -132,11 +131,11 @@ static const hmc5883Config_t *hmc5883Config = NULL;
 
 void MAG_DATA_READY_EXTI_Handler(void)
 {
-    if (EXTI_GetITStatus(hmc5883Config->exti_line) == RESET) {
-        return;
-    }
-
-    EXTI_ClearITPendingBit(hmc5883Config->exti_line);
+//    if (EXTI_GetITStatus(hmc5883Config->exti_line) == RESET) {
+//        return;
+//    }
+//
+//    EXTI_ClearITPendingBit(hmc5883Config->exti_line);
 
 #ifdef DEBUG_MAG_DATA_READY_INTERRUPT
     // Measure the delta between calls to the interrupt handler
@@ -211,19 +210,19 @@ static void hmc5883lConfigureDataReadyInterruptHandling(void)
 
 bool hmc5883lDetect(mag_t* mag, const hmc5883Config_t *hmc5883ConfigToUse)
 {
-    bool ack = false;
+    bool ack = 1;
     uint8_t sig = 0;
 
     hmc5883Config = hmc5883ConfigToUse;
 
     ack = IIC_Read_Reg_Len(MAG_ADDRESS, 0x0A, 1, &sig);
-    if (!ack || sig != 'H')
+    if (ack || sig != 'H')
         return false;
 
     mag->init = hmc5883lInit;
     mag->read = hmc5883lRead;
 
-    return true;
+    return 0;
 }
 
 void hmc5883lInit(void)
@@ -233,15 +232,15 @@ void hmc5883lInit(void)
     int32_t xyz_total[3] = { 0, 0, 0 }; // 32 bit totals so they won't overflow.
     bool bret = true;           // Error indicator
 
-    gpio_config_t gpio;
+//    gpio_config_t gpio;
 
-    if (hmc5883Config) {
-
-        gpio.pin = hmc5883Config->gpioPin;
-        gpio.speed = Speed_2MHz;
-        gpio.mode = Mode_IN_FLOATING;
-        gpioInit(hmc5883Config->gpioPort, &gpio);
-    }
+//    if (hmc5883Config) {
+//
+//        gpio.pin = hmc5883Config->gpioPin;
+//        gpio.speed = Speed_2MHz;
+//        gpio.mode = Mode_IN_FLOATING;
+//        gpioInit(hmc5883Config->gpioPort, &gpio);
+//    }
 
     delay_ms(50);
     IIC_Write_Reg(MAG_ADDRESS, HMC58X3_R_CONFA, 0x010 + HMC_POS_BIAS);   // Reg A DOR = 0x010 + MS1, MS0 set to pos bias
@@ -266,7 +265,7 @@ void hmc5883lInit(void)
             bret = false;
             break;              // Breaks out of the for loop.  No sense in continuing if we saturated.
         }
-        LED1_TOGGLE;
+
     }
 
     // Apply the negative bias. (Same gain)
@@ -314,7 +313,7 @@ bool hmc5883lRead(int16_t *magData)
 
     bool ack = IIC_Read_Reg_Len(MAG_ADDRESS, MAG_DATA_REGISTER, 6, buf);
     if (!ack) {
-        return false;
+        return 1;
     }
     // During calibration, magGain is 1.0, so the read returns normal non-calibrated values.
     // After calibration is done, magGain is set to calculated gain values.
@@ -322,5 +321,5 @@ bool hmc5883lRead(int16_t *magData)
     magData[Z] = (int16_t)(buf[2] << 8 | buf[3]) * magGain[Z];
     magData[Y] = (int16_t)(buf[4] << 8 | buf[5]) * magGain[Y];
 
-    return true;
+    return 0;
 }
