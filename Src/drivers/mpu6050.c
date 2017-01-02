@@ -3,6 +3,7 @@
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"   
+#include "i2c.h"
 
 u8						mpu6050_buffer[14];					//iic读取后存放数据
 S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
@@ -30,7 +31,7 @@ S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
 
 void MPU6050_Read(void)
 {
-	MPU_Read_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG,14,mpu6050_buffer);
+	IIC_Read_Reg_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG,14,mpu6050_buffer);
 }
 
 void MPU6050_Dataanl(void)

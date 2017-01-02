@@ -41,7 +41,7 @@ void SendChar(char *s);
 void SendInt(int a);
 void Send0x(int a);
 void SendDouble(double d);
-void _n();
+void _n(void);
 void _10xf(int num);
 void Receive(char* s);
 #endif

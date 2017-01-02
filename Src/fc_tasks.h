@@ -23,6 +23,8 @@ typedef enum {
 
     TASK_UPDATEMPU6050,
 
+	TASK_RUNNLED,
+
     TASK_BATTERY,
 
     TASK_RX,
@@ -40,3 +42,4 @@ typedef enum {
 
 void taskSystem(void);
 void taskUpdateMPU6050(void);
+void taskRUNLED(void);

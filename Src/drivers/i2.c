@@ -9,6 +9,18 @@
 #include "stm32f1xx_hal.h"
 #include "sys.h"
 #include "delay.h"
+#include "usart.h"
+
+
+static void I2C_delay(void)
+{
+
+   u8 i=5; //这里可以优化速度	，经测试最低到5还能写入
+   while(i)
+   {
+     i--;
+   }
+}
 
 
 void IIC_Init(void)
@@ -31,19 +43,24 @@ void IIC_Start(void)
 	SDA_OUT() ;     //sda线输出
 	IIC_SDA=1;
 	IIC_SCL=1;
-	delay_us(4);
- 	IIC_SDA=0;//START:when CLK is high,DATA change form high to low
+	I2C_delay();
+	IIC_SDA=0;//START:when CLK is high,DATA change form high to low
+	I2C_delay();
 	IIC_SCL=0;//钳住I2C总线，准备发送或接收数据
+	I2C_delay();
 }
 //产生IIC停止信号
 void IIC_Stop(void)
 {
 	SDA_OUT();//sda线输出
 	IIC_SCL=0;
+	I2C_delay();
 	IIC_SDA=0;//STOP:when CLK is high DATA change form low to high
- 	delay_us(4);
+	I2C_delay();
 	IIC_SCL=1;
+	I2C_delay();
 	IIC_SDA=1;//发送I2C总线结束信号
+	I2C_delay();
 }
 //等待应答信号到来
 //返回值：1，接收应答失败
@@ -51,42 +68,50 @@ void IIC_Stop(void)
 uint8_t IIC_Wait_Ack(void)
 {
 	uint8_t ucErrTime=0;
+
+	IIC_SCL=1;I2C_delay();
 	SDA_IN();      //SDA设置为输入
-	IIC_SDA=1;delay_us(1);
-	IIC_SCL=1;delay_us(1);
+	IIC_SDA=1;I2C_delay();
+	IIC_SCL=1;I2C_delay();
 	while(READ_SDA)
 	{
 		ucErrTime++;
 		if(ucErrTime>250)
 		{
+			//SendChar("i2c hahaha \r\n");
 			IIC_Stop();
 			return 1;
 		}
 	}
 	IIC_SCL=0;//时钟输出0
+	I2C_delay();
 	return 0;
 }
 //产生ACK应答
 void IIC_Ack(void)
 {
 	IIC_SCL=0;
+	I2C_delay();
 	SDA_OUT();
 	IIC_SDA=0;
-	delay_us(2);
+	I2C_delay();
 	IIC_SCL=1;
-	delay_us(2);
+	I2C_delay();
 	IIC_SCL=0;
+	I2C_delay();
 }
 //不产生ACK应答
 void IIC_NAck(void)
 {
 	IIC_SCL=0;
+	I2C_delay();
 	SDA_OUT();
 	IIC_SDA=1;
-	delay_us(2);
+	I2C_delay();
 	IIC_SCL=1;
-	delay_us(2);
+	I2C_delay();
 	IIC_SCL=0;
+	I2C_delay();
 }
 //IIC发送一个字节
 //返回从机有无应答
@@ -97,15 +122,16 @@ void IIC_Send_Byte(uint8_t txd)
     uint8_t t;
 	SDA_OUT();
     IIC_SCL=0;//拉低时钟开始数据传输
+    I2C_delay();
     for(t=0;t<8;t++)
     {
         IIC_SDA=(txd&0x80)>>7;
         txd<<=1;
-		delay_us(2);   //对TEA5767这三个延时都是必须的
+        I2C_delay();   //对TEA5767这三个延时都是必须的
 		IIC_SCL=1;
-		delay_us(2);
+		I2C_delay();
 		IIC_SCL=0;
-		delay_us(2);
+		I2C_delay();
     }
 }
 //读1个字节，ack=1时，发送ACK，ack=0，发送nACK
@@ -116,16 +142,22 @@ uint8_t IIC_Read_Byte(unsigned char ack)
     for(i=0;i<8;i++ )
 	{
         IIC_SCL=0;
-        delay_us(2);
+        I2C_delay();
 		IIC_SCL=1;
         receive<<=1;
         if(READ_SDA)receive++;
-		delay_us(1);
+        I2C_delay();
     }
-    if (!ack)
+    if (!ack){
         IIC_NAck();//发送nACK
-    else
+        //SendChar("nack\r\n");
+
+    }
+    else{
         IIC_Ack(); //发送ACK
+        //SendChar("ack\r\n");
+
+    }
     return receive;
 }
 
@@ -194,10 +226,10 @@ u8 IIC_Write_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf)
 
 u8 IIC_Read_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf)
 {
-	addr =addr;
+
 	while(len--)
 	{
-		*buf=MPU_Read_Byte(reg);
+		*buf=IIC_Read_Reg(addr,reg);
 		buf++;
 		reg++;
 	}
@@ -215,15 +247,28 @@ u8 IIC_Read_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf)
 //    IIC_Start();
 //	IIC_Send_Byte((addr<<1)|1);//发送器件地址+读命令
 //    IIC_Wait_Ack();		//等待应答
-//	delay_us(4);//+++++++
+//    I2C_delay();
 //	while(len)
 //	{
-//		if(len==1)*buf=IIC_Read_Byte(0);//读数据,发送nACK
-//		else *buf=IIC_Read_Byte(1);		//读数据,发送ACK
-//		delay_us(4);
+//		//SendChar("i2c 222 \n");
+//		if(len==1)
+//			{
+//				*buf=IIC_Read_Byte(0);//读数据,发送nACK
+////				SendChar("i2c_readf:");
+////				Send0x(*buf);
+////				_n();
+//			}
+//		else {
+//			*buf=IIC_Read_Byte(1);		//读数据,发送ACK
+////			SendChar("i2c_read:");
+////			Send0x(*buf);
+////			_n();
+//		}
+//		I2C_delay();
 //		len--;
 //		buf++;
 //	}
 //    IIC_Stop();	//产生一个停止条件
+//    delay_ms(1);
 //	return 0;
 }

@@ -35,6 +35,7 @@
 #include "axis.h"
 #include "maths.h"
 #include "delay.h"
+#include "usart.h"
 //#include "config/parameter_group.h"
 //
 //#include "system.h"
@@ -114,16 +115,7 @@
 
 
 
-#define HMC58X3_R_CONFA 0
-#define HMC58X3_R_CONFB 1
-#define HMC58X3_R_MODE 2
-#define HMC58X3_X_SELF_TEST_GAUSS (+1.16f)       // X axis level when bias current is applied.
-#define HMC58X3_Y_SELF_TEST_GAUSS (+1.16f)       // Y axis level when bias current is applied.
-#define HMC58X3_Z_SELF_TEST_GAUSS (+1.08f)       // Z axis level when bias current is applied.
-#define SELF_TEST_LOW_LIMIT  (243.0f / 390.0f)    // Low limit when gain is 5.
-#define SELF_TEST_HIGH_LIMIT (575.0f / 390.0f)    // High limit when gain is 5.
-#define HMC_POS_BIAS 1
-#define HMC_NEG_BIAS 2
+
 
 static float magGain[3] = { 1.0f, 1.0f, 1.0f };
 
@@ -232,15 +224,6 @@ void hmc5883lInit(void)
     int32_t xyz_total[3] = { 0, 0, 0 }; // 32 bit totals so they won't overflow.
     bool bret = true;           // Error indicator
 
-//    gpio_config_t gpio;
-
-//    if (hmc5883Config) {
-//
-//        gpio.pin = hmc5883Config->gpioPin;
-//        gpio.speed = Speed_2MHz;
-//        gpio.mode = Mode_IN_FLOATING;
-//        gpioInit(hmc5883Config->gpioPort, &gpio);
-//    }
 
     delay_ms(50);
     IIC_Write_Reg(MAG_ADDRESS, HMC58X3_R_CONFA, 0x010 + HMC_POS_BIAS);   // Reg A DOR = 0x010 + MS1, MS0 set to pos bias
@@ -304,7 +287,7 @@ void hmc5883lInit(void)
         magGain[Z] = 1.0f;
     }
 
-    hmc5883lConfigureDataReadyInterruptHandling();
+    //hmc5883lConfigureDataReadyInterruptHandling();
 }
 
 bool hmc5883lRead(int16_t *magData)
@@ -312,14 +295,15 @@ bool hmc5883lRead(int16_t *magData)
     uint8_t buf[6];
 
     bool ack = IIC_Read_Reg_Len(MAG_ADDRESS, MAG_DATA_REGISTER, 6, buf);
-    if (!ack) {
-        return 1;
-    }
+//    if (!ack) {
+//        return 1;
+//    }
     // During calibration, magGain is 1.0, so the read returns normal non-calibrated values.
     // After calibration is done, magGain is set to calculated gain values.
-    magData[X] = (int16_t)(buf[0] << 8 | buf[1]) * magGain[X];
-    magData[Z] = (int16_t)(buf[2] << 8 | buf[3]) * magGain[Z];
-    magData[Y] = (int16_t)(buf[4] << 8 | buf[5]) * magGain[Y];
+
+    magData[X] = (((int16_t)buf[0]) << 8 | buf[1]) * magGain[X];
+    magData[Z] = (((int16_t)buf[2]) << 8 | buf[3]) * magGain[Z];
+    magData[Y] = (((int16_t)buf[4]) << 8 | buf[5]) * magGain[Y];
 
     return 0;
 }

@@ -230,7 +230,7 @@ void _10xf(int num)
 	}
 }
 
-void _n()
+void _n(void)
 {
 	USART1->DR='\r';
 	while((USART1->SR&0X40)==0);

@@ -83,22 +83,26 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 char id;
 void init(void)
 {
-//
-//	while(id!=72){
-//		id=IIC_Read_Reg(MAG_ADDRESS,0x0a);
-//		delay_ms(500);
-//		SendChar("Initing HMC\n");
-//		SendInt(id);
-//		_n();
-//		}
+
 
 	while(MPU_Init()){
 
 	delay_ms(1000);
-	SendChar("Initing MPU\n");
+	SendChar("Initing MPU\r\n");
 	}
 
+	delay_ms(1000);
+	SendChar("init_mpu,ok\r\n");
 
+	while(id!=72){
+		id=IIC_Read_Reg(MAG_ADDRESS,0x0a);
+		delay_ms(500);
+		SendChar("Initing HMC\r\n");
+		SendInt(id);
+		_n();
+		}
+
+	SendChar("init_hmc,ok\r\n");
 }
 
 void configureScheduler(void)
@@ -106,8 +110,11 @@ void configureScheduler(void)
     schedulerInit();
     setTaskEnabled(TASK_SYSTEM, 1);
     setTaskEnabled(TASK_UPDATEMPU6050, 1);
+    setTaskEnabled(TASK_RUNNLED, 1);
 
 }
+
+
 /* USER CODE END 0 */
 
 mag_t mag;
@@ -120,8 +127,9 @@ int main(void)
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
+	JTAG_Set(0x01);
 	delay_init();
-  uart_init(72,115200);
+//  uart_init(72,115200);
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
@@ -146,16 +154,19 @@ int main(void)
 	init();
 
 	configureScheduler();
-
+	SendChar("init_ok222\r\n");
 	hmc5883lDetect(&mag,&hmc_config);
+	SendChar("init_ok333\r\n");
 	mag.init();
+	//hmc5883lInit();
   /* USER CODE END 2 */
-
+	SendChar("init_ok444\r\n");
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
 
 		scheduler();
+
 
 	}
 

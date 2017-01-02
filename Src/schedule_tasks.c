@@ -5,7 +5,7 @@
  *      Author: 50430
  */
 
-
+#include "stm32f1xx_hal.h"
 #include "delay.h"
 #include "usart.h"
 #include "hmc5883l.h"
@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include "mpu6050.h"
 
-int16_t mag_data[3];
+int16_t mag_data[3] = {0};
 extern mag_t mag;
 extern u8 mpu6050_buffer[14];					//iic读取后存放数据
 
@@ -27,6 +27,8 @@ void taskUpdateMPU6050(void){
 
 	uint8_t xl,xm;
 	int16_t x;
+
+	uint8_t sta;
 
 	MPU6050_Read();
 	MPU6050_Dataanl();
@@ -49,18 +51,57 @@ void taskUpdateMPU6050(void){
 	SendChar("GZ:");
 	SendInt(MPU6050_GYRO_LAST.Z);
 	_n();
-////	double a,b,c;
-//	xm = IIC_Read_Reg(MAG_ADDRESS,MAG_DATA_REGISTER+2);
-//	xl = IIC_Read_Reg(MAG_ADDRESS,MAG_DATA_REGISTER+3);
-////	sta = hmc5883lRead(mag_data);
+
+
+
+
+//	double a,b,c;
+//	xm = IIC_Read_Reg(MAG_ADDRESS,MAG_DATA_REGISTER+);
+//	xl = IIC_Read_Reg(MAG_ADDRESS,MAG_DATA_REGISTER+1);
+
+
+	delay_ms(5);
+	sta = hmc5883lRead(mag_data);
+
+//	mag_data[0] = IIC_Read_Reg(MAG_ADDRESS,0x03);
+//	mag_data[1] = IIC_Read_Reg(MAG_ADDRESS,0x04);
+//	mag_data[2] = IIC_Read_Reg(MAG_ADDRESS,0x05);
+//	mag_data[3] = IIC_Read_Reg(MAG_ADDRESS,0x06);
+//	mag_data[4] = IIC_Read_Reg(MAG_ADDRESS,0x07);
+//	mag_data[5] = IIC_Read_Reg(MAG_ADDRESS,0x08);
+//
+//
+//	mag_data[0] = (int16_t)( mag_data[0] << 8 |  mag_data[1]);// * magGain[0];
+//	mag_data[2] = (int16_t)(mag_data[2] << 8 | mag_data[3]);// * magGain[1];
+//	mag_data[4] = (int16_t)(mag_data[4] << 8 | mag_data[5]);// * magGain[2];
+
+
 //	x = (int16_t)(xm<<8 | xl);
-//	SendChar("x:");
-//	SendInt(x);
-//	_n();
+	SendChar("mag_x:");
+	SendInt(mag_data[0]);
+	_n();
+	SendChar("mag_y:");
+	SendInt(mag_data[2]);
+	_n();
+	SendChar("mag_z:");
+	SendInt(mag_data[1]);
+	_n();
 
 //	a = (double)(mag_data[0]<<8 + mag_data[1]);
 //	SendChar("X:");
 //	SendInt(mag_data[0]);
 //	_n();
+
+}
+void taskRUNLED(void)
+{
+	static char sta = 0;
+
+	sta = !sta;//(sta+1)%2;
+
+	if(sta)
+		HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_SET);
+	else
+		HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
 
 }

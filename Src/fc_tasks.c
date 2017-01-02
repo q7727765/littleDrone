@@ -44,7 +44,14 @@ cfTask_t cfTasks[] = {
     [TASK_UPDATEMPU6050] = {
         .taskName = "UPDATEMPU6050",
         .taskFunc = taskUpdateMPU6050,
-        .desiredPeriod = 1000000/2,          // 10 Hz, every 100 ms
+        .desiredPeriod = 1000000/2,
         .staticPriority = TASK_PRIORITY_REALTIME,
+    },
+
+    [TASK_RUNNLED] = {
+        .taskName = "RUNLED",
+        .taskFunc = taskRUNLED,
+        .desiredPeriod = 1000000/3,
+        .staticPriority = TASK_PRIORITY_MEDIUM,
     },
 };
