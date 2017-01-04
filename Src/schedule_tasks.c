@@ -13,8 +13,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "mpu6050.h"
+#include "ms5611.h"
+#include "HAL.h"
 
+uint32_t baroPressureSumtt = 0;
+extern int32_t baroPressure;
+extern int32_t baroTemperature;
+extern baro_t baro;
 int16_t mag_data[3] = {0};
+uint8_t ms5611_buf[3];
 extern mag_t mag;
 extern u8 mpu6050_buffer[14];					//iic读取后存放数据
 
@@ -30,6 +37,9 @@ void taskUpdateMPU6050(void){
 
 	uint8_t sta;
 
+	static uint8_t mo = 1;
+
+	//acc & gyro
 	MPU6050_Read();
 	MPU6050_Dataanl();
 
@@ -52,31 +62,10 @@ void taskUpdateMPU6050(void){
 	SendInt(MPU6050_GYRO_LAST.Z);
 	_n();
 
+//mag
 
-
-
-//	double a,b,c;
-//	xm = IIC_Read_Reg(MAG_ADDRESS,MAG_DATA_REGISTER+);
-//	xl = IIC_Read_Reg(MAG_ADDRESS,MAG_DATA_REGISTER+1);
-
-
-	delay_ms(5);
 	sta = hmc5883lRead(mag_data);
 
-//	mag_data[0] = IIC_Read_Reg(MAG_ADDRESS,0x03);
-//	mag_data[1] = IIC_Read_Reg(MAG_ADDRESS,0x04);
-//	mag_data[2] = IIC_Read_Reg(MAG_ADDRESS,0x05);
-//	mag_data[3] = IIC_Read_Reg(MAG_ADDRESS,0x06);
-//	mag_data[4] = IIC_Read_Reg(MAG_ADDRESS,0x07);
-//	mag_data[5] = IIC_Read_Reg(MAG_ADDRESS,0x08);
-//
-//
-//	mag_data[0] = (int16_t)( mag_data[0] << 8 |  mag_data[1]);// * magGain[0];
-//	mag_data[2] = (int16_t)(mag_data[2] << 8 | mag_data[3]);// * magGain[1];
-//	mag_data[4] = (int16_t)(mag_data[4] << 8 | mag_data[5]);// * magGain[2];
-
-
-//	x = (int16_t)(xm<<8 | xl);
 	SendChar("mag_x:");
 	SendInt(mag_data[0]);
 	_n();
@@ -87,9 +76,42 @@ void taskUpdateMPU6050(void){
 	SendInt(mag_data[1]);
 	_n();
 
-//	a = (double)(mag_data[0]<<8 + mag_data[1]);
-//	SendChar("X:");
-//	SendInt(mag_data[0]);
+//baro
+
+	if(mo){
+
+	    baro.get_ut();
+	    baro.start_up();
+
+	}else{
+
+	    baro.get_up();
+	    baro.start_ut();
+	    baro.calculate(&baroPressure, &baroTemperature);
+	    baroPressureSumtt =recalculateBarometerTotal(
+	    		48,
+	    		baroPressureSumtt,
+				baroPressure);
+
+	}
+
+	mo =! mo;
+
+    SendChar("baroPressure:");
+    SendInt(baroPressure);
+    _n();
+    SendChar("baroTemperature:");
+    SendInt(baroTemperature);
+    _n();
+    SendChar("baroPressureSumtt:");
+    SendInt(baroPressureSumtt);
+    _n();
+
+//	IIC_Write_Reg(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D1 + CMD_ADC_4096, 1); // D1 (pressure) conversion start!
+//	sta = IIC_Read_Reg_Len(MS5611_ADDR,CMD_ADC_READ,3,ms5611_buf);
+//	baro = ((uint32_t)ms5611_buf[0] << 16) | (uint32_t)(ms5611_buf[1] << 8) | (uint32_t)ms5611_buf[2];
+//	SendChar("baro:");
+//	SendInt(baro);
 //	_n();
 
 }

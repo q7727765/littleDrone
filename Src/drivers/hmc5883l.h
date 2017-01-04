@@ -26,6 +26,7 @@
 #pragma once
 
 #include "stdbool.h"
+#include "HAL.h"
 
 #define MAG_ADDRESS 0x1E
 #define MAG_DATA_REGISTER 0x03
@@ -60,10 +61,6 @@ typedef struct hmc5883Config_s {
     IRQn_Type exti_irqn;
 } hmc5883Config_t;
 
-typedef struct mag_s {
-    sensorInitFuncPtr init;                                 // initialize function
-    sensorReadFuncPtr read;                                 // read 3 axis data function
-} mag_t;
 
 bool hmc5883lDetect(mag_t* mag, const hmc5883Config_t *hmc5883ConfigToUse);
 void hmc5883lInit(void);

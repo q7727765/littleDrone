@@ -138,6 +138,7 @@ void IIC_Send_Byte(uint8_t txd)
 uint8_t IIC_Read_Byte(unsigned char ack)
 {
 	unsigned char i,receive=0;
+	IIC_SDA = 1;//这里要释放总线啊兄弟，你读数据的时候ack拉低了SDA，不释放，后面还连读个毛啊。
 	SDA_IN();//SDA设置为输入
     for(i=0;i<8;i++ )
 	{
@@ -150,13 +151,9 @@ uint8_t IIC_Read_Byte(unsigned char ack)
     }
     if (!ack){
         IIC_NAck();//发送nACK
-        //SendChar("nack\r\n");
-
     }
     else{
         IIC_Ack(); //发送ACK
-        //SendChar("ack\r\n");
-
     }
     return receive;
 }
@@ -227,48 +224,32 @@ u8 IIC_Write_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf)
 u8 IIC_Read_Reg_Len(u8 addr,u8 reg,u8 len,u8 *buf)
 {
 
-	while(len--)
-	{
-		*buf=IIC_Read_Reg(addr,reg);
-		buf++;
-		reg++;
-	}
-	return 0;//+++++
+ 	IIC_Start();
+	IIC_Send_Byte((addr<<1)|0);//发送器件地址+写命令
 
-// 	IIC_Start();
-//	IIC_Send_Byte((addr<<1)|0);//发送器件地址+写命令
-//	if(IIC_Wait_Ack())	//等待应答
-//	{
-//		IIC_Stop();
-//		return 1;
-//	}
-//    IIC_Send_Byte(reg);	//写寄存器地址
-//    IIC_Wait_Ack();		//等待应答
-//    IIC_Start();
-//	IIC_Send_Byte((addr<<1)|1);//发送器件地址+读命令
-//    IIC_Wait_Ack();		//等待应答
-//    I2C_delay();
-//	while(len)
-//	{
-//		//SendChar("i2c 222 \n");
-//		if(len==1)
-//			{
-//				*buf=IIC_Read_Byte(0);//读数据,发送nACK
-////				SendChar("i2c_readf:");
-////				Send0x(*buf);
-////				_n();
-//			}
-//		else {
-//			*buf=IIC_Read_Byte(1);		//读数据,发送ACK
-////			SendChar("i2c_read:");
-////			Send0x(*buf);
-////			_n();
-//		}
-//		I2C_delay();
-//		len--;
-//		buf++;
-//	}
-//    IIC_Stop();	//产生一个停止条件
-//    delay_ms(1);
-//	return 0;
+	if(IIC_Wait_Ack())	//等待应答
+	{
+		IIC_Stop();
+		return 1;
+	}
+
+    IIC_Send_Byte(reg);	//写寄存器地址
+    IIC_Wait_Ack();		//等待应答
+
+    IIC_Start();
+    IIC_Send_Byte((addr<<1)|1);//发送器件地址+读命令
+	IIC_Wait_Ack();		//等待应答
+
+	while(len)
+	{
+		if(len==1)*buf=IIC_Read_Byte(0);//读数据,发送nACK
+		else *buf = IIC_Read_Byte(1);		//读数据,发送ACK
+
+		len--;
+		buf++;
+	}
+    IIC_Stop();	//产生一个停止条件
+
+	return 0;
+
 }

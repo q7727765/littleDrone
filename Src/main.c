@@ -44,6 +44,9 @@
 #include "fc_tasks.h"
 #include "scheduler.h"
 #include "hmc5883l.h"
+#include "ms5611.h"
+#include "HAL.h"
+
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
@@ -80,6 +83,11 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 #define MAG_ADDRESS 0x1E
 
 /* USER CODE BEGIN 0 */
+
+mag_t mag;
+hmc5883Config_t hmc_config;
+extern baro_t baro;
+
 char id;
 void init(void)
 {
@@ -101,8 +109,18 @@ void init(void)
 		SendInt(id);
 		_n();
 		}
-
 	SendChar("init_hmc,ok\r\n");
+
+	ms5611Detect(&baro);
+//	id=0;
+//	while(id==0){
+//		id = ms5611_init();
+//		delay_ms(500);
+//		SendChar("Initing ms5611\r\n");
+//		SendInt(id);
+//		_n();
+//		}
+//	SendChar("init_ms5611,ok\r\n");
 }
 
 void configureScheduler(void)
@@ -117,8 +135,7 @@ void configureScheduler(void)
 
 /* USER CODE END 0 */
 
-mag_t mag;
-hmc5883Config_t hmc_config;
+
 int main(void)
 {
 
