@@ -1,7 +1,8 @@
 #ifndef __MPU6050_H
 #define __MPU6050_H
 #include "i2c.h"
-
+#include "stdbool.h"
+#include "HAL.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -108,7 +109,8 @@ void MPU6050_Read(void);
 void MPU6050_Dataanl(void);
 				
 				
-u8 MPU_Init(void); 								//初始化MPU6050
+void MPU_Init_Gyro(void); 								//初始化MPU6050
+void MPU_Init_Acc(void);
 u8 MPU_Write_Len(u8 addr,u8 reg,u8 len,u8 *buf);//IIC连续写
 u8 MPU_Read_Len(u8 addr,u8 reg,u8 len,u8 *buf); //IIC连续读 
 u8 MPU_Write_Byte(u8 reg,u8 data);				//IIC写一个字节
@@ -126,7 +128,10 @@ u8 MPU_Get_Gyroscope(short *gx,short *gy,short *gz);
 u8 MPU_Get_Accelerometer(short *ax,short *ay,short *az);
 void MPU6050_Read(void);
 void MPU6050_Dataanl(void);
-
+bool MPU6050DetectGyro(gyro_t *gyro);
+bool MPU6050DetectAcc(acc_t *acc);
+bool mpuGyroRead(int16_t *data);
+bool mpuAccRead(int16_t *data);
 #endif
 
 

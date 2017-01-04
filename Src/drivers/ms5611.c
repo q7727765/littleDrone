@@ -141,10 +141,6 @@ static void ms5611_start_ut(void)
 static void ms5611_get_ut(void)
 {
     ms5611_ut = ms5611_read_adc();
-    SendChar("ms5611_ut:");
-    SendInt(ms5611_ut);
-	_n();
-
 }
 
 static void ms5611_start_up(void)
@@ -155,10 +151,6 @@ static void ms5611_start_up(void)
 static void ms5611_get_up(void)
 {
     ms5611_up = ms5611_read_adc();
-    SendChar("ms5611_up:");
-    SendInt(ms5611_up);
-	_n();
-
 }
 
 STATIC_UNIT_TESTED void ms5611_calculate(int32_t *pressure, int32_t *temperature)

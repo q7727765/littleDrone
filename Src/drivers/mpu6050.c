@@ -4,6 +4,9 @@
 #include "delay.h"
 #include "usart.h"   
 #include "i2c.h"
+#include "stdbool.h"
+#include "HAL.h"
+#include "stdint.h"
 
 u8						mpu6050_buffer[14];					//iic读取后存放数据
 S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
@@ -28,6 +31,54 @@ S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
 //初始化MPU6050
 //返回值:0,成功
 //    其他,错误代码
+
+bool MPU6050DetectGyro(gyro_t *gyro)
+{
+	u8 res;
+
+	res=MPU_Read_Byte(MPU_DEVICE_ID_REG);
+	if(res!=MPU_ADDR) return false;
+
+	gyro->init = MPU_Init_Gyro;
+	gyro->read = mpuGyroRead;
+	//gyro->isDataReady = mpuIsDataReady;
+
+	// 16.4 dps/lsb scalefactor
+	gyro->scale = 1.0f / 16.4f;
+
+	return true;
+}
+
+bool MPU6050DetectAcc(acc_t *acc)
+{
+    acc->init = MPU_Init_Acc;
+    acc->read = mpuAccRead;
+    //acc->revisionCode = (mpuDetectionResult.resolution == MPU_HALF_RESOLUTION ? 'o' : 'n'); // es/non-es variance between MPU6050 sensors, half of the naze boards are mpu6000ES.
+
+	return true;
+}
+
+bool mpuAccRead(int16_t *data)
+{
+	u8 res;
+	res = IIC_Read_Reg_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG,6,mpu6050_buffer);
+	data[0] = ((((int16_t)mpu6050_buffer[0]) << 8) | mpu6050_buffer[1])- ACC_OFFSET.X;
+	data[1] = ((((int16_t)mpu6050_buffer[2]) << 8) | mpu6050_buffer[3])- ACC_OFFSET.Y;
+	data[2] = ((((int16_t)mpu6050_buffer[4]) << 8) | mpu6050_buffer[5])- ACC_OFFSET.Z;
+
+	return !res;
+}
+
+bool mpuGyroRead(int16_t *data)
+{
+	u8 res;
+	res = IIC_Read_Reg_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG+8,6,mpu6050_buffer+8);
+	data[0] = ((((int16_t)mpu6050_buffer[8]) << 8) | mpu6050_buffer[9])- GYRO_OFFSET.X;
+	data[1] = ((((int16_t)mpu6050_buffer[10]) << 8) | mpu6050_buffer[11])- GYRO_OFFSET.Y;
+	data[2] = ((((int16_t)mpu6050_buffer[12]) << 8) | mpu6050_buffer[13])- GYRO_OFFSET.X;
+
+	return !res;
+}
 
 void MPU6050_Read(void)
 {
@@ -109,7 +160,7 @@ void MPU6050_Dataanl(void)
 }
 
 
-u8 MPU_Init(void)
+void MPU_Init_Gyro(void)
 { 
 	u8 res;
 	IIC_Init();//初始化IIC总线
@@ -117,7 +168,7 @@ u8 MPU_Init(void)
     delay_ms(300);
 	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X00);	//唤醒MPU6050 
 	MPU_Set_Gyro_Fsr(3);					//陀螺仪传感器,±2000dps
-	MPU_Set_Accel_Fsr(2);					//加速度传感器,±8g
+
 	MPU_Set_LPF(42);
 	//MPU_Set_Rate(50);						//设置采样率50Hz
 	MPU_Write_Byte(MPU_INT_EN_REG,0X00);	//关闭所有中断
@@ -125,14 +176,16 @@ u8 MPU_Init(void)
 	MPU_Write_Byte(MPU_FIFO_EN_REG,0X00);	//关闭FIFO
 	MPU_Write_Byte(MPU_INTBP_CFG_REG,
 			0 << 7 | 0 << 6 | 0 << 5 | 0 << 4 | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0);	//INT引脚低电平有效
-	res=MPU_Read_Byte(MPU_DEVICE_ID_REG);
-	if(res==MPU_ADDR)//器件ID正确
-	{
-		MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X03);	//设置CLKSEL,PLL X轴为参考
-		MPU_Write_Byte(MPU_PWR_MGMT2_REG,0X00);	//加速度与陀螺仪都工作
-		MPU_Set_Rate(50);						//设置采样率为50Hz
- 	}else return 1;
-	return 0;
+
+	MPU_Write_Byte(MPU_PWR_MGMT2_REG,0X00);	//加速度与陀螺仪都工作
+	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X03);	//设置CLKSEL,PLL X轴为参考
+	MPU_Set_Rate(50);						//设置采样率为50Hz
+
+}
+
+void MPU_Init_Acc(void)
+{
+	MPU_Set_Accel_Fsr(2);					//加速度传感器,±8g
 }
 //设置MPU6050陀螺仪传感器满量程范围
 //fsr:0,±250dps;1,±500dps;2,±1000dps;3,±2000dps

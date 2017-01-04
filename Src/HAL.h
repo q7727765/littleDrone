@@ -40,5 +40,14 @@ typedef struct baro_s {
     baroCalculateFuncPtr calculate;
 } baro_t;
 
+extern acc_t acc;
+extern gyro_t gyro;
+extern mag_t mag;
+extern baro_t baro;
 
+
+extern void detectAcc();
+extern void detectGyro();
+extern void detectMag();
+extern void detectBaro();
 extern uint32_t recalculateBarometerTotal(uint8_t baroSampleCount, uint32_t pressureTotal, int32_t newPressureReading);

@@ -84,43 +84,20 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE BEGIN 0 */
 
-mag_t mag;
-hmc5883Config_t hmc_config;
-extern baro_t baro;
 
 char id;
 void init(void)
 {
+	IIC_Init();
+	detectGyro();
+	detectAcc();
+	detectMag();
+	detectBaro();
 
+	gyro.init();
+	acc.init();
+	mag.init();
 
-	while(MPU_Init()){
-
-	delay_ms(1000);
-	SendChar("Initing MPU\r\n");
-	}
-
-	delay_ms(1000);
-	SendChar("init_mpu,ok\r\n");
-
-	while(id!=72){
-		id=IIC_Read_Reg(MAG_ADDRESS,0x0a);
-		delay_ms(500);
-		SendChar("Initing HMC\r\n");
-		SendInt(id);
-		_n();
-		}
-	SendChar("init_hmc,ok\r\n");
-
-	ms5611Detect(&baro);
-//	id=0;
-//	while(id==0){
-//		id = ms5611_init();
-//		delay_ms(500);
-//		SendChar("Initing ms5611\r\n");
-//		SendInt(id);
-//		_n();
-//		}
-//	SendChar("init_ms5611,ok\r\n");
 }
 
 void configureScheduler(void)
@@ -165,17 +142,12 @@ int main(void)
 
 //  HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
 //  HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
 
 
 	init();
 
 	configureScheduler();
-	SendChar("init_ok222\r\n");
-	hmc5883lDetect(&mag,&hmc_config);
-	SendChar("init_ok333\r\n");
-	mag.init();
-	//hmc5883lInit();
   /* USER CODE END 2 */
 	SendChar("init_ok444\r\n");
   /* Infinite loop */

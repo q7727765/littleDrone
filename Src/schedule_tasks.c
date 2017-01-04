@@ -16,6 +16,9 @@
 #include "ms5611.h"
 #include "HAL.h"
 
+
+int16_t gyrodata[3];
+int16_t accdata[3];
 uint32_t baroPressureSumtt = 0;
 extern int32_t baroPressure;
 extern int32_t baroTemperature;
@@ -40,31 +43,33 @@ void taskUpdateMPU6050(void){
 	static uint8_t mo = 1;
 
 	//acc & gyro
-	MPU6050_Read();
+	//MPU6050_Read();
+	gyro.read(gyrodata);
+	acc.read(accdata);
 	MPU6050_Dataanl();
 
 	SendChar("X:");
-	SendInt(MPU6050_ACC_LAST.X);
+	SendInt(accdata[0]);
 	_n();
 	SendChar("Y:");
-	SendInt(MPU6050_ACC_LAST.Y);
+	SendInt(accdata[1]);
 	_n();
 	SendChar("Z:");
-	SendInt(MPU6050_ACC_LAST.Z);
+	SendInt(accdata[2]);
 	_n();
 	SendChar("GX:");
-	SendInt(MPU6050_GYRO_LAST.X);
+	SendInt(gyrodata[0]);
 	_n();
 	SendChar("GY:");
-	SendInt(MPU6050_GYRO_LAST.Y);
+	SendInt(gyrodata[1]);
 	_n();
 	SendChar("GZ:");
-	SendInt(MPU6050_GYRO_LAST.Z);
+	SendInt(gyrodata[2]);
 	_n();
 
 //mag
 
-	sta = hmc5883lRead(mag_data);
+	sta = mag.read(mag_data);
 
 	SendChar("mag_x:");
 	SendInt(mag_data[0]);

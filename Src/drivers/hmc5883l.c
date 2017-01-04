@@ -200,12 +200,10 @@ static void hmc5883lConfigureDataReadyInterruptHandling(void)
 
 
 
-bool hmc5883lDetect(mag_t* mag, const hmc5883Config_t *hmc5883ConfigToUse)
+bool hmc5883lDetect(mag_t* mag)
 {
     bool ack = 1;
     uint8_t sig = 0;
-
-    hmc5883Config = hmc5883ConfigToUse;
 
     ack = IIC_Read_Reg_Len(MAG_ADDRESS, 0x0A, 1, &sig);
     if (ack || sig != 'H')
@@ -214,7 +212,7 @@ bool hmc5883lDetect(mag_t* mag, const hmc5883Config_t *hmc5883ConfigToUse)
     mag->init = hmc5883lInit;
     mag->read = hmc5883lRead;
 
-    return 0;
+    return true;
 }
 
 void hmc5883lInit(void)

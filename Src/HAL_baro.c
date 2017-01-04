@@ -7,6 +7,9 @@
 
 #include "HAL.h"
 #include "maths.h"
+#include "ms5611.h"
+#include "usart.h"
+#include "delay.h"
 
 baro_t baro;                        // barometer access functions
 uint16_t calibratingB = 0;      // baro calibration = get new ground pressure value
@@ -29,6 +32,16 @@ static bool baroReady = false;
 
 #define PRESSURE_SAMPLES_MEDIAN 3
 
+void detectBaro()
+{
+	while(!	ms5611Detect(&baro)) {
+		delay_ms(500);
+		SendChar("Initing ms5611\r\n");
+		_n();
+	}
+	SendChar("ms5611 OK\r\n");
+	_n();
+}
 
 static int32_t applyBarometerMedianFilter(int32_t newPressureReading)
 {
