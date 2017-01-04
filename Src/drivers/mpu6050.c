@@ -8,6 +8,11 @@
 #include "HAL.h"
 #include "stdint.h"
 
+
+#define MPU_HALF_RESOLUTION 256 * 8
+#define MPU_FULL_RESOLUTION 512 * 8
+
+
 u8						mpu6050_buffer[14];					//iic读取后存放数据
 S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
 u8						GYRO_OFFSET_OK = 1;
@@ -54,7 +59,7 @@ bool MPU6050DetectAcc(acc_t *acc)
     acc->init = MPU_Init_Acc;
     acc->read = mpuAccRead;
     //acc->revisionCode = (mpuDetectionResult.resolution == MPU_HALF_RESOLUTION ? 'o' : 'n'); // es/non-es variance between MPU6050 sensors, half of the naze boards are mpu6000ES.
-
+    acc->acc_1G = MPU_FULL_RESOLUTION;
 	return true;
 }
 
