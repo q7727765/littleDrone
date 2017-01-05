@@ -21,7 +21,11 @@ typedef enum {
     /* Actual tasks */
     TASK_SYSTEM = 0,
 
-    TASK_UPDATEMPU6050,
+    TASK_UPDATE_MPU6050,
+
+	TASK_UPDATE_ATTITUDE,
+
+	TASK_USART_DEBUG,
 
 	TASK_RUNNLED,
 
@@ -43,3 +47,6 @@ typedef enum {
 void taskSystem(void);
 void taskUpdateMPU6050(void);
 void taskRUNLED(void);
+void configureScheduler(void);
+void taskUpdateAttitude(void);
+void taskUsartDebug(void);

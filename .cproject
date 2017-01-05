@@ -61,6 +61,9 @@
 									<listOptionValue builtIn="false" value="STM32F103xB"/>
 									<listOptionValue builtIn="false" value="u8=uint8_t"/>
 									<listOptionValue builtIn="false" value="u16=uint16_t"/>
+									<listOptionValue builtIn="false" value="s16=int16_t"/>
+									<listOptionValue builtIn="false" value="s32=int32_t"/>
+									<listOptionValue builtIn="false" value="s8=int8_t"/>
 									<listOptionValue builtIn="false" value="u32=uint32_t"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 								</option>

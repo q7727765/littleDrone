@@ -100,14 +100,7 @@ void init(void)
 
 }
 
-void configureScheduler(void)
-{
-    schedulerInit();
-    setTaskEnabled(TASK_SYSTEM, 1);
-    setTaskEnabled(TASK_UPDATEMPU6050, 1);
-    setTaskEnabled(TASK_RUNNLED, 1);
 
-}
 
 
 /* USER CODE END 0 */

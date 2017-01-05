@@ -38,6 +38,8 @@ typedef struct baro_s {
     baroOpFuncPtr start_up;
     baroOpFuncPtr get_up;
     baroCalculateFuncPtr calculate;
+
+
 } baro_t;
 
 extern acc_t acc;
