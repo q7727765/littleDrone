@@ -39,6 +39,9 @@ extern  u8 str9[STR_LEN];
 /////////////////////////////////////////////////////////////////////////////////////
 //Data_Exchange函数处理各种数据发送请求，比如想实现每5ms发送一次传感器数据至上位机，即在此函数内实现
 //此函数应由用户每1ms调用一次
+
+extern attitudeEulerAngles_t attitude;
+
 void ANO_DT_Data_Exchange(void)
 {
 	static u8 cnt = 0;
@@ -79,14 +82,14 @@ void ANO_DT_Data_Exchange(void)
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_version)
 	{
-//		f.send_version = 0;
-//		ANO_DT_Send_Version(4,300,100,400,0);
+		f.send_version = 0;
+		ANO_DT_Send_Version(4,300,100,400,0);
 	}
 /////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_status)
 	{
-//		f.send_status = 0;
-//		ANO_DT_Send_Status(ROLL,PITCH,YAW,0,0,ARMED);
+		f.send_status = 0;
+		ANO_DT_Send_Status(attitude.values.roll,attitude.values.pitch,attitude.values.yaw,0,0,0);//last ARMED
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_senser)
@@ -226,109 +229,109 @@ void ANO_DT_Data_Receive_Prepare(u8 data)
 //Data_Receive_Anl函数是协议数据解析函数，函数参数是符合协议格式的一个数据帧，该函数会首先对协议数据进行校验
 //校验通过后对数据进行解析，实现相应功能
 //此函数可以不用用户自行调用，由函数Data_Receive_Prepare自动调用
-void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
-{
-	u8 sum = 0;
-	u8 i;
-	for(i=0;i<(num-1);i++)
-		sum += *(data_buf+i);
-	if(!(sum==*(data_buf+num-1)))		return;		//判断sum
-	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		//判断帧头
-	
-	if(*(data_buf+2)==0X01)
-	{
-		if(*(data_buf+4)==0X01)
-			//mpu6050.Acc_CALIBRATE = 1;//++++
-		if(*(data_buf+4)==0X02)
-			//mpu6050.Gyro_CALIBRATE = 1;//++++
-		if(*(data_buf+4)==0X03)
-		{
-			//mpu6050.Acc_CALIBRATE = 1;		//++++
-			//mpu6050.Gyro_CALIBRATE = 1;			//++++
-		}
-	}
-	
-	if(*(data_buf+2)==0X02)
-	{
-		if(*(data_buf+4)==0X01)
-		{
-			f.send_pid1 = 1;
-			f.send_pid2 = 1;
-			f.send_pid3 = 1;
-			f.send_pid4 = 1;
-			f.send_pid5 = 1;
-			f.send_pid6 = 1;
-		}
-		if(*(data_buf+4)==0X02)
-		{
-			
-		}
-		if(*(data_buf+4)==0XA0)		//读取版本信息
-		{
-			f.send_version = 1;
-		}
-		if(*(data_buf+4)==0XA1)		//恢复默认参数
-		{
-			Para_ResetToFactorySetup();
-		}
-	}
-	
-
-	if(*(data_buf+2)==0X10)								//PID1
-    {
-        PID_ROL.P  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
-        PID_ROL.I  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
-        PID_ROL.D  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
-        PID_PIT.P = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
-        PID_PIT.I = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
-        PID_PIT.D = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
-        PID_YAW.P = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
-        PID_YAW.I = 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
-        PID_YAW.D = 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
-        ANO_DT_Send_Check(*(data_buf+2),sum);
-		//Param_SavePID();
-    }
-    if(*(data_buf+2)==0X11)								//PID2
-    {
-//        ctrl_1.PID[PID4].kp 	= 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
-//        ctrl_1.PID[PID4].ki 	= 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
-//        ctrl_1.PID[PID4].kd 	= 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
-//        ctrl_1.PID[PID5].kp 	= 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
-//        ctrl_1.PID[PID5].ki 	= 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
-//        ctrl_1.PID[PID5].kd 	= 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
-//        ctrl_1.PID[PID6].kp	  = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
-//        ctrl_1.PID[PID6].ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
-//        ctrl_1.PID[PID6].kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+//void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
+//{
+//	u8 sum = 0;
+//	u8 i;
+//	for(i=0;i<(num-1);i++)
+//		sum += *(data_buf+i);
+//	if(!(sum==*(data_buf+num-1)))		return;		//判断sum
+//	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		//判断帧头
+//
+//	if(*(data_buf+2)==0X01)
+//	{
+//		if(*(data_buf+4)==0X01)
+//			//mpu6050.Acc_CALIBRATE = 1;//++++
+//		if(*(data_buf+4)==0X02)
+//			//mpu6050.Gyro_CALIBRATE = 1;//++++
+//		if(*(data_buf+4)==0X03)
+//		{
+//			//mpu6050.Acc_CALIBRATE = 1;		//++++
+//			//mpu6050.Gyro_CALIBRATE = 1;			//++++
+//		}
+//	}
+//
+//	if(*(data_buf+2)==0X02)
+//	{
+//		if(*(data_buf+4)==0X01)
+//		{
+//			f.send_pid1 = 1;
+//			f.send_pid2 = 1;
+//			f.send_pid3 = 1;
+//			f.send_pid4 = 1;
+//			f.send_pid5 = 1;
+//			f.send_pid6 = 1;
+//		}
+//		if(*(data_buf+4)==0X02)
+//		{
+//
+//		}
+//		if(*(data_buf+4)==0XA0)		//读取版本信息
+//		{
+//			f.send_version = 1;
+//		}
+//		if(*(data_buf+4)==0XA1)		//恢复默认参数
+//		{
+//			//Para_ResetToFactorySetup();
+//		}
+//	}
+//
+//
+//	if(*(data_buf+2)==0X10)								//PID1
+//    {
+//        PID_ROL.P  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
+//        PID_ROL.I  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
+//        PID_ROL.D  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
+//        PID_PIT.P = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
+//        PID_PIT.I = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
+//        PID_PIT.D = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
+//        PID_YAW.P = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
+//        PID_YAW.I = 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
+//        PID_YAW.D = 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
 //        ANO_DT_Send_Check(*(data_buf+2),sum);
-//				Param_SavePID();
-    }
-    if(*(data_buf+2)==0X12)								//PID3
-    {	
-//        ctrl_2.PID[PIDROLL].kp  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
-//        ctrl_2.PID[PIDROLL].ki  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
-//        ctrl_2.PID[PIDROLL].kd  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
-//        ctrl_2.PID[PIDPITCH].kp = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
-//        ctrl_2.PID[PIDPITCH].ki = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
-//        ctrl_2.PID[PIDPITCH].kd = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
-//        ctrl_2.PID[PIDYAW].kp 	= 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
-//        ctrl_2.PID[PIDYAW].ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
-//        ctrl_2.PID[PIDYAW].kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
-//        ANO_DT_Send_Check(*(data_buf+2),sum);
-//				Param_SavePID();
-    }
-	if(*(data_buf+2)==0X13)								//PID4
-	{
-		ANO_DT_Send_Check(*(data_buf+2),sum);
-	}
-	if(*(data_buf+2)==0X14)								//PID5
-	{
-		ANO_DT_Send_Check(*(data_buf+2),sum);
-	}
-	if(*(data_buf+2)==0X15)								//PID6
-	{
-		ANO_DT_Send_Check(*(data_buf+2),sum);
-	}
-}
+//		//Param_SavePID();
+//    }
+//    if(*(data_buf+2)==0X11)								//PID2
+//    {
+////        ctrl_1.PID[PID4].kp 	= 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
+////        ctrl_1.PID[PID4].ki 	= 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
+////        ctrl_1.PID[PID4].kd 	= 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
+////        ctrl_1.PID[PID5].kp 	= 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
+////        ctrl_1.PID[PID5].ki 	= 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
+////        ctrl_1.PID[PID5].kd 	= 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
+////        ctrl_1.PID[PID6].kp	  = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
+////        ctrl_1.PID[PID6].ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
+////        ctrl_1.PID[PID6].kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+////        ANO_DT_Send_Check(*(data_buf+2),sum);
+////				Param_SavePID();
+//    }
+//    if(*(data_buf+2)==0X12)								//PID3
+//    {
+////        ctrl_2.PID[PIDROLL].kp  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
+////        ctrl_2.PID[PIDROLL].ki  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
+////        ctrl_2.PID[PIDROLL].kd  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
+////        ctrl_2.PID[PIDPITCH].kp = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
+////        ctrl_2.PID[PIDPITCH].ki = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
+////        ctrl_2.PID[PIDPITCH].kd = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
+////        ctrl_2.PID[PIDYAW].kp 	= 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
+////        ctrl_2.PID[PIDYAW].ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
+////        ctrl_2.PID[PIDYAW].kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+////        ANO_DT_Send_Check(*(data_buf+2),sum);
+////				Param_SavePID();
+//    }
+//	if(*(data_buf+2)==0X13)								//PID4
+//	{
+//		ANO_DT_Send_Check(*(data_buf+2),sum);
+//	}
+//	if(*(data_buf+2)==0X14)								//PID5
+//	{
+//		ANO_DT_Send_Check(*(data_buf+2),sum);
+//	}
+//	if(*(data_buf+2)==0X15)								//PID6
+//	{
+//		ANO_DT_Send_Check(*(data_buf+2),sum);
+//	}
+//}
 
 void ANO_DT_Send_Version(u8 hardware_type, u16 hardware_ver,u16 software_ver,u16 protocol_ver,u16 bootloader_ver)
 {

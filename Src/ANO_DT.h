@@ -1,7 +1,14 @@
-#ifndef _DATA_TRANSFER_H
-#define	_DATA_TRANSFER_H
 
-#include "stm32f10x.h"
+#pragma once
+
+
+#include "stm32f103xb.h"
+#include "stdint.h"
+
+typedef volatile int8_t vs8;
+typedef volatile int16_t vs16;
+typedef volatile int32_t vs32;
+
 
 #define STR_LEN 30
 typedef struct 
@@ -37,5 +44,5 @@ void ANO_DT_Send_MotoPWM(u16 m_1,u16 m_2,u16 m_3,u16 m_4,u16 m_5,u16 m_6,u16 m_7
 void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float p2_i,float p2_d,float p3_p,float p3_i,float p3_d);
 void ANO_DT_Send_User(u8*s0,u8*s1,u8*s2,u8*s3,u8*s4,u8*s5,u8*s6,u8*s7,u8*s8,u8*s9);
 
-#endif
+
 

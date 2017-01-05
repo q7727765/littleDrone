@@ -98,6 +98,7 @@ void init(void)
 	acc.init();
 	mag.init();
 
+	imuInit();
 }
 
 

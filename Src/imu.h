@@ -7,9 +7,14 @@
 
 #pragma once
 
-#define STATIC_UNIT_TESTED static
+
 #include "stdint.h"
+#include "stdbool.h"
+
+#define STATIC_UNIT_TESTED static
+
 #define XYZ_AXIS_COUNT 3
+
 
 typedef union {
     int16_t raw[XYZ_AXIS_COUNT];
@@ -20,4 +25,15 @@ typedef union {
         int16_t yaw;
     } values;
 } attitudeEulerAngles_t;
+
+extern attitudeEulerAngles_t attitude;
+extern float gyroScale;
+
+void imuInit(void);
+void imuMahonyAHRSupdate(float dt, float gx, float gy, float gz,
+                                bool useAcc, float ax, float ay, float az,
+                                bool useMag, float mx, float my, float mz,
+                                bool useYaw, float yawError);
+
+void imuUpdateEulerAngles(void);
 
