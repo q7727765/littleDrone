@@ -22,6 +22,8 @@
 
 #include "scheduler/scheduler.h"
 
+#include "imu.h"
+
 // No need for a linked list for the queue, since items are only inserted at startup
 #ifdef UNIT_TEST
 #define TASK_QUEUE_ARRAY_SIZE (TASK_COUNT + 2) // 1 extra space so test code can check for buffer overruns
@@ -33,6 +35,7 @@ const uint32_t taskQueueArraySize = TASK_QUEUE_ARRAY_SIZE;
 const uint32_t taskCount = TASK_COUNT;
 cfTask_t* taskQueueArray[TASK_QUEUE_ARRAY_SIZE];
 
+//周期单位：us
 cfTask_t cfTasks[] = {
     [TASK_SYSTEM] = {
         .taskName = "SYSTEM",
@@ -41,17 +44,43 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_HIGH,
     },
 
-    [TASK_UPDATEMPU6050] = {
-        .taskName = "UPDATEMPU6050",
+    [TASK_UPDATE_MPU6050] = {
+        .taskName = "UPDATE_MPU6050",
         .taskFunc = taskUpdateMPU6050,
-        .desiredPeriod = 1000000/2,
+        .desiredPeriod = 1000,
         .staticPriority = TASK_PRIORITY_REALTIME,
+    },
+
+    [TASK_UPDATE_ATTITUDE] = {
+        .taskName = "UPDATE_ATTITUDE",
+        .taskFunc = taskUpdateAttitude,
+        .desiredPeriod = 1000,
+        .staticPriority = TASK_PRIORITY_REALTIME_PRO,
     },
 
     [TASK_RUNNLED] = {
         .taskName = "RUNLED",
         .taskFunc = taskRUNLED,
-        .desiredPeriod = 1000000/3,
-        .staticPriority = TASK_PRIORITY_MEDIUM,
+        .desiredPeriod = 500000,
+        .staticPriority = TASK_PRIORITY_LOW,
     },
+
+    [TASK_USART_DEBUG] = {
+        .taskName = "USART_DEBUG",
+        .taskFunc = taskUsartDebug,
+        .desiredPeriod = 1000,
+        .staticPriority = TASK_PRIORITY_HIGH,
+    },
+
+
 };
+
+void configureScheduler(void)
+{
+    schedulerInit();
+    setTaskEnabled(TASK_SYSTEM, 1);
+    setTaskEnabled(TASK_UPDATE_MPU6050, 1);
+    setTaskEnabled(TASK_RUNNLED, 1);
+    setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
+    setTaskEnabled(TASK_USART_DEBUG, 1);
+}
