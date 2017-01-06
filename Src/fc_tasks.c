@@ -51,6 +51,13 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
+    [TASK_UPDATE_MAG] = {
+        .taskName = "UPDATE_MAG",
+        .taskFunc = taskUpdateMAG,
+        .desiredPeriod = 100000,
+        .staticPriority = TASK_PRIORITY_REALTIME,
+    },
+
     [TASK_UPDATE_ATTITUDE] = {
         .taskName = "UPDATE_ATTITUDE",
         .taskFunc = Get_Attitude,
@@ -83,4 +90,7 @@ void configureScheduler(void)
     setTaskEnabled(TASK_RUNNLED, 1);
     setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
     setTaskEnabled(TASK_USART_DEBUG, 1);
+    setTaskEnabled(TASK_UPDATE_MAG, 1);
+
+
 }

@@ -19,7 +19,7 @@
 #define Acc_G 	0.0011963				//加速度变成G
 #define Gyro_G 	0.0610351				//角速度变成度   此参数对应陀螺2000度每秒
 #define Gyro_Gr	0.0010653				//角速度变成弧度	此参数对应陀螺2000度每秒
-#define FILTER_NUM 10
+#define FILTER_NUM 5
 
 S_INT16_XYZ ACC_AVG;			//平均值滤波后的ACC
 S_FLOAT_XYZ GYRO_I;				//陀螺仪积分
@@ -27,12 +27,16 @@ S_FLOAT_XYZ EXP_ANGLE;		//期望角度
 S_FLOAT_XYZ DIF_ANGLE;		//期望角度与实际角度差
 S_FLOAT_XYZ Q_ANGLE;			//四元数计算出的角度
 
+S_FLOAT_XYZ MAG_P;
+
+
 int16_t	ACC_X_BUF[FILTER_NUM],
 		ACC_Y_BUF[FILTER_NUM],
 		ACC_Z_BUF[FILTER_NUM];	//加速度滑动窗口滤波数组
 
-int16_t gyrodata[3];
-int16_t accdata[3];
+int16_t gyro_data[3];
+int16_t acc_data[3];
+int16_t mag_data[3];
 
 void Prepare_Data(void)
 {
@@ -40,8 +44,8 @@ void Prepare_Data(void)
 	int32_t temp1=0,temp2=0,temp3=0;
 	uint8_t i;
 
-	gyro.read(gyrodata);
-	acc.read(accdata);
+	gyro.read(gyro_data);
+	acc.read(acc_data);
 	MPU6050_Dataanl();
 
 	ACC_X_BUF[filter_cnt] = MPU6050_ACC_LAST.X;//更新滑动窗口数组
@@ -61,7 +65,8 @@ void Prepare_Data(void)
 
 	//GYRO_I.X += MPU6050_GYRO_LAST.X*Gyro_G*0.001;//0.001是时间间隔,两次prepare的执行周期
 	//GYRO_I.Y += MPU6050_GYRO_LAST.Y*Gyro_G*0.001;
-	GYRO_I.Z += MPU6050_GYRO_LAST.Z*Gyro_G*0.001;
+	GYRO_I.Z += MPU6050_GYRO_LAST.Z*Gyro_G*0.0013;
+	//MAG_P.X += mag_data[0];
 }
 
 void Get_Attitude(void)
@@ -137,7 +142,19 @@ void IMUupdate(float gx, float gy, float gz, float ax, float ay, float az)
   q2 = q2 / norm;
   q3 = q3 / norm;
 
-  Q_ANGLE.Z = GYRO_I.Z;//atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.3; // yaw
+//  float headingRadians  = atan2((double)mag_data[1] , (double)mag_data[0]);
+////  if(headingRadians < 0)
+////      headingRadians += 2*M_PI;
+////  if(headingRadians > 2*M_PI)
+////        headingRadians -= 2*M_PI;
+//
+//  int headingDegrees = headingRadians * 180/M_PI;
+//
+//  if(headingDegrees < 0)
+//	  headingDegrees += 360;
+//  if(headingDegrees > 360)
+//	  headingDegrees -= 360;
+  Q_ANGLE.Z = GYRO_I.Z; //atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.3; // yaw
   Q_ANGLE.Y = asin(-2 * q1 * q3 + 2 * q0* q2)* 57.3; // pitch
   Q_ANGLE.X = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
 }

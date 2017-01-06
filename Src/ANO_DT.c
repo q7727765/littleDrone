@@ -15,6 +15,9 @@
 #include "time.h"
 #include "usart.h"
 //#include "stmflash.h"
+#include "string.h"
+#include "imu.h"
+#include "math.h"
 
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
@@ -26,16 +29,16 @@
 dt_flag_t f;					//需要发送数据的标志
 u8 data_to_send[50];	//发送数据缓存
 
-extern	u8 str0[STR_LEN];								
-extern	u8 str1[STR_LEN];								
-extern	u8 str2[STR_LEN];								
-extern	u8 str3[STR_LEN];								
-extern	u8 str4[STR_LEN];								
-extern	u8 str5[STR_LEN];								
-extern	u8 str6[STR_LEN];								
-extern	u8 str7[STR_LEN];							
-extern	u8 str8[STR_LEN];								
-extern  u8 str9[STR_LEN];
+u8 str0[STR_LEN] = "";
+u8 str1[STR_LEN] = "";
+u8 str2[STR_LEN] = "";
+u8 str3[STR_LEN] = "";
+u8 str4[STR_LEN] = "";
+u8 str5[STR_LEN] = "";
+u8 str6[STR_LEN] = "";
+u8 str7[STR_LEN] = "";
+u8 str8[STR_LEN] = "";
+u8 str9[STR_LEN] = "";
 /////////////////////////////////////////////////////////////////////////////////////
 //Data_Exchange函数处理各种数据发送请求，比如想实现每5ms发送一次传感器数据至上位机，即在此函数内实现
 //此函数应由用户每1ms调用一次
@@ -73,8 +76,11 @@ void ANO_DT_Data_Exchange(void)
 	
 	if(f.send_user)
 	{
-//		f.send_user = 0;
-//		ANO_DT_Send_User(str0,str1,str2,str3,str4,str5,str6,str7,str8,str9);//+++
+		f.send_user = 0;
+		sprintf(str0,"mag.x:%d",mag_data[0]);
+		sprintf(str1,"mag.y:%d",mag_data[1]);
+		sprintf(str2,"mag.z:%d",mag_data[2]);
+		ANO_DT_Send_User(str0,str1,str2,str3,str4,str5,str6,str7,str8,str9);//+++
 	}
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_version)
@@ -94,7 +100,7 @@ void ANO_DT_Data_Exchange(void)
 		f.send_senser = 0;
 		ANO_DT_Send_Senser(MPU6050_ACC_LAST.X,MPU6050_ACC_LAST.Y,MPU6050_ACC_LAST.Z,
 												MPU6050_GYRO_LAST.X,MPU6050_GYRO_LAST.Y,MPU6050_GYRO_LAST.Z,
-												0,0,0,0);
+												mag_data[0],mag_data[1],mag_data[2],0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	else if(f.send_rcdata)

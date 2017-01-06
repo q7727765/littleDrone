@@ -10,8 +10,8 @@
 
 u8						mpu6050_buffer[14];					//iic读取后存放数据
 S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
-u8						GYRO_OFFSET_OK = 1;
-u8						ACC_OFFSET_OK = 1;
+u8						GYRO_OFFSET_OK = 0;
+u8						ACC_OFFSET_OK = 0;
 S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
 
 
@@ -91,10 +91,15 @@ void MPU6050_Dataanl(void)
 	MPU6050_ACC_LAST.Y=((((int16_t)mpu6050_buffer[2]) << 8) | mpu6050_buffer[3]) - ACC_OFFSET.Y;
 	MPU6050_ACC_LAST.Z=((((int16_t)mpu6050_buffer[4]) << 8) | mpu6050_buffer[5]) - ACC_OFFSET.Z;
 	//跳过温度ADC
+
 	MPU6050_GYRO_LAST.X=((((int16_t)mpu6050_buffer[8]) << 8) | mpu6050_buffer[9]) - GYRO_OFFSET.X;
 	MPU6050_GYRO_LAST.Y=((((int16_t)mpu6050_buffer[10]) << 8) | mpu6050_buffer[11]) - GYRO_OFFSET.Y;
 	MPU6050_GYRO_LAST.Z=((((int16_t)mpu6050_buffer[12]) << 8) | mpu6050_buffer[13]) - GYRO_OFFSET.Z;
 	
+	//防止静止时候飞机的微小抖动造成的yaw偏差
+	if(MPU6050_GYRO_LAST.X>-10&&MPU6050_GYRO_LAST.X<10)MPU6050_GYRO_LAST.X = 0;
+	if(MPU6050_GYRO_LAST.Y>-10&&MPU6050_GYRO_LAST.Y<10)MPU6050_GYRO_LAST.Y = 0;
+	if(MPU6050_GYRO_LAST.Z>-10&&MPU6050_GYRO_LAST.Z<10)MPU6050_GYRO_LAST.Z = 0;
 	if(!GYRO_OFFSET_OK)
 	{
 		static int32_t	tempgx=0,tempgy=0,tempgz=0;

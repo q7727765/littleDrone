@@ -299,9 +299,9 @@ bool hmc5883lRead(int16_t *magData)
     // During calibration, magGain is 1.0, so the read returns normal non-calibrated values.
     // After calibration is done, magGain is set to calculated gain values.
 
-    magData[X] = (((int16_t)buf[0]) << 8 | buf[1]) * magGain[X];
-    magData[Z] = (((int16_t)buf[2]) << 8 | buf[3]) * magGain[Z];
-    magData[Y] = (((int16_t)buf[4]) << 8 | buf[5]) * magGain[Y];
+    magData[X] = (((int16_t)buf[0]) << 8 | buf[1]) ;//* magGain[X];
+    magData[Z] = (((int16_t)buf[2]) << 8 | buf[3]) ;//* magGain[Z];
+    magData[Y] = (((int16_t)buf[4]) << 8 | buf[5]) ;//* magGain[Y];
 
     return 0;
 }
