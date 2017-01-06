@@ -149,6 +149,12 @@ void taskUpdateAttitude(void)
 	Get_Attitude();
 
 }
+
+void taskPIDLoop(void)
+{
+
+}
+
 void taskRUNLED(void)
 {
 	static char sta = 0;

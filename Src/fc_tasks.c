@@ -65,6 +65,13 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_REALTIME_PRO,
     },
 
+    [TASK_PID_LOOP] = {
+        .taskName = "PID_LOOP",
+        .taskFunc = taskPIDLoop,
+        .desiredPeriod = 20000,
+        .staticPriority = TASK_PRIORITY_REALTIME_PRO,
+    },
+
     [TASK_RUNNLED] = {
         .taskName = "RUNLED",
         .taskFunc = taskRUNLED,
@@ -91,6 +98,8 @@ void configureScheduler(void)
     setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
     setTaskEnabled(TASK_USART_DEBUG, 1);
     setTaskEnabled(TASK_UPDATE_MAG, 1);
+    setTaskEnabled(TASK_PID_LOOP, 1);
+
 
 
 }

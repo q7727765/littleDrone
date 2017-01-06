@@ -38,6 +38,7 @@ int16_t gyro_data[3];
 int16_t acc_data[3];
 int16_t mag_data[3];
 
+
 void Prepare_Data(void)
 {
 	static uint8_t filter_cnt=0;

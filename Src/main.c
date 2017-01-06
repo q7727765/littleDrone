@@ -46,6 +46,7 @@
 #include "hmc5883l.h"
 #include "ms5611.h"
 #include "HAL.h"
+#include "stmflash.h"
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
@@ -97,6 +98,7 @@ void init(void)
 	gyro.init();
 	acc.init();
 	mag.init();
+	EE_READ_PID();
 
 }
 
@@ -116,7 +118,7 @@ int main(void)
   /* MCU Configuration----------------------------------------------------------*/
 	JTAG_Set(0x01);
 	delay_init();
-//  uart_init(72,115200);
+
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
@@ -126,8 +128,9 @@ int main(void)
   /* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	//MX_ADC1_Init();
-	//MX_TIM2_Init();
-	MX_USART1_UART_Init();
+	MX_TIM2_Init();
+	//MX_USART1_UART_Init();
+	uart_init(72,115200);
 	MX_USART3_UART_Init();
 	//MX_SPI2_Init();
 
@@ -145,8 +148,20 @@ int main(void)
 	SendChar("init_ok444\r\n");
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+//	uint8_t  ssttrr[20] = "ni shi ren ma!";
+//	uint8_t  rrssttrr[20] = "aaaaaa";
 	while (1) {
 
+//
+//		STMFLASH_Write(STM32_FLASH_BASE+0xF800,(u16*)ssttrr,3);
+//		SendChar("init_ok555\r\n");
+//		STMFLASH_Read(STM32_FLASH_BASE+0xF800,(u16*)rrssttrr,3);
+//		SendChar("str:");
+//		SendChar(rrssttrr);
+//		_n();
+//
+//		delay_ms(500);
 		scheduler();
 
 
