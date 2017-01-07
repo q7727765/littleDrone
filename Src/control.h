@@ -2,7 +2,7 @@
 
 #include "stm32f103xb.h"
 
-#define ARMED_LED PBout(3)
+//#define ARMED_LED PBout(3)
 typedef struct PID{float P,pout,I,iout,D,dout,IMAX,OUT;}PID;
 
 extern u8 ARMED;

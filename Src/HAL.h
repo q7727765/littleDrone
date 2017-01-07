@@ -38,16 +38,26 @@ typedef struct baro_s {
     baroOpFuncPtr start_up;
     baroOpFuncPtr get_up;
     baroCalculateFuncPtr calculate;
-
-
 } baro_t;
+
+typedef struct motor_s {
+	volatile uint32_t *value[4];
+}motor_t;
+
+typedef struct attitude_s {
+	float pitch;
+	float roll;
+	float yaw;
+}attitude_t;
 
 extern acc_t acc;
 extern gyro_t gyro;
 extern mag_t mag;
 extern baro_t baro;
+extern motor_t motor;
 
-
+void motor_init();
+void motor_out(u16 m1,u16 m2,u16 m3,u16 m4);
 extern void detectAcc();
 extern void detectGyro();
 extern void detectMag();

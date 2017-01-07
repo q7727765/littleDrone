@@ -9,17 +9,26 @@
 
 
 #include "stm32f103xb.h"
+#include "HAL.h"
 
-#define YAW Q_ANGLE.Z
-#define PITCH -Q_ANGLE.Y
-#define ROLL Q_ANGLE.X
+#define YAW 	now_attitude.yaw
+#define PITCH  -now_attitude.pitch
+#define ROLL 	now_attitude.roll
 
 
 typedef struct{
+				int16_t X;
+				int16_t Y;
+				int16_t Z;
+}S_INT16_XYZ;
+typedef struct{
 				float X;
 				float Y;
-				float Z;}S_FLOAT_XYZ;
-extern S_FLOAT_XYZ Q_ANGLE;			//四元数计算出的角度
+				float Z;
+}S_FLOAT_XYZ;
+
+
+extern attitude_t now_attitude;			//四元数计算出的角度
 extern S_FLOAT_XYZ GYRO_I;
 
 extern int16_t gyro_data[3];

@@ -17,6 +17,7 @@
 #include "HAL.h"
 #include "imu.h"
 #include "ANO_DT.h"
+#include "control.h"
 
 uint32_t baroPressureSumtt = 0;
 extern int32_t baroPressure;
@@ -67,13 +68,13 @@ void taskUsartDebug(void)
 		_n();
 
 		SendChar("ANGLE_X:");
-		SendDouble(Q_ANGLE.X);
+		SendDouble(now_attitude.roll);
 		_n();
 		SendChar("ANGLE_Y:");
-		SendDouble(Q_ANGLE.Y);
+		SendDouble(now_attitude.pitch);
 		_n();
 		SendChar("ANGLE_Z:");
-		SendDouble(Q_ANGLE.Z);
+		SendDouble(now_attitude.yaw);
 		_n();
 
 
@@ -148,6 +149,16 @@ void taskUpdateAttitude(void)
 {
 	Get_Attitude();
 
+//	*(motor.value[0]) = 0;
+//	*(motor.value[1]) = 0;
+//	*(motor.value[2]) = 0;
+//	*(motor.value[3]) = 0;
+	CONTROL(now_attitude.roll,
+			now_attitude.pitch,
+			now_attitude.yaw,
+			0,
+			0,
+			0);
 }
 
 void taskPIDLoop(void)

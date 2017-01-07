@@ -25,7 +25,8 @@ S_INT16_XYZ ACC_AVG;			//平均值滤波后的ACC
 S_FLOAT_XYZ GYRO_I;				//陀螺仪积分
 S_FLOAT_XYZ EXP_ANGLE;		//期望角度
 S_FLOAT_XYZ DIF_ANGLE;		//期望角度与实际角度差
-S_FLOAT_XYZ Q_ANGLE;			//四元数计算出的角度
+attitude_t now_attitude;	//四元数计算出的角度
+
 
 S_FLOAT_XYZ MAG_P;
 
@@ -155,8 +156,8 @@ void IMUupdate(float gx, float gy, float gz, float ax, float ay, float az)
 //	  headingDegrees += 360;
 //  if(headingDegrees > 360)
 //	  headingDegrees -= 360;
-  Q_ANGLE.Z = GYRO_I.Z; //atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.3; // yaw
-  Q_ANGLE.Y = asin(-2 * q1 * q3 + 2 * q0* q2)* 57.3; // pitch
-  Q_ANGLE.X = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
+  now_attitude.yaw = GYRO_I.Z; //atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.3; // yaw
+  now_attitude.pitch = asin(-2 * q1 * q3 + 2 * q0* q2)* 57.3; // pitch
+  now_attitude.roll = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
 }
 

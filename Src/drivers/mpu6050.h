@@ -3,7 +3,7 @@
 #include "i2c.h"
 #include "stdbool.h"
 #include "HAL.h"
-
+#include "imu.h"
 
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -91,10 +91,7 @@
 //如果接V3.3,则IIC地址为0X69(不包含最低位).
 #define MPU_ADDR				0X68
 
-typedef struct{
-				int16_t X;
-				int16_t Y;
-				int16_t Z;}S_INT16_XYZ;
+
 extern S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
 extern S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
 extern u8							GYRO_OFFSET_OK;

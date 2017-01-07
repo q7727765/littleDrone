@@ -52,15 +52,12 @@ u16 VirtAddVarTab[NumbOfVar] = {
 
 void Para_ResetToFactorySetup()
 {
-	PID_ROL.P = 10.0;
-	PID_ROL.I = 0.01;
-	PID_ROL.D = 1.5;
-	PID_PIT.P = 10.0;
-	PID_PIT.I = 0.01;
-	PID_PIT.D = 1.5;
-	PID_YAW.P = 1.0;
-	PID_YAW.I = 0.01;
-	PID_YAW.D = 1.5;
+	PID_ROL.P = 1.0; PID_ROL.I = 0.00; PID_ROL.D = 0;
+
+	PID_PIT.P = 1.0 ;PID_PIT.I = 0.00; PID_PIT.D = 0;
+
+	PID_YAW.P = 1.0; PID_YAW.I = 0.00; PID_YAW.D = 0;
+
 	EE_SAVE_PID();
 	f.send_pid1 = 1;
 //	f.send_pid2 = 1;
@@ -68,9 +65,6 @@ void Para_ResetToFactorySetup()
 //	f.send_pid4 = 1;
 //	f.send_pid5 = 1;
 //	f.send_pid6 = 1;
-	
-	
-	
 
 }
 

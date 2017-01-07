@@ -10,13 +10,13 @@ typedef volatile int16_t vs16;
 typedef volatile int32_t vs32;
 
 //++++--
-uint16_t rc_yaw;
-uint16_t rc_thr;
+uint16_t rc_yaw = 1500;
+uint16_t rc_thr = 1500;
 
-
+attitude_t tag_attitude;
 
 PID PID_ROL,PID_PIT,PID_YAW;
-u8 ARMED = 0;
+u8 ARMED = 1;
 
 float rol_i=0,pit_i=0,yaw_p=0;
 float bbuf;
@@ -48,7 +48,7 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	rol_i=-2000;
 	
 	PID_ROL.pout = PID_ROL.P * err_rol;
-	PID_ROL.dout = -PID_ROL.D*MPU6050_GYRO_LAST.X;
+	PID_ROL.dout = PID_ROL.D*MPU6050_GYRO_LAST.X;
 	PID_ROL.iout = PID_ROL.I*rol_i;
 	////////////////////////////////////////////////////
 	
@@ -60,7 +60,7 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	pit_i=-2000;
 
 	PID_PIT.pout = PID_PIT.P * err_pit;
-	PID_PIT.dout = -PID_PIT.D * MPU6050_GYRO_LAST.Y;
+	PID_PIT.dout = PID_PIT.D * MPU6050_GYRO_LAST.Y;
 	PID_PIT.iout = PID_PIT.I *pit_i;	
 	////////////////////////////////////////////////////
 	
@@ -85,17 +85,17 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 		yaw_p = 0;
 	}
 	
-	PID_ROL.OUT = PID_ROL.pout + PID_ROL.iout + PID_ROL.dout;
-	PID_PIT.OUT = PID_PIT.pout + PID_PIT.iout + PID_PIT.dout;
+	PID_ROL.OUT = PID_ROL.pout + PID_ROL.iout - PID_ROL.dout;
+	PID_PIT.OUT = PID_PIT.pout + PID_PIT.iout - PID_PIT.dout;
 	PID_YAW.OUT = PID_YAW.pout /*+ PID_YAW.iout*/ + PID_YAW.dout;
 	
 	if(rc_thr>START_THR&&ARMED)
 	{
 		//moto为0~1000的值对应占空比0~100
-		moto1 = rc_thr -1000 + PID_ROL.OUT - PID_PIT.OUT + PID_YAW.OUT;
-		moto2 = rc_thr -1000 - PID_ROL.OUT + PID_PIT.OUT + PID_YAW.OUT;
-		moto3 = rc_thr -1000 - PID_ROL.OUT - PID_PIT.OUT - PID_YAW.OUT;
-		moto4 = rc_thr -1000 + PID_ROL.OUT + PID_PIT.OUT - PID_YAW.OUT;
+		moto1 = rc_thr -1000 - PID_ROL.OUT - PID_PIT.OUT - PID_YAW.OUT;
+		moto2 = rc_thr -1000 + PID_ROL.OUT - PID_PIT.OUT + PID_YAW.OUT;
+		moto3 = rc_thr -1000 + PID_ROL.OUT + PID_PIT.OUT - PID_YAW.OUT;
+		moto4 = rc_thr -1000 - PID_ROL.OUT + PID_PIT.OUT + PID_YAW.OUT;
 		
 	}
 	else
@@ -105,6 +105,6 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 		moto3 = 0;
 		moto4 = 0;
 	}
-	Motor_Out(moto1,moto2,moto3,moto4);
+	motor_out(moto1,moto2,moto3,moto4);
 	
 }

@@ -113,8 +113,8 @@ void ANO_DT_Data_Exchange(void)
 /////////////////////////////////////////////////////////////////////////////////////	
 	if(f.send_motopwm)
 	{
-//		f.send_motopwm = 0;
-//		ANO_DT_Send_MotoPWM(Motor[0],Motor[1],Motor[2],Motor[3],0,0,0,0);
+		f.send_motopwm = 0;
+		ANO_DT_Send_MotoPWM((u16)*(motor.value[0]),(u16)*(motor.value[1]),(u16)*(motor.value[2]),(u16)*(motor.value[3]),0,0,0,0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_power)

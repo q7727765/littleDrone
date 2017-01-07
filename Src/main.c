@@ -100,6 +100,11 @@ void init(void)
 	mag.init();
 	EE_READ_PID();
 
+	motor_init();
+//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
+//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
+//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
 }
 
 
@@ -136,7 +141,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
-//  HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
+//	HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
 //  HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
 
@@ -149,8 +154,9 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-//	uint8_t  ssttrr[20] = "ni shi ren ma!";
-//	uint8_t  rrssttrr[20] = "aaaaaa";
+	uint16_t mv;
+	uint8_t i;
+
 	while (1) {
 
 //
@@ -163,6 +169,17 @@ int main(void)
 //
 //		delay_ms(500);
 		scheduler();
+
+//		for(i=0;i<500;i++){
+//			*(motor.value[0]) = i%500;
+//			*(motor.value[1]) = (i+130)%500;
+//			*(motor.value[2]) = (i+260)%500;
+//			*(motor.value[3]) = (i+390)%500;
+//
+//			delay_ms(50);
+//		}
+
+
 
 
 	}
@@ -288,10 +305,11 @@ static void MX_TIM2_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
   TIM_OC_InitTypeDef sConfigOC;
 
+
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+  htim2.Init.Prescaler = 71;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 0;
+  htim2.Init.Period = 1000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
