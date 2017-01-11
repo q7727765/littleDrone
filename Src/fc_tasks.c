@@ -86,7 +86,12 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_HIGH,
     },
 
-
+    [TASK_UPDATE_RC] = {
+        .taskName = "UPDATE_RC",
+        .taskFunc = taskUpdateRC,
+        .desiredPeriod = 20000,
+        .staticPriority = TASK_PRIORITY_REALTIME,
+    },
 };
 
 void configureScheduler(void)
@@ -99,7 +104,7 @@ void configureScheduler(void)
     setTaskEnabled(TASK_USART_DEBUG, 1);
     setTaskEnabled(TASK_UPDATE_MAG, 1);
     setTaskEnabled(TASK_PID_LOOP, 1);
-
+    setTaskEnabled(TASK_UPDATE_RC, 1);
 
 
 }

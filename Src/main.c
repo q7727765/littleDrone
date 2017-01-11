@@ -47,6 +47,7 @@
 #include "ms5611.h"
 #include "HAL.h"
 #include "stmflash.h"
+#include "nrf24l01.h"
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
@@ -101,7 +102,17 @@ void init(void)
 	EE_READ_PID();
 
 	motor_init();
-//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+	NRF24L01_Init();
+
+	while(NRF24L01_Check()){
+		SendChar("nrf ing\r\n");
+		delay_ms(500);
+	}
+	SendChar("nrf ok\r\n");
+	NRF24L01_RX_Mode();
+
+
+	//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 //	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
 //	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
 //	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
@@ -136,8 +147,8 @@ int main(void)
 	MX_TIM2_Init();
 	//MX_USART1_UART_Init();
 	uart_init(72,115200);
-	MX_USART3_UART_Init();
-	//MX_SPI2_Init();
+	//MX_USART3_UART_Init();
+	MX_SPI2_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -157,30 +168,25 @@ int main(void)
 	uint16_t mv;
 	uint8_t i;
 
+
+	HAL_StatusTypeDef sta;
+
+	HAL_SPI_StateTypeDef spi_sta;
+
+	char s_data[] = {0x20 + 0x10,0x33,0x33,0x33,0x33,0x31};
+	char r_data[] = {0x38,0x38,0x38,0x38,0x38};
+	char r_cmd = 0x10;
+//	char s_cmd = "sjkw";
+
+	spi_sta = HAL_SPI_GetState(&hspi2);
+	SendChar("sta_:");
+	SendInt(spi_sta);
+	_n();
+
+
 	while (1) {
 
-//
-//		STMFLASH_Write(STM32_FLASH_BASE+0xF800,(u16*)ssttrr,3);
-//		SendChar("init_ok555\r\n");
-//		STMFLASH_Read(STM32_FLASH_BASE+0xF800,(u16*)rrssttrr,3);
-//		SendChar("str:");
-//		SendChar(rrssttrr);
-//		_n();
-//
-//		delay_ms(500);
 		scheduler();
-
-//		for(i=0;i<500;i++){
-//			*(motor.value[0]) = i%500;
-//			*(motor.value[1]) = (i+130)%500;
-//			*(motor.value[2]) = (i+260)%500;
-//			*(motor.value[3]) = (i+390)%500;
-//
-//			delay_ms(50);
-//		}
-
-
-
 
 	}
 
@@ -285,11 +291,11 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi2.Init.CRCPolynomial = 10;
+  hspi2.Init.CRCPolynomial = 7;
   if (HAL_SPI_Init(&hspi2) != HAL_OK)
   {
     Error_Handler();
@@ -428,6 +434,12 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED2_Pin|LED1_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : LED4_Pin LED3_Pin */
+  GPIO_InitStruct.Pin = RXD_B_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED4_Pin LED3_Pin */
   GPIO_InitStruct.Pin = LED4_Pin|LED3_Pin;

@@ -18,6 +18,7 @@
 #include "imu.h"
 #include "ANO_DT.h"
 #include "control.h"
+#include "nrf24l01.h"
 
 uint32_t baroPressureSumtt = 0;
 extern int32_t baroPressure;
@@ -37,7 +38,8 @@ extern u8							ACC_OFFSET_OK;
 void taskUsartDebug(void)
 {
 
-	ANO_DT_Data_Exchange();
+
+//	ANO_DT_Data_Exchange();
 #if 0
 		uint8_t xl,xm;
 		int16_t x;
@@ -164,6 +166,31 @@ void taskUpdateAttitude(void)
 void taskPIDLoop(void)
 {
 
+}
+
+void taskUpdateRC(void)
+{
+	char sta = NRF24L01_RxPacket((u8*)rc.value);
+	if(!sta){
+		SendChar("nrf receive:");
+
+		SendInt(rc.value[0]);
+		_n();
+		SendInt(rc.value[1]);
+		_n();
+		SendInt(rc.value[2]);
+		_n();
+		SendInt(rc.value[3]);
+		_n();
+		SendInt(rc.value[4]);
+		_n();
+		SendInt(rc.value[5]);
+		_n();
+		SendInt(rc.value[6]);
+		_n();
+		SendInt(rc.value[7]);
+		_n();
+	}
 }
 
 void taskRUNLED(void)

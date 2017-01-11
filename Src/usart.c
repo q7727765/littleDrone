@@ -37,7 +37,7 @@
 //加入以下代码,支持printf函数,而不需要选择use MicroLIB
 
 
-#if 1
+#if 0
 //#pragma import(__use_no_semihosting)
 #pragma import(__use_no_semihosting_swi)
 //标准库需要的支持函数

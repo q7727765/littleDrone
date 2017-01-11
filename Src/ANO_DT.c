@@ -107,8 +107,10 @@ void ANO_DT_Data_Exchange(void)
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_rcdata)
 	{
-//		f.send_rcdata = 0;
-//		ANO_DT_Send_RCData(RCData[2],RCData[3],RCData[0],RCData[1],RCData[4],RCData[5],RCData[6],RCData[7],0,0);
+		f.send_rcdata = 0;
+		ANO_DT_Send_RCData(rc.value[rc_thr_num],rc.value[rc_yaw_num],rc.value[rc_rol_num],
+				rc.value[rc_pit_num],rc.value[rc_aux1_num],rc.value[rc_aux2_num],
+				rc.value[rc_push_num],rc.value[rc_ball_num],0,0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////	
 	if(f.send_motopwm)
