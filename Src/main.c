@@ -112,10 +112,10 @@ void init(void)
 	NRF24L01_RX_Mode();
 
 
-	//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
-//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
-//	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
+		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
+		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
+		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
 }
 
 
@@ -128,12 +128,12 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	uint32_t time;
+	uart_init(72,115200);
+	delay_init();
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
-	JTAG_Set(0x01);
-	delay_init();
+
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
@@ -143,47 +143,19 @@ int main(void)
 
   /* Initialize all configured peripherals */
 	MX_GPIO_Init();
-	//MX_ADC1_Init();
+	MX_ADC1_Init();
 	MX_TIM2_Init();
-	//MX_USART1_UART_Init();
-	uart_init(72,115200);
-	//MX_USART3_UART_Init();
 	MX_SPI2_Init();
 
   /* USER CODE BEGIN 2 */
-
-//	HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
-//  HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
-
-
 	init();
-
 	configureScheduler();
   /* USER CODE END 2 */
-	SendChar("init_ok444\r\n");
+
+
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-	uint16_t mv;
-	uint8_t i;
-
-
-	HAL_StatusTypeDef sta;
-
-	HAL_SPI_StateTypeDef spi_sta;
-
-	char s_data[] = {0x20 + 0x10,0x33,0x33,0x33,0x33,0x31};
-	char r_data[] = {0x38,0x38,0x38,0x38,0x38};
-	char r_cmd = 0x10;
-//	char s_cmd = "sjkw";
-
-	spi_sta = HAL_SPI_GetState(&hspi2);
-	SendChar("sta_:");
-	SendInt(spi_sta);
-	_n();
-
-
 	while (1) {
 
 		scheduler();

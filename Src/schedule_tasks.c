@@ -39,7 +39,7 @@ void taskUsartDebug(void)
 {
 
 
-//	ANO_DT_Data_Exchange();
+	ANO_DT_Data_Exchange();
 #if 0
 		uint8_t xl,xm;
 		int16_t x;
@@ -146,6 +146,7 @@ void taskUpdateMAG(void)
 	mag.read(mag_data);
 
 }
+attitude_t tar_attitude;
 
 void taskUpdateAttitude(void)
 {
@@ -155,12 +156,16 @@ void taskUpdateAttitude(void)
 //	*(motor.value[1]) = 0;
 //	*(motor.value[2]) = 0;
 //	*(motor.value[3]) = 0;
-	CONTROL(now_attitude.roll,
+	tar_attitude.pitch = (rc.value[rc_pit_num] - 1500) / 12;
+	tar_attitude.roll  = (rc.value[rc_rol_num] - 1500) / 12;
+	tar_attitude.yaw   = (rc.value[rc_yaw_num] - 1500) / 12;
+
+	CONTROL(now_attitude.roll ,
 			now_attitude.pitch,
-			now_attitude.yaw,
-			0,
-			0,
-			0);
+			now_attitude.yaw  ,
+			tar_attitude.pitch,
+			tar_attitude.roll ,
+			tar_attitude.yaw);
 }
 
 void taskPIDLoop(void)
@@ -170,27 +175,28 @@ void taskPIDLoop(void)
 
 void taskUpdateRC(void)
 {
-	char sta = NRF24L01_RxPacket((u8*)rc.value);
-	if(!sta){
-		SendChar("nrf receive:");
-
-		SendInt(rc.value[0]);
-		_n();
-		SendInt(rc.value[1]);
-		_n();
-		SendInt(rc.value[2]);
-		_n();
-		SendInt(rc.value[3]);
-		_n();
-		SendInt(rc.value[4]);
-		_n();
-		SendInt(rc.value[5]);
-		_n();
-		SendInt(rc.value[6]);
-		_n();
-		SendInt(rc.value[7]);
-		_n();
-	}
+	NRF24L01_RxPacket((u8*)rc.value);
+//	char sta =
+//	if(!sta){
+//		SendChar("nrf receive:");
+//
+//		SendInt(rc.value[0]);
+//		_n();
+//		SendInt(rc.value[1]);
+//		_n();
+//		SendInt(rc.value[2]);
+//		_n();
+//		SendInt(rc.value[3]);
+//		_n();
+//		SendInt(rc.value[4]);
+//		_n();
+//		SendInt(rc.value[5]);
+//		_n();
+//		SendInt(rc.value[6]);
+//		_n();
+//		SendInt(rc.value[7]);
+//		_n();
+//	}
 }
 
 void taskRUNLED(void)

@@ -10,8 +10,7 @@ typedef volatile int16_t vs16;
 typedef volatile int32_t vs32;
 
 //++++--
-uint16_t rc_yaw = 1500;
-uint16_t rc_thr = 1500;
+
 
 attitude_t tag_attitude;
 
@@ -32,7 +31,7 @@ float Get_MxMi(float num,float max,float min)
 
 void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float pit_tar, float yaw_tar)
 {
-	u16 moto1=0,moto2=0,moto3=0,moto4=0;
+	int16_t moto1=0,moto2=0,moto3=0,moto4=0;
 	
 	vs16 yaw_d;
 	float err_rol = rol_tar - rol_now;
@@ -65,9 +64,9 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	////////////////////////////////////////////////////
 	
 	//*******************YAW的计算*********************//
-	if(rc_yaw<1400||rc_yaw>1600)
+	if(rc.value[rc_yaw_num]<1400||rc.value[rc_yaw_num]>1600)
 	{
-		bbuf = MPU6050_GYRO_LAST.Z + (rc_yaw-1500)*2;
+		bbuf = MPU6050_GYRO_LAST.Z + (rc.value[rc_yaw_num]-1500)*2;
 	}
 	yaw_p+=MPU6050_GYRO_LAST.Z*0.0609756f*0.002f;
 	if(yaw_p>20)
@@ -78,7 +77,7 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	PID_YAW.pout = PID_YAW.P*yaw_p;
 	PID_YAW.dout = PID_YAW.dout*MPU6050_GYRO_LAST.Z;
 	////////////////////////////////////////////////////
-	if(rc_thr<START_THR)
+	if(rc.value[rc_thr_num]<START_THR)
 	{
 		pit_i = 0;
 		rol_i = 0;
@@ -89,13 +88,13 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	PID_PIT.OUT = PID_PIT.pout + PID_PIT.iout - PID_PIT.dout;
 	PID_YAW.OUT = PID_YAW.pout /*+ PID_YAW.iout*/ + PID_YAW.dout;
 	
-	if(rc_thr>START_THR&&ARMED)
+	if(rc.value[rc_thr_num]>START_THR&&ARMED)
 	{
 		//moto为0~1000的值对应占空比0~100
-		moto1 = rc_thr -1000 - PID_ROL.OUT - PID_PIT.OUT - PID_YAW.OUT;
-		moto2 = rc_thr -1000 + PID_ROL.OUT - PID_PIT.OUT + PID_YAW.OUT;
-		moto3 = rc_thr -1000 + PID_ROL.OUT + PID_PIT.OUT - PID_YAW.OUT;
-		moto4 = rc_thr -1000 - PID_ROL.OUT + PID_PIT.OUT + PID_YAW.OUT;
+		moto1 = (rc.value[rc_thr_num] - 1000) * 0.8 - PID_ROL.OUT - PID_PIT.OUT - PID_YAW.OUT;
+		moto2 = (rc.value[rc_thr_num] - 1000) * 0.8 + PID_ROL.OUT - PID_PIT.OUT + PID_YAW.OUT;
+		moto3 = (rc.value[rc_thr_num] - 1000) * 0.8 + PID_ROL.OUT + PID_PIT.OUT - PID_YAW.OUT;
+		moto4 = (rc.value[rc_thr_num] - 1000) * 0.8 - PID_ROL.OUT + PID_PIT.OUT + PID_YAW.OUT;
 		
 	}
 	else

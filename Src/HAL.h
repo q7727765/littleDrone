@@ -79,7 +79,7 @@ extern motor_t motor;
 extern rc_t rc;
 
 void motor_init();
-void motor_out(u16 m1,u16 m2,u16 m3,u16 m4);
+void motor_out(int16_t m1,int16_t m2,int16_t m3,int16_t m4);
 extern void detectAcc();
 extern void detectGyro();
 extern void detectMag();

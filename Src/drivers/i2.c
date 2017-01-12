@@ -43,24 +43,24 @@ void IIC_Start(void)
 	SDA_OUT() ;     //sda线输出
 	IIC_SDA=1;
 	IIC_SCL=1;
-	I2C_delay();
+	delay_us(2);
 	IIC_SDA=0;//START:when CLK is high,DATA change form high to low
-	I2C_delay();
+	delay_us(2);
 	IIC_SCL=0;//钳住I2C总线，准备发送或接收数据
-	I2C_delay();
+	delay_us(2);
 }
 //产生IIC停止信号
 void IIC_Stop(void)
 {
 	SDA_OUT();//sda线输出
 	IIC_SCL=0;
-	I2C_delay();
+	delay_us(2);
 	IIC_SDA=0;//STOP:when CLK is high DATA change form low to high
-	I2C_delay();
+	delay_us(2);
 	IIC_SCL=1;
-	I2C_delay();
+	delay_us(2);
 	IIC_SDA=1;//发送I2C总线结束信号
-	I2C_delay();
+	delay_us(2);
 }
 //等待应答信号到来
 //返回值：1，接收应答失败
@@ -69,10 +69,10 @@ uint8_t IIC_Wait_Ack(void)
 {
 	uint8_t ucErrTime=0;
 
-	IIC_SCL=1;I2C_delay();
+	IIC_SCL=1;delay_us(2);
 	SDA_IN();      //SDA设置为输入
-	IIC_SDA=1;I2C_delay();
-	IIC_SCL=1;I2C_delay();
+	IIC_SDA=1;delay_us(2);
+	IIC_SCL=1;delay_us(2);
 	while(READ_SDA)
 	{
 		ucErrTime++;
@@ -84,34 +84,34 @@ uint8_t IIC_Wait_Ack(void)
 		}
 	}
 	IIC_SCL=0;//时钟输出0
-	I2C_delay();
+	delay_us(2);
 	return 0;
 }
 //产生ACK应答
 void IIC_Ack(void)
 {
 	IIC_SCL=0;
-	I2C_delay();
+	delay_us(2);
 	SDA_OUT();
 	IIC_SDA=0;
-	I2C_delay();
+	delay_us(2);
 	IIC_SCL=1;
-	I2C_delay();
+	delay_us(2);
 	IIC_SCL=0;
-	I2C_delay();
+	delay_us(2);
 }
 //不产生ACK应答
 void IIC_NAck(void)
 {
 	IIC_SCL=0;
-	I2C_delay();
+	delay_us(2);
 	SDA_OUT();
 	IIC_SDA=1;
-	I2C_delay();
+	delay_us(2);
 	IIC_SCL=1;
-	I2C_delay();
+	delay_us(2);
 	IIC_SCL=0;
-	I2C_delay();
+	delay_us(2);
 }
 //IIC发送一个字节
 //返回从机有无应答
@@ -122,16 +122,16 @@ void IIC_Send_Byte(uint8_t txd)
     uint8_t t;
 	SDA_OUT();
     IIC_SCL=0;//拉低时钟开始数据传输
-    I2C_delay();
+    delay_us(2);
     for(t=0;t<8;t++)
     {
         IIC_SDA=(txd&0x80)>>7;
         txd<<=1;
-        I2C_delay();   //对TEA5767这三个延时都是必须的
+        delay_us(2);   //对TEA5767这三个延时都是必须的
 		IIC_SCL=1;
-		I2C_delay();
+		delay_us(2);
 		IIC_SCL=0;
-		I2C_delay();
+		delay_us(2);
     }
 }
 //读1个字节，ack=1时，发送ACK，ack=0，发送nACK
@@ -143,11 +143,11 @@ uint8_t IIC_Read_Byte(unsigned char ack)
     for(i=0;i<8;i++ )
 	{
         IIC_SCL=0;
-        I2C_delay();
+        delay_us(2);
 		IIC_SCL=1;
         receive<<=1;
         if(READ_SDA)receive++;
-        I2C_delay();
+        delay_us(2);
     }
     if (!ack){
         IIC_NAck();//发送nACK
