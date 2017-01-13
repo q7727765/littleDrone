@@ -7,11 +7,12 @@
 #include "stdbool.h"
 #include "HAL.h"
 #include "stdint.h"
+#include "stmflash.h"
 
 u8						mpu6050_buffer[14];					//iic读取后存放数据
 S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
-u8						GYRO_OFFSET_OK = 0;
-u8						ACC_OFFSET_OK = 0;
+u8						GYRO_OFFSET_OK = 1;
+u8						ACC_OFFSET_OK = 1;
 S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
 
 
@@ -126,7 +127,7 @@ void MPU6050_Dataanl(void)
 			GYRO_OFFSET.Z=tempgz/cnt_g;
 			cnt_g = 0;
 			GYRO_OFFSET_OK = 1;
-			//EE_SAVE_GYRO_OFFSET();//保存数据+++
+			EE_SAVE_GYRO_OFFSET();//保存数据+++
 			return;
 		}
 		cnt_g++;
@@ -157,7 +158,7 @@ void MPU6050_Dataanl(void)
 			ACC_OFFSET.Z=tempaz/cnt_a;
 			cnt_a = 0;
 			ACC_OFFSET_OK = 1;
-			//EE_SAVE_ACC_OFFSET();//保存数据+++
+			EE_SAVE_ACC_OFFSET();//保存数据+++
 			return;
 		}
 		cnt_a++;		

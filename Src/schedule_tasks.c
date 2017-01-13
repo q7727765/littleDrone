@@ -154,10 +154,6 @@ void taskUpdateAttitude(void)
 {
 	Get_Attitude();
 
-//	*(motor.value[0]) = 0;
-//	*(motor.value[1]) = 0;
-//	*(motor.value[2]) = 0;
-//	*(motor.value[3]) = 0;
 	tar_attitude.pitch = (rc.value[rc_pit_num] - 1500) / 12;
 	tar_attitude.roll  = (rc.value[rc_rol_num] - 1500) / 12;
 	tar_attitude.yaw   = (rc.value[rc_yaw_num] - 1500) / 12;
@@ -178,27 +174,12 @@ void taskPIDLoop(void)
 void taskUpdateRC(void)
 {
 	NRF24L01_RxPacket((u8*)rc.value);
-//	char sta =
-//	if(!sta){
-//		SendChar("nrf receive:");
-//
-//		SendInt(rc.value[0]);
-//		_n();
-//		SendInt(rc.value[1]);
-//		_n();
-//		SendInt(rc.value[2]);
-//		_n();
-//		SendInt(rc.value[3]);
-//		_n();
-//		SendInt(rc.value[4]);
-//		_n();
-//		SendInt(rc.value[5]);
-//		_n();
-//		SendInt(rc.value[6]);
-//		_n();
-//		SendInt(rc.value[7]);
-//		_n();
-//	}
+
+	if(rc.value[rc_push_num] == 1000){
+		ACC_OFFSET_OK  = 0;
+		GYRO_OFFSET_OK = 0;
+	}
+
 }
 
 void taskBatteryMoniter(void)

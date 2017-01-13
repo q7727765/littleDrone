@@ -260,9 +260,9 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 	if(*(data_buf+2)==0X01)
 	{
 		if(*(data_buf+4)==0X01)
-			//mpu6050.Acc_CALIBRATE = 1;//++++
-		if(*(data_buf+4)==0X02)
-			//mpu6050.Gyro_CALIBRATE = 1;//++++
+			ACC_OFFSET_OK  = 0;//++++
+		if(*(data_buf+4)==0X02	)
+			GYRO_OFFSET_OK = 0;//++++
 		if(*(data_buf+4)==0X03)
 		{
 			//mpu6050.Acc_CALIBRATE = 1;		//++++

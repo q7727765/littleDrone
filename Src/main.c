@@ -100,6 +100,8 @@ void init(void)
 	acc.init();
 	mag.init();
 	EE_READ_PID();
+	EE_READ_ACC_OFFSET();
+	EE_READ_GYRO_OFFSET();
 
 	motor_init();
 	NRF24L01_Init();
