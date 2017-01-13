@@ -31,6 +31,8 @@ typedef enum {
 
 	TASK_UPDATE_RC,
 
+	TASK_BATTERY_MONITOR,
+
 	TASK_USART_DEBUG,
 
 	TASK_RUNNLED,
@@ -59,4 +61,5 @@ void taskUsartDebug(void);
 void taskUpdateMAG(void);
 void taskPIDLoop(void);
 void taskUpdateRC(void);
+void taskBatteryMoniter(void);
 

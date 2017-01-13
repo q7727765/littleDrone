@@ -47,11 +47,11 @@ u8 str9[STR_LEN] = "";
 void ANO_DT_Data_Exchange(void)
 {
 	static u8 cnt = 0;
-	static u8 senser_cnt 	= 10;
-	static u8 status_cnt 	= 15;
-	static u8 rcdata_cnt 	= 20;
-	static u8 motopwm_cnt	= 20;
-	static u8 power_cnt		=	50;
+	static u8 senser_cnt 	= 20;
+	static u8 status_cnt 	= 20;
+	static u8 rcdata_cnt 	= 30;
+	static u8 motopwm_cnt	= 35;
+	static u8 power_cnt		= 200;
 	static u8 user_cnt 		= 10;
 	
 	if((cnt % senser_cnt) == (senser_cnt-1))
@@ -121,8 +121,8 @@ void ANO_DT_Data_Exchange(void)
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_power)
 	{
-//		f.send_power = 0;
-//		ANO_DT_Send_Power(0,0);//电压电流
+		f.send_power = 0;
+		ANO_DT_Send_Power(battery.voltage,0);//电压电流
 	}
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_pid1)

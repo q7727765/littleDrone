@@ -55,14 +55,14 @@ cfTask_t cfTasks[] = {
         .taskName = "UPDATE_MAG",
         .taskFunc = taskUpdateMAG,
         .desiredPeriod = 100000,
-        .staticPriority = TASK_PRIORITY_REALTIME,
+        .staticPriority = TASK_PRIORITY_HIGH,
     },
 
     [TASK_UPDATE_ATTITUDE] = {
         .taskName = "UPDATE_ATTITUDE",
         .taskFunc = taskUpdateAttitude,
         .desiredPeriod = 1000,
-        .staticPriority = TASK_PRIORITY_REALTIME_PRO,
+        .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
     [TASK_PID_LOOP] = {
@@ -70,6 +70,13 @@ cfTask_t cfTasks[] = {
         .taskFunc = taskPIDLoop,
         .desiredPeriod = 20000,
         .staticPriority = TASK_PRIORITY_REALTIME_PRO,
+    },
+
+    [TASK_BATTERY_MONITOR] = {
+        .taskName = "BATTERY_MONITOR",
+        .taskFunc = taskBatteryMoniter,
+        .desiredPeriod = 200000,
+        .staticPriority = TASK_PRIORITY_MEDIUM,
     },
 
     [TASK_RUNNLED] = {
@@ -90,7 +97,7 @@ cfTask_t cfTasks[] = {
         .taskName = "UPDATE_RC",
         .taskFunc = taskUpdateRC,
         .desiredPeriod = 20000,
-        .staticPriority = TASK_PRIORITY_REALTIME,
+        .staticPriority = TASK_PRIORITY_REALTIME_PRO,
     },
 };
 
@@ -105,6 +112,7 @@ void configureScheduler(void)
     setTaskEnabled(TASK_UPDATE_MAG, 1);
     setTaskEnabled(TASK_PID_LOOP, 1);
     setTaskEnabled(TASK_UPDATE_RC, 1);
+    setTaskEnabled(TASK_BATTERY_MONITOR, 1);
 
 
 }

@@ -71,12 +71,30 @@ typedef struct rc_s {
 
 }rc_t;
 
+/*
+ * \brief 电池管理结构体
+ *
+ * \para  raw_data : 12位ad读出来的原始数据
+ *        voltage  : 转换后的真正电压值
+ *        vol_alarm: 报警电压
+ *        scale    : raw_data转换为voltage时的比例系数
+ * \addition 公式: 	voltage = ((float)raw_data/4096)*3.33*scale;
+ * */
+typedef struct battery_s{
+	uint16_t raw_data;
+	uint16_t voltage;
+	uint16_t vol_alarm;
+	float scale;
+}battery_t;
+
+
 extern acc_t acc;
 extern gyro_t gyro;
 extern mag_t mag;
 extern baro_t baro;
 extern motor_t motor;
 extern rc_t rc;
+extern battery_t battery;
 
 void motor_init();
 void motor_out(int16_t m1,int16_t m2,int16_t m3,int16_t m4);

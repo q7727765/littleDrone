@@ -34,6 +34,8 @@ extern S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//¡„∆Ø
 extern u8							GYRO_OFFSET_OK;
 extern u8							ACC_OFFSET_OK;
 
+extern ADC_HandleTypeDef hadc1;
+battery_t battery;
 
 void taskUsartDebug(void)
 {
@@ -197,6 +199,13 @@ void taskUpdateRC(void)
 //		SendInt(rc.value[7]);
 //		_n();
 //	}
+}
+
+void taskBatteryMoniter(void)
+{
+	battery.scale = 2.298;
+	battery.raw_data = (uint16_t)HAL_ADC_GetValue(&hadc1);
+	battery.voltage = ((float)battery.raw_data/4096) * battery.scale * 333;
 }
 
 void taskRUNLED(void)
