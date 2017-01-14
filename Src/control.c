@@ -15,7 +15,7 @@ typedef volatile int32_t vs32;
 attitude_t tag_attitude;
 
 PID PID_ROL,PID_PIT,PID_YAW;
-u8 ARMED = 1;
+u8 ARMED = 0;
 
 float rol_i=0,pit_i=0,yaw_p=0;
 float bbuf;
@@ -35,7 +35,7 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	
 	vs16 yaw_d;
 	float err_rol = rol_tar - rol_now;
-	float err_pit = pit_tar + pit_now;
+	float err_pit = pit_tar - pit_now;
 	//float err_yaw = yaw_tar - yaw_now;
 	
 	
@@ -64,10 +64,10 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	////////////////////////////////////////////////////
 	
 	//*******************YAW的计算*********************//
-	if(rc.value[rc_yaw_num]<1400||rc.value[rc_yaw_num]>1600)
-	{
-		bbuf = MPU6050_GYRO_LAST.Z + (rc.value[rc_yaw_num]-1500)*2;
-	}
+//	if(rc.value[rc_yaw_num]<1400||rc.value[rc_yaw_num]>1600)
+//	{
+//		bbuf = MPU6050_GYRO_LAST.Z + (rc.value[rc_yaw_num]-1500)*2;
+//	}
 	yaw_p+=MPU6050_GYRO_LAST.Z*0.0609756f*0.002f;
 	if(yaw_p>20)
 		yaw_p = 20;
@@ -91,10 +91,10 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	if(rc.value[rc_thr_num]>START_THR&&ARMED)
 	{
 		//moto为0~1000的值对应占空比0~100
-		moto1 = (rc.value[rc_thr_num] - 1000) * 0.8 - PID_ROL.OUT - PID_PIT.OUT - PID_YAW.OUT;
-		moto2 = (rc.value[rc_thr_num] - 1000) * 0.8 + PID_ROL.OUT - PID_PIT.OUT + PID_YAW.OUT;
-		moto3 = (rc.value[rc_thr_num] - 1000) * 0.8 + PID_ROL.OUT + PID_PIT.OUT - PID_YAW.OUT;
-		moto4 = (rc.value[rc_thr_num] - 1000) * 0.8 - PID_ROL.OUT + PID_PIT.OUT + PID_YAW.OUT;
+		moto1 = (rc.value[rc_thr_num] - 1000) * 0.8 - PID_ROL.OUT + PID_PIT.OUT - PID_YAW.OUT;
+		moto2 = (rc.value[rc_thr_num] - 1000) * 0.8 + PID_ROL.OUT + PID_PIT.OUT + PID_YAW.OUT;
+		moto3 = (rc.value[rc_thr_num] - 1000) * 0.8 + PID_ROL.OUT - PID_PIT.OUT - PID_YAW.OUT;
+		moto4 = (rc.value[rc_thr_num] - 1000) * 0.8 - PID_ROL.OUT - PID_PIT.OUT + PID_YAW.OUT;
 		
 	}
 	else

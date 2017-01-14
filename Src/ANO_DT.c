@@ -94,7 +94,7 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_status)
 	{
 		f.send_status = 0;
-		ANO_DT_Send_Status(ROLL,PITCH,YAW,0,0,0);//last ARMED
+		ANO_DT_Send_Status(now_attitude.roll,now_attitude.pitch,now_attitude.yaw,0,0,ARMED);//last ARMED
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_senser)
@@ -116,7 +116,12 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_motopwm)
 	{
 		f.send_motopwm = 0;
-		ANO_DT_Send_MotoPWM((u16)*(motor.value[0]),(u16)*(motor.value[1]),(u16)*(motor.value[2]),(u16)*(motor.value[3]),0,0,0,0);
+		ANO_DT_Send_MotoPWM(
+				(u16)*(motor.value[0]),
+				(u16)*(motor.value[1]),
+				(u16)*(motor.value[2]),
+				(u16)*(motor.value[3]),
+				0,0,0,0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_power)

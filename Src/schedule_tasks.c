@@ -158,12 +158,12 @@ void taskUpdateAttitude(void)
 	tar_attitude.roll  = (rc.value[rc_rol_num] - 1500) / 12;
 	tar_attitude.yaw   = (rc.value[rc_yaw_num] - 1500) / 12;
 
-	CONTROL(now_attitude.roll ,
-			now_attitude.pitch,
-			now_attitude.yaw  ,
-			tar_attitude.pitch,
-			tar_attitude.roll ,
-			tar_attitude.yaw);
+	CONTROL(now_attitude.roll  ,
+			now_attitude.pitch ,
+			now_attitude.yaw   ,
+			-tar_attitude.roll  ,
+			-tar_attitude.pitch,
+			-tar_attitude.yaw);
 }
 
 void taskPIDLoop(void)
@@ -178,6 +178,12 @@ void taskUpdateRC(void)
 	if(rc.value[rc_push_num] == 1000){
 		ACC_OFFSET_OK  = 0;
 		GYRO_OFFSET_OK = 0;
+	}
+
+	if(rc.value[rc_aux2_num] == 2000){
+		ARMED = 1;
+	}else{
+		ARMED = 0;
 	}
 
 }
