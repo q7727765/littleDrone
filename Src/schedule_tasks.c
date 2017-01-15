@@ -40,106 +40,13 @@ battery_t battery;
 void taskUsartDebug(void)
 {
 
-
 	ANO_DT_Data_Exchange();
-#if 0
-		uint8_t xl,xm;
-		int16_t x;
 
-		uint8_t sta;
-
-		static uint8_t mo = 1;
-
-		//acc & gyro
-
-		SendChar("X:");
-		SendInt(acc_data[0]);
-		_n();
-		SendChar("Y:");
-		SendInt(acc_data[1]);
-		_n();
-		SendChar("Z:");
-		SendInt(acc_data[2]);
-		_n();
-		SendChar("GX:");
-		SendInt(gyro_data[0]);
-		_n();
-		SendChar("GY:");
-		SendInt(gyro_data[1]);
-		_n();
-		SendChar("GZ:");
-		SendInt(gyro_data[2]);
-		_n();
-
-		SendChar("ANGLE_X:");
-		SendDouble(now_attitude.roll);
-		_n();
-		SendChar("ANGLE_Y:");
-		SendDouble(now_attitude.pitch);
-		_n();
-		SendChar("ANGLE_Z:");
-		SendDouble(now_attitude.yaw);
-		_n();
-
-
-	//mag
-
-
-		sta = mag.read(mag_data);
-
-		SendChar("mag_x:");
-		SendInt(mag_data[0]);
-		_n();
-		SendChar("mag_y:");
-		SendInt(mag_data[2]);
-		_n();
-		SendChar("mag_z:");
-		SendInt(mag_data[1]);
-		_n();
-
-	//baro
-
-		if(mo){
-
-		    baro.get_ut();
-		    baro.start_up();
-
-		}else{
-
-		    baro.get_up();
-		    baro.start_ut();
-		    baro.calculate(&baroPressure, &baroTemperature);
-		    baroPressureSumtt =recalculateBarometerTotal(
-		    		48,
-		    		baroPressureSumtt,
-					baroPressure);
-
-		}
-
-		mo =! mo;
-
-	    SendChar("baroPressure:");
-	    SendInt(baroPressure);
-	    _n();
-	    SendChar("baroTemperature:");
-	    SendInt(baroTemperature);
-	    _n();
-//	    SendChar("baroPressureSumtt:");
-//	    SendInt(baroPressureSumtt);
-//	    _n();
-
-	//	IIC_Write_Reg(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D1 + CMD_ADC_4096, 1); // D1 (pressure) conversion start!
-	//	sta = IIC_Read_Reg_Len(MS5611_ADDR,CMD_ADC_READ,3,ms5611_buf);
-	//	baro = ((uint32_t)ms5611_buf[0] << 16) | (uint32_t)(ms5611_buf[1] << 8) | (uint32_t)ms5611_buf[2];
-	//	SendChar("baro:");
-	//	SendInt(baro);
-	//	_n();
-#endif
 }
 void taskUpdateMPU6050(void)
 {
 
-	Prepare_Data();
+
 
 }
 
@@ -152,7 +59,8 @@ attitude_t tar_attitude;
 
 void taskUpdateAttitude(void)
 {
-	Get_Attitude();
+	Prepare_Data();//imu数据获取
+	Get_Attitude();//姿态解算
 
 	tar_attitude.pitch = (rc.value[rc_pit_num] - 1500) / 12;
 	tar_attitude.roll  = (rc.value[rc_rol_num] - 1500) / 12;
