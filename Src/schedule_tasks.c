@@ -47,7 +47,6 @@ void taskUpdateMPU6050(void)
 {
 
 
-
 }
 
 void taskUpdateMAG(void)
@@ -59,12 +58,35 @@ attitude_t tar_attitude;
 
 void taskUpdateAttitude(void)
 {
+#define _debug_taskUpdateAttitude 0
+
+	static uint32_t t0,t1,t2,t3,t4,t5,t6;
+	static uint32_t old;
+	old = t1;
+
+#if _debug_taskUpdateAttitude
+	t1 = micros();
+#endif
+
 	Prepare_Data();//imu数据获取
+
+#if _debug_taskUpdateAttitude
+	t2 = micros();
+#endif
+
 	Get_Attitude();//姿态解算
+
+#if _debug_taskUpdateAttitude
+	t3 = micros();
+#endif
 
 	tar_attitude.pitch = (rc.value[rc_pit_num] - 1500) / 12;
 	tar_attitude.roll  = (rc.value[rc_rol_num] - 1500) / 12;
 	tar_attitude.yaw   = (rc.value[rc_yaw_num] - 1500) / 12;
+
+#if _debug_taskUpdateAttitude
+	t4 = micros();
+#endif
 
 	CONTROL(now_attitude.roll  ,
 			now_attitude.pitch ,
@@ -72,6 +94,31 @@ void taskUpdateAttitude(void)
 			-tar_attitude.roll  ,
 			-tar_attitude.pitch,
 			-tar_attitude.yaw);
+
+#if _debug_taskUpdateAttitude
+
+	t5 = micros();
+
+
+	SendChar(":imu:");
+	SendInt(t2-t1);
+	SendChar(":att:");
+	SendInt(t3-t2);
+	SendChar(":rcg:");
+	SendInt(t4-t3);
+	SendChar(":con:");
+	SendInt(t5-t4);
+	SendChar(":atime:");
+	SendInt(t5-t1);
+	SendChar(":per:");
+	SendInt(t1-old);
+
+	t6 = micros();
+	SendChar(":uart:");
+	SendInt(t6-t5);
+	_n();
+	_n();
+#endif
 }
 
 void taskPIDLoop(void)

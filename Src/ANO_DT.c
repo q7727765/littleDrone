@@ -48,26 +48,26 @@ void ANO_DT_Data_Exchange(void)
 {
 	static u8 cnt = 0;
 	static u8 senser_cnt 	= 20;
-	static u8 status_cnt 	= 20;
+	static u8 status_cnt 	= 15;
 	static u8 rcdata_cnt 	= 30;
 	static u8 motopwm_cnt	= 35;
 	static u8 power_cnt		= 200;
 	static u8 user_cnt 		= 10;
 	
 	if((cnt % senser_cnt) == (senser_cnt-1))
-		f.send_senser = 1;	
+		f.send_senser = 1;
 	
 	if((cnt % status_cnt) == (status_cnt-1))
 		f.send_status = 1;	
 	
 	if((cnt % rcdata_cnt) == (rcdata_cnt-1))
-		f.send_rcdata = 1;	
+		f.send_rcdata = 1;
 	
 	if((cnt % motopwm_cnt) == (motopwm_cnt-1))
-		f.send_motopwm = 1;	
+		f.send_motopwm = 1;
 	
 	if((cnt % power_cnt) == (power_cnt-1))
-		f.send_power = 1;		
+		f.send_power = 1;
 	
 	if((cnt % user_cnt) == (user_cnt-1))
 		f.send_user = 0;
@@ -94,7 +94,7 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_status)
 	{
 		f.send_status = 0;
-		ANO_DT_Send_Status(now_attitude.roll,now_attitude.pitch,now_attitude.yaw,0,0,ARMED);//last ARMED
+		ANO_DT_Send_Status(-now_attitude.roll,now_attitude.pitch,now_attitude.yaw,0,0,ARMED);//last ARMED
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_senser)

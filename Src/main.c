@@ -125,7 +125,6 @@ void init(void)
 
 /* USER CODE END 0 */
 
-
 int main(void)
 {
 
@@ -163,7 +162,6 @@ int main(void)
 	while (1) {
 
 		scheduler();
-
 	}
 
 }

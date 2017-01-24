@@ -20,7 +20,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //用户根据自己的需要设置
-#define STM32_FLASH_SIZE 	64 	 		//所选STM32的FLASH容量大小(单位为K)
+#define STM32_FLASH_SIZE 	128 	 		//所选STM32的FLASH容量大小(单位为K)
 #define STM32_FLASH_WREN 	1              	//使能FLASH写入(0，不是能;1，使能)
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,8 +55,8 @@ typedef volatile uint32_t vu32;
 
 void Para_ResetToFactorySetup();
 void Param_SavePID();
-u8 EE_ReadVariable(uint16_t VirtAddress, uint16_t* Data);
-u8 EE_WriteVariable(uint16_t VirtAddress, uint16_t Data);
+u8 EE_ReadVariable(uint32_t VirtAddress, uint16_t* Data);
+u8 EE_WriteVariable(uint32_t VirtAddress, uint16_t Data);
 
 void EE_SAVE_ACC_OFFSET(void);
 void EE_READ_ACC_OFFSET(void);

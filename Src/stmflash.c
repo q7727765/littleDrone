@@ -4,12 +4,12 @@
 #include "mpu6050.h"
 #include "control.h"
 #include "ANO_DT.h"
-u16 VirtAddVarTab[NumbOfVar] = {
-		0xFE00, 0xFE02, 0xFE04,
-		0xFE08, 0xFE0a, 0xFE0c,
-		0xFE10, 0xFE12, 0xFE14,
-		0xFE18, 0xFE1a, 0xFE1c,
-		0xFE20, 0xFE22, 0xFE24,};
+u32 VirtAddVarTab[NumbOfVar] = {
+		0x1EE00, 0x1EE02, 0x1EE04,
+		0x1EE08, 0x1EE0a, 0x1EE0c,
+		0x1EE10, 0x1EE12, 0x1EE14,
+		0x1EE18, 0x1EE1a, 0x1EE1c,
+		0x1EE20, 0x1EE22, 0x1EE24,};
 
 //#define EE_6050_ACC_X_OFFSET_ADDR	0
 //#define EE_6050_ACC_Y_OFFSET_ADDR	1
@@ -146,13 +146,13 @@ void EE_READ_PID(void)
 	f.send_pid1 = 1;
 }
 
-u8 EE_WriteVariable(u16 addr,u16 data)
+u8 EE_WriteVariable(u32 addr,u16 data)
 {
 	STMFLASH_Write(STM32_FLASH_BASE+(u32)addr,&data,2);
 	return 0;
 }
 
-u8 EE_ReadVariable(u16 addr,u16* data)
+u8 EE_ReadVariable(u32 addr,u16* data)
 {
 	STMFLASH_Read(STM32_FLASH_BASE+(u32)addr,data,2);
 	return 0;
