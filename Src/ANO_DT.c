@@ -70,7 +70,7 @@ void ANO_DT_Data_Exchange(void)
 		f.send_power = 1;
 	
 	if((cnt % user_cnt) == (user_cnt-1))
-		f.send_user = 0;
+		f.send_user = 1;
 	
 	
 	cnt++;
@@ -79,9 +79,7 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_user)
 	{
 		f.send_user = 0;
-		sprintf(str0,"mag.x:%d",mag_data[0]);
-		sprintf(str1,"mag.y:%d",mag_data[1]);
-		sprintf(str2,"mag.z:%d",mag_data[2]);
+
 		ANO_DT_Send_User(str0,str1,str2,str3,str4,str5,str6,str7,str8,str9);//+++
 	}
 /////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +98,7 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_senser)
 	{
 		f.send_senser = 0;
-		ANO_DT_Send_Senser(MPU6050_ACC_LAST.X,MPU6050_ACC_LAST.Y,MPU6050_ACC_LAST.Z,
+		ANO_DT_Send_Senser(ACC_AVG.X,ACC_AVG.Y,ACC_AVG.Z,
 												MPU6050_GYRO_LAST.X,MPU6050_GYRO_LAST.Y,MPU6050_GYRO_LAST.Z,
 												mag_data[0],mag_data[1],mag_data[2],0);
 	}	

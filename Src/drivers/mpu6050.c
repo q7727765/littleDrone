@@ -86,6 +86,9 @@ void MPU6050_Read(void)
 	IIC_Read_Reg_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG,14,mpu6050_buffer);
 }
 
+#define 	MPU6050_MAX		32767
+#define		MPU6050_MIN		-32768
+
 void MPU6050_Dataanl(void)
 {
 	MPU6050_ACC_LAST.X=((((int16_t)mpu6050_buffer[0]) << 8) | mpu6050_buffer[1]) - ACC_OFFSET.X;
@@ -97,14 +100,34 @@ void MPU6050_Dataanl(void)
 	MPU6050_GYRO_LAST.Y=((((int16_t)mpu6050_buffer[10]) << 8) | mpu6050_buffer[11]) - GYRO_OFFSET.Y;
 	MPU6050_GYRO_LAST.Z=((((int16_t)mpu6050_buffer[12]) << 8) | mpu6050_buffer[13]) - GYRO_OFFSET.Z;
 	
+	MPU6050_ACC_LAST.X>MPU6050_MAX ? MPU6050_MAX:MPU6050_ACC_LAST.X;
+	MPU6050_ACC_LAST.X<MPU6050_MIN ? MPU6050_MIN:MPU6050_ACC_LAST.X;
+	MPU6050_ACC_LAST.Y>MPU6050_MAX ? MPU6050_MAX:MPU6050_ACC_LAST.Y;
+	MPU6050_ACC_LAST.Y<MPU6050_MIN ? MPU6050_MIN:MPU6050_ACC_LAST.Y;
+	MPU6050_ACC_LAST.Z>MPU6050_MAX ? MPU6050_MAX:MPU6050_ACC_LAST.Z;
+	MPU6050_ACC_LAST.Z<MPU6050_MIN ? MPU6050_MIN:MPU6050_ACC_LAST.Z;
+	MPU6050_GYRO_LAST.X>MPU6050_MAX ? MPU6050_MAX:MPU6050_GYRO_LAST.X;
+	MPU6050_GYRO_LAST.X<MPU6050_MIN ? MPU6050_MIN:MPU6050_GYRO_LAST.X;
+	MPU6050_GYRO_LAST.Y>MPU6050_MAX ? MPU6050_MAX:MPU6050_GYRO_LAST.Y;
+	MPU6050_GYRO_LAST.Y<MPU6050_MIN ? MPU6050_MIN:MPU6050_GYRO_LAST.Y;
+	MPU6050_GYRO_LAST.Z>MPU6050_MAX ? MPU6050_MAX:MPU6050_GYRO_LAST.Z;
+	MPU6050_GYRO_LAST.Z<MPU6050_MIN ? MPU6050_MIN:MPU6050_GYRO_LAST.Z;
+
+
+
+
+
+
+
 	//防止静止时候飞机的微小抖动造成的yaw偏差
-	if(MPU6050_GYRO_LAST.X>-10&&MPU6050_GYRO_LAST.X<10)MPU6050_GYRO_LAST.X = 0;
-	if(MPU6050_GYRO_LAST.Y>-10&&MPU6050_GYRO_LAST.Y<10)MPU6050_GYRO_LAST.Y = 0;
-	if(MPU6050_GYRO_LAST.Z>-10&&MPU6050_GYRO_LAST.Z<10)MPU6050_GYRO_LAST.Z = 0;
+//	if(MPU6050_GYRO_LAST.X>-10&&MPU6050_GYRO_LAST.X<10)MPU6050_GYRO_LAST.X = 0;
+//	if(MPU6050_GYRO_LAST.Y>-10&&MPU6050_GYRO_LAST.Y<10)MPU6050_GYRO_LAST.Y = 0;
+//	if(MPU6050_GYRO_LAST.Z>-10&&MPU6050_GYRO_LAST.Z<10)MPU6050_GYRO_LAST.Z = 0;
+
 	if(!GYRO_OFFSET_OK)
 	{
 		static int32_t	tempgx=0,tempgy=0,tempgz=0;
-		static uint8_t cnt_g=0;
+		static uint16_t cnt_g=0;
 // 		LED1_ON;
 		if(cnt_g==0)
 		{
@@ -135,7 +158,7 @@ void MPU6050_Dataanl(void)
 	if(!ACC_OFFSET_OK)
 	{
 		static int32_t	tempax=0,tempay=0,tempaz=0;
-		static uint8_t cnt_a=0;
+		static uint16_t cnt_a=0;
 // 		LED1_ON;
 		if(cnt_a==0)
 		{
@@ -151,7 +174,7 @@ void MPU6050_Dataanl(void)
 		tempax+= MPU6050_ACC_LAST.X;
 		tempay+= MPU6050_ACC_LAST.Y;
 		//tempaz+= MPU6050_ACC_LAST.Z;
-		if(cnt_a==200)
+		if(cnt_a==500)
 		{
 			ACC_OFFSET.X=tempax/cnt_a;
 			ACC_OFFSET.Y=tempay/cnt_a;
@@ -175,13 +198,13 @@ void MPU_Init_Gyro(void)
 	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X00);	//唤醒MPU6050 
 	MPU_Set_Gyro_Fsr(3);					//陀螺仪传感器,±2000dps
 
-	MPU_Set_LPF(10);
+	MPU_Set_LPF(20);
 	//MPU_Set_Rate(50);						//设置采样率50Hz
 	MPU_Write_Byte(MPU_INT_EN_REG,0X00);	//关闭所有中断
 	MPU_Write_Byte(MPU_USER_CTRL_REG,0X00);	//I2C主模式关闭
-	MPU_Write_Byte(MPU_FIFO_EN_REG,0X00);	//关闭FIFO
-	MPU_Write_Byte(MPU_INTBP_CFG_REG,
-			0 << 7 | 0 << 6 | 0 << 5 | 0 << 4 | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0);	//INT引脚低电平有效
+//	MPU_Write_Byte(MPU_FIFO_EN_REG,0X00);	//关闭FIFO
+//	MPU_Write_Byte(MPU_INTBP_CFG_REG,
+//			0 << 7 | 0 << 6 | 0 << 5 | 0 << 4 | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0);	//INT引脚低电平有效
 
 	MPU_Write_Byte(MPU_PWR_MGMT2_REG,0X00);	//加速度与陀螺仪都工作
 	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X03);	//设置CLKSEL,PLL X轴为参考
@@ -191,7 +214,7 @@ void MPU_Init_Gyro(void)
 
 void MPU_Init_Acc(void)
 {
-	MPU_Set_Accel_Fsr(2);					//加速度传感器,±8g
+	MPU_Set_Accel_Fsr(1);					//加速度传感器,±8g
 }
 //设置MPU6050陀螺仪传感器满量程范围
 //fsr:0,±250dps;1,±500dps;2,±1000dps;3,±2000dps

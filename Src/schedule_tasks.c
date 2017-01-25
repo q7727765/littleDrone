@@ -56,9 +56,16 @@ void taskUpdateMAG(void)
 }
 attitude_t tar_attitude;
 
+
+
+union _dat{
+	uint16_t full;
+	uint8_t  byte[2];
+}d_temp;
+
 void taskUpdateAttitude(void)
 {
-#define _debug_taskUpdateAttitude 0
+#define _debug_taskUpdateAttitude 1
 
 	static uint32_t t0,t1,t2,t3,t4,t5,t6;
 	static uint32_t old;
@@ -99,25 +106,22 @@ void taskUpdateAttitude(void)
 
 	t5 = micros();
 
+	d_temp.full = (uint16_t)(t2 - t1);
+	str0[0] = d_temp.byte[1];
+	str0[1] = d_temp.byte[0];
 
-	SendChar(":imu:");
-	SendInt(t2-t1);
-	SendChar(":att:");
-	SendInt(t3-t2);
-	SendChar(":rcg:");
-	SendInt(t4-t3);
-	SendChar(":con:");
-	SendInt(t5-t4);
-	SendChar(":atime:");
-	SendInt(t5-t1);
-	SendChar(":per:");
-	SendInt(t1-old);
+	d_temp.full = (uint16_t)(t3 - t2);
+	str0[2] = d_temp.byte[1];
+	str0[3] = d_temp.byte[0];
 
-	t6 = micros();
-	SendChar(":uart:");
-	SendInt(t6-t5);
-	_n();
-	_n();
+	d_temp.full = (uint16_t)(t5 - t1);
+	str0[4] = d_temp.byte[1];
+	str0[5] = d_temp.byte[0];
+
+	d_temp.full = (uint16_t)(t1 - old);
+	str0[6] = d_temp.byte[1];
+	str0[7] = d_temp.byte[0];
+
 #endif
 }
 

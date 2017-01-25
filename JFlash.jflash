@@ -38,9 +38,9 @@
   UseAutoSpeed = 0x00000001
   ClockSpeed = 0x00000000
   EndianMode = 0
-  ChipName = "ST STM32F103C8"
+  ChipName = "ST STM32F103CB"
 [FLASH]
-  aRangeSel[1] = 0-63
+  aRangeSel[1] = 0-127
   BankName = "Internal flash"
   BankSelMode = 1
   BaseAddr = 0x08000000

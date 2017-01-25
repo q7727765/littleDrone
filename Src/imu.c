@@ -19,7 +19,7 @@
 #define Acc_G 	0.0011963				//加速度变成G
 #define Gyro_G 	0.0610351				//角速度变成度   此参数对应陀螺2000度每秒
 #define Gyro_Gr	0.0010653				//角速度变成弧度	此参数对应陀螺2000度每秒
-#define FILTER_NUM 20
+#define FILTER_NUM 300
 
 S_INT16_XYZ ACC_AVG;			//平均值滤波后的ACC
 S_FLOAT_XYZ GYRO_I;				//陀螺仪积分
@@ -42,9 +42,9 @@ int16_t mag_data[3];
 
 void Prepare_Data(void)
 {
-	static uint8_t filter_cnt=0;
+	static uint16_t filter_cnt=0;
 	int32_t temp1=0,temp2=0,temp3=0;
-	uint8_t i;
+	uint16_t i;
 
 	gyro.read(gyro_data);
 	acc.read(acc_data);

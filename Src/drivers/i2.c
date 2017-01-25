@@ -14,7 +14,7 @@
 
 static void I2C_delay(void)
 {
-   for(u8 i=8;i--;){
+   for(u8 i=9;i--;){
 	   __ASM("NOP");
    }
 }
