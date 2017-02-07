@@ -30,7 +30,7 @@ extern mag_t mag;
 extern u8 mpu6050_buffer[14];					//iic读取后存放数据
 
 extern S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
-extern S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
+extern S_FLOAT_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
 extern u8							GYRO_OFFSET_OK;
 extern u8							ACC_OFFSET_OK;
 
@@ -87,9 +87,9 @@ void taskUpdateAttitude(void)
 	t3 = micros();
 #endif
 
-	tar_attitude.pitch = (rc.value[rc_pit_num] - 1500) / 12;
-	tar_attitude.roll  = (rc.value[rc_rol_num] - 1500) / 12;
-	tar_attitude.yaw   = (rc.value[rc_yaw_num] - 1500) / 12;
+	tar_attitude.pitch = (rc.value[rc_pit_num] - 1500) / 25.0;
+	tar_attitude.roll  = (rc.value[rc_rol_num] - 1500) / 25.0 ;
+	tar_attitude.yaw   = (rc.value[rc_yaw_num] - 1500) / 25.0;
 
 #if _debug_taskUpdateAttitude
 	t4 = micros();
@@ -106,18 +106,22 @@ void taskUpdateAttitude(void)
 
 	t5 = micros();
 
+	//imu数据采集时间
 	d_temp.full = (uint16_t)(t2 - t1);
 	str0[0] = d_temp.byte[1];
 	str0[1] = d_temp.byte[0];
 
+	//四元数姿态融合
 	d_temp.full = (uint16_t)(t3 - t2);
 	str0[2] = d_temp.byte[1];
 	str0[3] = d_temp.byte[0];
 
+	//姿态任务总耗时
 	d_temp.full = (uint16_t)(t5 - t1);
 	str0[4] = d_temp.byte[1];
 	str0[5] = d_temp.byte[0];
 
+	//两次任务执行间隔
 	d_temp.full = (uint16_t)(t1 - old);
 	str0[6] = d_temp.byte[1];
 	str0[7] = d_temp.byte[0];

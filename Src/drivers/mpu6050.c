@@ -10,7 +10,7 @@
 #include "stmflash.h"
 
 u8						mpu6050_buffer[14];					//iic读取后存放数据
-S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
+S_FLOAT_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
 u8						GYRO_OFFSET_OK = 1;
 u8						ACC_OFFSET_OK = 1;
 S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
@@ -76,7 +76,7 @@ bool mpuGyroRead(int16_t *data)
 	res = IIC_Read_Reg_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG+8,6,mpu6050_buffer+8);
 	data[0] = ((((int16_t)mpu6050_buffer[8]) << 8) | mpu6050_buffer[9])- GYRO_OFFSET.X;
 	data[1] = ((((int16_t)mpu6050_buffer[10]) << 8) | mpu6050_buffer[11])- GYRO_OFFSET.Y;
-	data[2] = ((((int16_t)mpu6050_buffer[12]) << 8) | mpu6050_buffer[13])- GYRO_OFFSET.X;
+	data[2] = ((((int16_t)mpu6050_buffer[12]) << 8) | mpu6050_buffer[13])- GYRO_OFFSET.Z;
 
 	return !res;
 }
@@ -174,7 +174,7 @@ void MPU6050_Dataanl(void)
 		tempax+= MPU6050_ACC_LAST.X;
 		tempay+= MPU6050_ACC_LAST.Y;
 		//tempaz+= MPU6050_ACC_LAST.Z;
-		if(cnt_a==500)
+		if(cnt_a==300)
 		{
 			ACC_OFFSET.X=tempax/cnt_a;
 			ACC_OFFSET.Y=tempay/cnt_a;

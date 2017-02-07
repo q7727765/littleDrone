@@ -20,7 +20,7 @@
 #include "math.h"
 #include "main.h"
 #include "stm32f1xx_hal.h"
-
+#include "axis.h"
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
 #define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)		) )
@@ -98,9 +98,9 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_senser)
 	{
 		f.send_senser = 0;
-		ANO_DT_Send_Senser(ACC_AVG.X,ACC_AVG.Y,ACC_AVG.Z,
-												MPU6050_GYRO_LAST.X,MPU6050_GYRO_LAST.Y,MPU6050_GYRO_LAST.Z,
-												mag_data[0],mag_data[1],mag_data[2],0);
+		ANO_DT_Send_Senser(acc_ldata[X]*1000,acc_ldata[Y]*1000,acc_ldata[Z]*1000,
+							gyro_ldata[X]*1000,gyro_ldata[Y]*1000,gyro_ldata[Z]*1000,
+							mag_data[0],mag_data[1],mag_data[2],0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_rcdata)

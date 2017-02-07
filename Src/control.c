@@ -64,10 +64,10 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	////////////////////////////////////////////////////
 	
 	//*******************YAWµÄ¼ÆËã*********************//
-//	if(rc.value[rc_yaw_num]<1400||rc.value[rc_yaw_num]>1600)
-//	{
-//		bbuf = MPU6050_GYRO_LAST.Z + (rc.value[rc_yaw_num]-1500)*2;
-//	}
+	if(rc.value[rc_yaw_num]<1400||rc.value[rc_yaw_num]>1600)
+	{
+		MPU6050_GYRO_LAST.Z = MPU6050_GYRO_LAST.Z + (rc.value[rc_yaw_num]-1500)*2;
+	}
 	yaw_p+=MPU6050_GYRO_LAST.Z*0.0609756f*0.002f;
 	if(yaw_p>20)
 		yaw_p = 20;

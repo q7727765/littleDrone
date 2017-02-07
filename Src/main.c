@@ -48,7 +48,7 @@
 #include "HAL.h"
 #include "stmflash.h"
 #include "nrf24l01.h"
-
+#include "filter.h"
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
@@ -86,6 +86,8 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE BEGIN 0 */
 
+#define IMU_SAMPLE_RATE			1000.0f
+#define IMU_FILTER_CUTOFF_FREQ	30.0f
 
 char id;
 void init(void)
@@ -113,11 +115,17 @@ void init(void)
 	SendChar("nrf ok\r\n");
 	NRF24L01_RX_Mode();
 
+	LPF2pSetCutoffFreq_1(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);		//30Hz
+	LPF2pSetCutoffFreq_2(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+	LPF2pSetCutoffFreq_3(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+	LPF2pSetCutoffFreq_4(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+	LPF2pSetCutoffFreq_5(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+	LPF2pSetCutoffFreq_6(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
 
-		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
-		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
-		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
 }
 
 

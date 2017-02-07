@@ -13,13 +13,15 @@
 #include "HAL.h"
 #include "imu.h"
 #include "MPU6050.h"
+#include "filter.h"
+#include "stmflash.h"
 
 #define RtA 		57.324841				//弧度到角度
 #define AtR    	0.0174533				//度到角度
 #define Acc_G 	0.0011963				//加速度变成G
 #define Gyro_G 	0.0610351				//角速度变成度   此参数对应陀螺2000度每秒
 #define Gyro_Gr	0.0010653				//角速度变成弧度	此参数对应陀螺2000度每秒
-#define FILTER_NUM 300
+#define FILTER_NUM 100
 
 S_INT16_XYZ ACC_AVG;			//平均值滤波后的ACC
 S_FLOAT_XYZ GYRO_I;				//陀螺仪积分
@@ -39,6 +41,12 @@ int16_t gyro_data[3];
 int16_t acc_data[3];
 int16_t mag_data[3];
 
+float gyro_rdata[3];
+float acc_rdata[3];
+
+float gyro_ldata[3];
+float acc_ldata[3];
+
 
 void Prepare_Data(void)
 {
@@ -48,35 +56,111 @@ void Prepare_Data(void)
 
 	gyro.read(gyro_data);
 	acc.read(acc_data);
-	MPU6050_Dataanl();
 
-	ACC_X_BUF[filter_cnt] = MPU6050_ACC_LAST.X;//更新滑动窗口数组
-	ACC_Y_BUF[filter_cnt] = MPU6050_ACC_LAST.Y;
-	ACC_Z_BUF[filter_cnt] = MPU6050_ACC_LAST.Z;
-	for(i=0;i<FILTER_NUM;i++)
+	for(i=0;i<3;i++)
 	{
-		temp1 += ACC_X_BUF[i];
-		temp2 += ACC_Y_BUF[i];
-		temp3 += ACC_Z_BUF[i];
+			acc_rdata[i]= (float)acc_data[i] *ACC_SCALE * CONSTANTS_ONE_G ;
+			gyro_rdata[i]=(float)gyro_data[i] * GYRO_SCALE * M_PI_F /180.f;		//deg/s
 	}
-	ACC_AVG.X = temp1 / FILTER_NUM;
-	ACC_AVG.Y = temp2 / FILTER_NUM;
-	ACC_AVG.Z = temp3 / FILTER_NUM;
-	filter_cnt++;
-	if(filter_cnt==FILTER_NUM)	filter_cnt=0;
+
+	acc_ldata[X] = LPF2pApply_1(acc_rdata[X] - ACC_OFFSET.X);
+	acc_ldata[Y] = LPF2pApply_2(acc_rdata[Y] - ACC_OFFSET.Y);
+	acc_ldata[Z] = LPF2pApply_3(acc_rdata[Z] - ACC_OFFSET.Z);
+	gyro_ldata[X] = LPF2pApply_4(gyro_rdata[X] - GYRO_OFFSET.X);
+	gyro_ldata[Y] = LPF2pApply_5(gyro_rdata[Y] - GYRO_OFFSET.Y);
+	gyro_ldata[Z] = LPF2pApply_6(gyro_rdata[Z] - GYRO_OFFSET.Z);
+
+			if(!GYRO_OFFSET_OK)
+			{
+				static float	tempgx=0,tempgy=0,tempgz=0;
+				static uint16_t cnt_g=0;
+		// 		LED1_ON;
+				if(cnt_g==0)
+				{
+					GYRO_OFFSET.X=0;
+					GYRO_OFFSET.Y=0;
+					GYRO_OFFSET.Z=0;
+					tempgx = 0;
+					tempgy = 0;
+					tempgz = 0;
+					cnt_g = 1;
+					return;
+				}
+				tempgx+= gyro_rdata[X];
+				tempgy+= gyro_rdata[Y];
+				tempgz+= gyro_rdata[Z];
+				if(cnt_g==200)
+				{
+					GYRO_OFFSET.X=tempgx/cnt_g;
+					GYRO_OFFSET.Y=tempgy/cnt_g;
+					GYRO_OFFSET.Z=tempgz/cnt_g;
+					cnt_g = 0;
+					GYRO_OFFSET_OK = 1;
+					EE_SAVE_GYRO_OFFSET();//保存数据+++
+					return;
+				}
+				cnt_g++;
+			}
+			if(!ACC_OFFSET_OK)
+			{
+				static float	tempax=0,tempay=0,tempaz=0;
+				static uint16_t cnt_a=0;
+		// 		LED1_ON;
+				if(cnt_a==0)
+				{
+					ACC_OFFSET.X = 0;
+					ACC_OFFSET.Y = 0;
+					ACC_OFFSET.Z = 0;
+					tempax = 0;
+					tempay = 0;
+					tempaz = 0;
+					cnt_a = 1;
+					return;
+				}
+				tempax+= acc_rdata[X];
+				tempay+= acc_rdata[Y];
+				tempaz+= acc_rdata[Z];
+				if(cnt_a==300)
+				{
+					ACC_OFFSET.X=tempax/cnt_a;
+					ACC_OFFSET.Y=tempay/cnt_a;
+					ACC_OFFSET.Z=tempaz/cnt_a - CONSTANTS_ONE_G;
+					cnt_a = 0;
+					ACC_OFFSET_OK = 1;
+					EE_SAVE_ACC_OFFSET();//保存数据+++
+					return;
+				}
+				cnt_a++;
+			}
+
+	GYRO_I.Z += gyro_ldata[Z] * 0.0013 * 180.f / M_PI_F;
+//	MPU6050_Dataanl();
+
+//	ACC_X_BUF[filter_cnt] = MPU6050_ACC_LAST.X;//更新滑动窗口数组
+//	ACC_Y_BUF[filter_cnt] = MPU6050_ACC_LAST.Y;
+//	ACC_Z_BUF[filter_cnt] = MPU6050_ACC_LAST.Z;
+//	for(i=0;i<FILTER_NUM;i++)
+//	{
+//		temp1 += ACC_X_BUF[i];
+//		temp2 += ACC_Y_BUF[i];
+//		temp3 += ACC_Z_BUF[i];
+//	}
+//	ACC_AVG.X = temp1 / FILTER_NUM;
+//	ACC_AVG.Y = temp2 / FILTER_NUM;
+//	ACC_AVG.Z = temp3 / FILTER_NUM;
+//	filter_cnt++;
+//	if(filter_cnt==FILTER_NUM)	filter_cnt=0;
 
 	//GYRO_I.X += MPU6050_GYRO_LAST.X*Gyro_G*0.001;//0.001是时间间隔,两次prepare的执行周期
 	//GYRO_I.Y += MPU6050_GYRO_LAST.Y*Gyro_G*0.001;
-	GYRO_I.Z += MPU6050_GYRO_LAST.Z*Gyro_G*0.0013;
+	//GYRO_I.Z += MPU6050_GYRO_LAST.Z*Gyro_G*0.0013;
 	//MAG_P.X += mag_data[0];
 }
 
 void Get_Attitude(void)
 {
-	IMUupdate(MPU6050_GYRO_LAST.X*Gyro_Gr,
-						MPU6050_GYRO_LAST.Y*Gyro_Gr,
-						MPU6050_GYRO_LAST.Z*Gyro_Gr,
-						ACC_AVG.X,ACC_AVG.Y,ACC_AVG.Z);	//*0.0174转成弧度
+	IMUupdate(gyro_ldata[X],gyro_ldata[Y],gyro_ldata[Z],
+				acc_ldata[X],acc_ldata[Y],acc_ldata[Z]);	//*0.0174转成弧度
 }
 ////////////////////////////////////////////////////////////////////////////////
 #define Kp 10.0f                        // proportional gain governs rate of convergence to accelerometer/magnetometer
