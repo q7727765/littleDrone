@@ -19,6 +19,7 @@
 #include "ANO_DT.h"
 #include "control.h"
 #include "nrf24l01.h"
+#include "led.h"
 
 uint32_t baroPressureSumtt = 0;
 extern int32_t baroPressure;
@@ -29,10 +30,6 @@ uint8_t ms5611_buf[3];
 extern mag_t mag;
 extern u8 mpu6050_buffer[14];					//iic读取后存放数据
 
-extern S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
-extern S_FLOAT_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
-extern u8							GYRO_OFFSET_OK;
-extern u8							ACC_OFFSET_OK;
 
 extern ADC_HandleTypeDef hadc1;
 battery_t battery;
@@ -75,13 +72,21 @@ void taskUpdateAttitude(void)
 	t1 = micros();
 #endif
 
-	Prepare_Data();//imu数据获取
+	IMUSO3Thread();
 
+	if(imu.caliPass == 0){
+		led.model = ON;
+		if(IMU_Calibrate()){
+			//gParamsSaveEEPROMRequset=1;	//请求记录到EEPROM
+			imu.caliPass=1;
+			led.model = DOUBLE_FLASH;
+		}
+	}
 #if _debug_taskUpdateAttitude
 	t2 = micros();
 #endif
 
-	Get_Attitude();//姿态解算
+
 
 #if _debug_taskUpdateAttitude
 	t3 = micros();
@@ -95,9 +100,9 @@ void taskUpdateAttitude(void)
 	t4 = micros();
 #endif
 
-	CONTROL(now_attitude.roll  ,
-			now_attitude.pitch ,
-			now_attitude.yaw   ,
+	CONTROL(imu.roll  ,
+			imu.pitch ,
+			imu.yaw   ,
 			-tar_attitude.roll  ,
 			-tar_attitude.pitch,
 			-tar_attitude.yaw);
@@ -112,19 +117,15 @@ void taskUpdateAttitude(void)
 	str0[1] = d_temp.byte[0];
 
 	//四元数姿态融合
-	d_temp.full = (uint16_t)(t3 - t2);
+	d_temp.full = (uint16_t)(t5 - t1);
 	str0[2] = d_temp.byte[1];
 	str0[3] = d_temp.byte[0];
 
-	//姿态任务总耗时
-	d_temp.full = (uint16_t)(t5 - t1);
+	//两次任务执行间隔
+	d_temp.full = (uint16_t)(t1 - old);
 	str0[4] = d_temp.byte[1];
 	str0[5] = d_temp.byte[0];
 
-	//两次任务执行间隔
-	d_temp.full = (uint16_t)(t1 - old);
-	str0[6] = d_temp.byte[1];
-	str0[7] = d_temp.byte[0];
 
 #endif
 }
@@ -139,8 +140,7 @@ void taskUpdateRC(void)
 	NRF24L01_RxPacket((u8*)rc.value);
 
 	if(rc.value[rc_push_num] == 1000){
-		ACC_OFFSET_OK  = 0;
-		GYRO_OFFSET_OK = 0;
+		imu.caliPass = 0;
 	}
 
 	if(rc.value[rc_aux2_num] == 2000){
@@ -158,15 +158,25 @@ void taskBatteryMoniter(void)
 	battery.voltage = ((float)battery.raw_data/4096) * battery.scale * 333;
 }
 
-void taskRUNLED(void)
+void taskLED(void)
 {
-	static char sta = 0;
 
-	sta = !sta;//(sta+1)%2;
-
-	if(sta)
-		HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_SET);
-	else
+	switch(led.model){
+	case ON:
 		HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
+		break;
+	case OFF:
+		HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_SET);
+		break;
+	case SINGLE_FLASH:
+		break;
+	case DOUBLE_FLASH:
+		double_flash();
+		break;
+	case SINGLE_FLASH_500MS:
+		single_flash_500ms();
+		break;
+	default:;
+	}
 
 }

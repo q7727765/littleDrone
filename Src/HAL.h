@@ -22,7 +22,6 @@ typedef struct acc_s {
 	sensorAccInitFuncPtr init;                             // initialize function
     sensorReadFuncPtr read;                                 // read 3 axis data function
     uint16_t acc_1G;
-    char revisionCode;                                      // a revision code for the sensor, if known
 } acc_t;
 
 typedef struct mag_s {
@@ -87,6 +86,17 @@ typedef struct battery_s{
 	float scale;
 }battery_t;
 
+enum model_s{
+	ON,
+	OFF,
+	SINGLE_FLASH,
+	DOUBLE_FLASH,
+	SINGLE_FLASH_500MS,
+};
+typedef struct led_s{
+	uint8_t state;	/*0 for off,1 for on*/
+	enum model_s model;
+}led_t;
 
 extern acc_t acc;
 extern gyro_t gyro;

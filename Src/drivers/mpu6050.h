@@ -92,10 +92,7 @@
 #define MPU_ADDR				0X68
 
 
-extern S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
-extern S_FLOAT_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
-extern u8							GYRO_OFFSET_OK;
-extern u8							ACC_OFFSET_OK;
+
 				
 				
 				

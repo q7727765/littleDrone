@@ -31,6 +31,17 @@ typedef struct
 }dt_flag_t;
 
 extern dt_flag_t f;
+extern u8 str0[STR_LEN];
+extern u8 str1[STR_LEN];
+extern u8 str2[STR_LEN];
+extern u8 str3[STR_LEN];
+extern u8 str4[STR_LEN];
+extern u8 str5[STR_LEN];
+extern u8 str6[STR_LEN];
+extern u8 str7[STR_LEN];
+extern u8 str8[STR_LEN];
+extern u8 str9[STR_LEN];
+
 
 void ANO_DT_Data_Exchange(void);
 void ANO_DT_Data_Receive_Prepare(u8 data);

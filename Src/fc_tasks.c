@@ -61,7 +61,7 @@ cfTask_t cfTasks[] = {
     [TASK_UPDATE_ATTITUDE] = {
         .taskName = "UPDATE_ATTITUDE",
         .taskFunc = taskUpdateAttitude,
-        .desiredPeriod = 1000,
+        .desiredPeriod = 2500,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
@@ -79,10 +79,10 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_MEDIUM,
     },
 
-    [TASK_RUNNLED] = {
-        .taskName = "RUNLED",
-        .taskFunc = taskRUNLED,
-        .desiredPeriod = 500000,
+    [TASK_LED] = {
+        .taskName = "LED",
+        .taskFunc = taskLED,
+        .desiredPeriod = 100000,
         .staticPriority = TASK_PRIORITY_LOW,
     },
 
@@ -106,7 +106,7 @@ void configureScheduler(void)
     schedulerInit();
     setTaskEnabled(TASK_SYSTEM, 1);
     setTaskEnabled(TASK_UPDATE_MPU6050, 0);
-    setTaskEnabled(TASK_RUNNLED, 1);
+    setTaskEnabled(TASK_LED, 1);
     setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
     setTaskEnabled(TASK_USART_DEBUG, 1);
     setTaskEnabled(TASK_UPDATE_MAG, 0);

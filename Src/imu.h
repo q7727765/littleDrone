@@ -1,53 +1,61 @@
-/*
- * imu.h
- *
- *  Created on: 2016年12月29日
- *      Author: 50430
- */
-
 #pragma once
 
-
-#include "stm32f103xb.h"
-#include "HAL.h"
-
-#define YAW 	now_attitude.yaw
-#define PITCH  	now_attitude.pitch
-#define ROLL 	now_attitude.roll
+#include <math.h>
+#include <stdint.h>
 
 
-typedef struct{
-				int16_t X;
-				int16_t Y;
-				int16_t Z;
-}S_INT16_XYZ;
-typedef struct{
-				float X;
-				float Y;
-				float Z;
-}S_FLOAT_XYZ;
+#define IMU_SAMPLE_RATE 			250.0f	//imu采样率（HZ）//1000.0f/(float)DMP_CALC_PRD
+#define IMU_FILTER_CUTOFF_FREQ	30.0f
+
+//校准时间
+#define ACC_CALC_TIME  3000//ms
+#define GYRO_CALC_TIME   2000000l	//us
+
+typedef float  quad[4];
+typedef float  vector3f[3];	//不可作为返回值，指针
+typedef float  matrix3f[3][3];
 
 
-extern attitude_t now_attitude;			//四元数计算出的角度
-extern S_FLOAT_XYZ GYRO_I;
-extern S_INT16_XYZ ACC_AVG;
-extern int16_t gyro_data[3];
-extern int16_t acc_data[3];
-extern int16_t mag_data[3];
+typedef struct mat3_tt
+{
+float m[3][3];
+}mat3;
 
-extern float gyro_rdata[3];
-extern float acc_rdata[3];
-
-extern float gyro_ldata[3];
-extern float acc_ldata[3];
+typedef struct vec3_tt
+{
+float v[3];
+}vec3;
 
 
+enum{ROLL,PITCH,YAW,THROTTLE};
+enum{X,Y,Z};
 
-void Prepare_Data(void);
-void Get_Attitude(void);
-void IMUupdate(float gx, float gy, float gz, float ax, float ay, float az);
+typedef struct IMU_tt
+{
+uint8_t caliPass;
+uint8_t ready;
+int16_t accADC[3];
+int16_t gyroADC[3];
+int16_t magADC[3];
+float 	accRaw[3];		//m/s^2
+float 	gyroRaw[3];		//rad/s
+float 	magRaw[3];		//
+float   accOffset[3];		//m/s^2
+float   gyroOffset[3];
+float   accb[3];		//filted, in body frame
+float   accg[3];
+float   gyro[3];
+float   DCMgb[3][3];
+float   q[4];
+float   roll;				//deg
+float   pitch;
+float 	yaw;
+float   rollRad;				//rad
+float   pitchRad;
+float 	yawRad;
+}imu_t;
 
-#define M_PI_F 3.1415926
+//enum{ROLL,PITCH,YAW};
 #define M_PI_F 3.1415926
 #define CONSTANTS_ONE_G					9.80665f		/* m/s^2		*/
 #define CONSTANTS_AIR_DENSITY_SEA_LEVEL_15C		1.225f			/* kg/m^3		*/
@@ -55,19 +63,19 @@ void IMUupdate(float gx, float gy, float gz, float ax, float ay, float az);
 #define CONSTANTS_ABSOLUTE_NULL_CELSIUS			-273.15f		/* 癈			*/
 #define CONSTANTS_RADIUS_OF_EARTH			6371000			/* meters (m)		*/
 
-#define SENSOR_MAX_G 8.0f		//constant g		// tobe fixed to 8g. but IMU need to  correct at the same time
-#define SENSOR_MAX_W 2000.0f	//deg/s
-#define ACC_SCALE  (SENSOR_MAX_G/32768.0f)
-#define GYRO_SCALE  (SENSOR_MAX_W/32768.0f)
+//extern volatile float accFilted[3],gyroFilted[3];
+//extern float DCMbg[3][3],DCMgb[3][3];
+//extern float accZoffsetTemp;
+//extern float IMU_Pitch,IMU_Roll,IMU_Yaw;
+extern imu_t imu;
+extern uint8_t imuCaliFlag;
 
 
-extern u8 str0[];
-extern u8 str1[];
-extern u8 str2[];
-extern u8 str3[];
-extern u8 str4[];
-extern u8 str5[];
-extern u8 str6[];
-extern u8 str7[];
-extern u8 str8[];
-extern u8 str9[];
+/* Function prototypes */
+static float invSqrt(float number);
+static void NonlinearSO3AHRSinit(float ax, float ay, float az, float mx, float my, float mz);
+static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz, float twoKp, float twoKi, float dt);
+
+void IMUSO3Thread(void);
+uint8_t IMU_Calibrate(void);
+

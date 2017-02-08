@@ -86,8 +86,6 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE BEGIN 0 */
 
-#define IMU_SAMPLE_RATE			1000.0f
-#define IMU_FILTER_CUTOFF_FREQ	30.0f
 
 char id;
 void init(void)

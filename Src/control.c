@@ -47,8 +47,8 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	rol_i=-2000;
 	
 	PID_ROL.pout = PID_ROL.P * err_rol;
-	PID_ROL.dout = PID_ROL.D*MPU6050_GYRO_LAST.X;
-	PID_ROL.iout = PID_ROL.I*rol_i;
+	PID_ROL.dout = PID_ROL.D * imu.gyroRaw[X];
+	PID_ROL.iout = PID_ROL.I * rol_i;
 	////////////////////////////////////////////////////
 	
 	//*******************PIT的计算*********************//
@@ -59,23 +59,23 @@ void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float p
 	pit_i=-2000;
 
 	PID_PIT.pout = PID_PIT.P * err_pit;
-	PID_PIT.dout = PID_PIT.D * MPU6050_GYRO_LAST.Y;
+	PID_PIT.dout = PID_PIT.D * imu.gyroRaw[Y];
 	PID_PIT.iout = PID_PIT.I *pit_i;	
 	////////////////////////////////////////////////////
 	
 	//*******************YAW的计算*********************//
 	if(rc.value[rc_yaw_num]<1400||rc.value[rc_yaw_num]>1600)
 	{
-		MPU6050_GYRO_LAST.Z = MPU6050_GYRO_LAST.Z + (rc.value[rc_yaw_num]-1500)*2;
+		imu.gyroRaw[Z] = imu.gyroRaw[Z] + (rc.value[rc_yaw_num]-1500)*2;
 	}
-	yaw_p+=MPU6050_GYRO_LAST.Z*0.0609756f*0.002f;
+	yaw_p+=imu.gyroRaw[Z]*0.0609756f*0.002f;
 	if(yaw_p>20)
 		yaw_p = 20;
 	if(yaw_p<-20)
 		yaw_p=-20;
 	
 	PID_YAW.pout = PID_YAW.P*yaw_p;
-	PID_YAW.dout = PID_YAW.dout*MPU6050_GYRO_LAST.Z;
+	PID_YAW.dout = PID_YAW.dout*imu.gyroRaw[Z];
 	////////////////////////////////////////////////////
 	if(rc.value[rc_thr_num]<START_THR)
 	{

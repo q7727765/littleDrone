@@ -20,7 +20,6 @@
 #include "math.h"
 #include "main.h"
 #include "stm32f1xx_hal.h"
-#include "axis.h"
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
 #define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)		) )
@@ -92,15 +91,17 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_status)
 	{
 		f.send_status = 0;
-		ANO_DT_Send_Status(-now_attitude.roll,now_attitude.pitch,now_attitude.yaw,0,0,ARMED);//last ARMED
+		ANO_DT_Send_Status(-imu.roll,imu.pitch,imu.yaw,0,0,ARMED);//last ARMED
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_senser)
 	{
 		f.send_senser = 0;
-		ANO_DT_Send_Senser(acc_ldata[X]*1000,acc_ldata[Y]*1000,acc_ldata[Z]*1000,
-							gyro_ldata[X]*1000,gyro_ldata[Y]*1000,gyro_ldata[Z]*1000,
-							mag_data[0],mag_data[1],mag_data[2],0);
+		ANO_DT_Send_Senser(imu.accb[X]*1000,imu.accb[Y]*1000,imu.accb[Z]*1000,
+							(imu.gyro[X]- imu.gyroOffset[X])*1000,
+							(imu.gyro[Y]- imu.gyroOffset[Y])*1000,
+							(imu.gyro[Z]- imu.gyroOffset[Z])*1000,
+							imu.magRaw[0],imu.magRaw[1],imu.magRaw[2],0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_rcdata)
@@ -263,9 +264,9 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 	if(*(data_buf+2)==0X01)
 	{
 		if(*(data_buf+4)==0X01)
-			ACC_OFFSET_OK  = 0;//++++
+			imu.caliPass = 0;//++++
 		if(*(data_buf+4)==0X02	)
-			GYRO_OFFSET_OK = 0;//++++
+			imu.caliPass = 0;//++++
 		if(*(data_buf+4)==0X03)
 		{
 			//mpu6050.Acc_CALIBRATE = 1;		//++++
