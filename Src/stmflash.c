@@ -4,12 +4,17 @@
 #include "mpu6050.h"
 #include "control.h"
 #include "ANO_DT.h"
-u32 VirtAddVarTab[NumbOfVar] = {
+u32 VirtAddVarTab[] = {
 		0x1EE00, 0x1EE02, 0x1EE04,
-		0x1EE08, 0x1EE0a, 0x1EE0c,
-		0x1EE10, 0x1EE12, 0x1EE14,
-		0x1EE18, 0x1EE1a, 0x1EE1c,
-		0x1EE20, 0x1EE22, 0x1EE24,};
+		0x1EE06, 0x1EE08, 0x1EE0A,
+		0x1EE1C, 0x1EE1E, 0x1EE20,
+		0x1EE22, 0x1EE24, 0x1EE26,
+		0x1EE28, 0x1EE2A, 0x1EE2C,
+		0x1EE2E, 0x1EE30, 0x1EE32,
+		0x1EE34, 0x1EE36, 0x1EE38,
+		0x1EE3A, 0x1EE3C, 0x1EE3E,
+
+};
 
 //#define EE_6050_ACC_X_OFFSET_ADDR	0
 //#define EE_6050_ACC_Y_OFFSET_ADDR	1
@@ -26,7 +31,15 @@ u32 VirtAddVarTab[NumbOfVar] = {
 //#define EE_PID_YAW_P	12
 //#define EE_PID_YAW_I	13
 //#define EE_PID_YAW_D	14																
-																		 
+//#define EE_PID_ANGLE_ROLL_P	15
+//#define EE_PID_ANGLE_ROLL_I	16
+//#define EE_PID_ANGLE_ROLL_D	17
+//#define EE_PID_ANGLE_PIT_P	18
+//#define EE_PID_ANGLE_PIT_I	19
+//#define EE_PID_ANGLE_PIT_D	20
+//#define EE_PID_ANGLE_YAW_P	21
+//#define EE_PID_ANGLE_YAW_I	22
+//#define EE_PID_ANGLE_YAW_D	23
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK战舰STM32开发板
@@ -54,15 +67,22 @@ u32 VirtAddVarTab[NumbOfVar] = {
 
 void Para_ResetToFactorySetup()
 {
-	PID_ROL.P = 1.5; PID_ROL.I = 0.00; PID_ROL.D = 0.040;
+	roll_rate_PID.P  = 1.5; roll_rate_PID.I  = 0.00; roll_rate_PID.D  = 0.040;
 
-	PID_PIT.P = 1.5 ;PID_PIT.I = 0.00; PID_PIT.D = 0.040;
+	pitch_rate_PID.P = 1.5 ;pitch_rate_PID.I = 0.00; pitch_rate_PID.D = 0.040;
 
-	PID_YAW.P = 1.0; PID_YAW.I = 0.00; PID_YAW.D = 0;
+	yaw_rate_PID.P   = 1.0; yaw_rate_PID.I   = 0.00; yaw_rate_PID.D   = 0;
+
+	roll_angle_PID.P  = 1.5; roll_angle_PID.I  = 0.00; roll_angle_PID.D  = 0.040;
+
+	pitch_angle_PID.P = 1.5 ;pitch_angle_PID.I = 0.00; pitch_angle_PID.D = 0.040;
+
+	yaw_angle_PID.P   = 1.0; yaw_angle_PID.I   = 0.00; yaw_angle_PID.D   = 0;
+
 
 	EE_SAVE_PID();
 	f.send_pid1 = 1;
-//	f.send_pid2 = 1;
+	f.send_pid2 = 1;
 //	f.send_pid3 = 1;
 //	f.send_pid4 = 1;
 //	f.send_pid5 = 1;
@@ -114,48 +134,88 @@ void EE_READ_GYRO_OFFSET(void)
 void EE_SAVE_PID(void)
 {
 	u16 _temp;
-	_temp = PID_ROL.P * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_ROL_P],_temp);
-	_temp = PID_ROL.I * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_ROL_I],_temp);
-	_temp = PID_ROL.D * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_ROL_D],_temp);
-	_temp = PID_PIT.P * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_PIT_P],_temp);
-	_temp = PID_PIT.I * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_PIT_I],_temp);
-	_temp = PID_PIT.D * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_PIT_D],_temp);
-	_temp = PID_YAW.P * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_YAW_P],_temp);
-	_temp = PID_YAW.I * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_YAW_I],_temp);
-	_temp = PID_YAW.D * 100;
-	EE_WriteVariable(VirtAddVarTab[EE_PID_YAW_D],_temp);
+	_temp = (uint16_t)(roll_rate_PID.P * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_ROLL_P],_temp);
+	_temp = (uint16_t)(roll_rate_PID.I * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_ROLL_I],_temp);
+	_temp = (uint16_t)(roll_rate_PID.D * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_ROLL_D],_temp);
+	_temp = (uint16_t)(pitch_rate_PID.P * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_PIT_P],_temp);
+	_temp = (uint16_t)(pitch_rate_PID.I * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_PIT_I],_temp);
+	_temp = (uint16_t)(pitch_rate_PID.D * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_PIT_D],_temp);
+	_temp = (uint16_t)(yaw_rate_PID.P * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_YAW_P],_temp);
+	_temp = (uint16_t)(yaw_rate_PID.I * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_YAW_I],_temp);
+	_temp = (uint16_t)(yaw_rate_PID.D * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_RATE_YAW_D],_temp);
+
+	_temp = (uint16_t)(roll_angle_PID.P * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_ROLL_P],_temp);
+	_temp = (uint16_t)(roll_angle_PID.I * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_ROLL_I],_temp);
+	_temp = (uint16_t)(roll_angle_PID.D * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_ROLL_D],_temp);
+	_temp = (uint16_t)(pitch_angle_PID.P * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_PIT_P],_temp);
+	_temp = (uint16_t)(pitch_angle_PID.I * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_PIT_I],_temp);
+	_temp = (uint16_t)(pitch_angle_PID.D * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_PIT_D],_temp);
+	_temp = (uint16_t)(yaw_angle_PID.P * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_YAW_P],_temp);
+	_temp = (uint16_t)(yaw_angle_PID.I * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_YAW_I],_temp);
+	_temp = (uint16_t)(yaw_angle_PID.D * 1000);
+	EE_WriteVariable(VirtAddVarTab[EE_PID_ANGLE_YAW_D],_temp);
 }
 void EE_READ_PID(void)
 {
 	u16 _temp;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_ROL_P],&_temp);
-	PID_ROL.P = (float)_temp / 100;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_ROL_I],&_temp);
-	PID_ROL.I = (float)_temp / 100;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_ROL_D],&_temp);
-	PID_ROL.D = (float)_temp / 100;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_PIT_P],&_temp);
-	PID_PIT.P = (float)_temp / 100;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_PIT_I],&_temp);
-	PID_PIT.I = (float)_temp / 100;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_PIT_D],&_temp);
-	PID_PIT.D = (float)_temp / 100;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_YAW_P],&_temp);
-	PID_YAW.P = (float)_temp / 100;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_YAW_I],&_temp);
-	PID_YAW.I = (float)_temp / 100;
-	EE_ReadVariable(VirtAddVarTab[EE_PID_YAW_D],&_temp);
-	PID_YAW.D = (float)_temp / 100;
+
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_ROLL_P],&_temp);
+	roll_rate_PID.P = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_ROLL_I],&_temp);
+	roll_rate_PID.I = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_ROLL_D],&_temp);
+	roll_rate_PID.D = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_PIT_P],&_temp);
+	pitch_rate_PID.P = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_PIT_I],&_temp);
+	pitch_rate_PID.I = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_PIT_D],&_temp);
+	pitch_rate_PID.D = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_YAW_P],&_temp);
+	yaw_rate_PID.P = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_YAW_I],&_temp);
+	yaw_rate_PID.I = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_YAW_D],&_temp);
+	yaw_rate_PID.D = (float)_temp / 1000;
+
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_ROLL_P],&_temp);
+	roll_angle_PID.P = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_ROLL_I],&_temp);
+	roll_angle_PID.I = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_ROLL_D],&_temp);
+	roll_angle_PID.D = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_PIT_P],&_temp);
+	pitch_angle_PID.P = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_PIT_I],&_temp);
+	pitch_angle_PID.I = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_PIT_D],&_temp);
+	pitch_angle_PID.D = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_YAW_P],&_temp);
+	yaw_angle_PID.P = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_YAW_I],&_temp);
+	yaw_angle_PID.I = (float)_temp / 1000;
+	EE_ReadVariable(VirtAddVarTab[EE_PID_ANGLE_YAW_D],&_temp);
+	yaw_angle_PID.D = (float)_temp / 1000;
 
 	f.send_pid1 = 1;
+	f.send_pid2 = 1;
 }
 
 u8 EE_WriteVariable(u32 addr,u16 data)

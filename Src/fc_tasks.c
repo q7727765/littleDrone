@@ -44,10 +44,10 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_HIGH,
     },
 
-    [TASK_UPDATE_MPU6050] = {
-        .taskName = "UPDATE_MPU6050",
-        .taskFunc = taskUpdateMPU6050,
-        .desiredPeriod = 1000,
+    [TASK_UPDATE_ATT_ANGLE] = {
+        .taskName = "UPDATE_ATT_ANGLE",
+        .taskFunc = taskUpdateAttiAngle,
+        .desiredPeriod = 10000,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
@@ -69,7 +69,7 @@ cfTask_t cfTasks[] = {
         .taskName = "PID_LOOP",
         .taskFunc = taskPIDLoop,
         .desiredPeriod = 20000,
-        .staticPriority = TASK_PRIORITY_REALTIME_PRO,
+        .staticPriority = 0,
     },
 
     [TASK_BATTERY_MONITOR] = {
@@ -97,7 +97,7 @@ cfTask_t cfTasks[] = {
         .taskName = "UPDATE_RC",
         .taskFunc = taskUpdateRC,
         .desiredPeriod = 20000,
-        .staticPriority = TASK_PRIORITY_REALTIME_PRO,
+        .staticPriority = TASK_PRIORITY_REALTIME,
     },
 };
 
@@ -105,7 +105,7 @@ void configureScheduler(void)
 {
     schedulerInit();
     setTaskEnabled(TASK_SYSTEM, 1);
-    setTaskEnabled(TASK_UPDATE_MPU6050, 0);
+    setTaskEnabled(TASK_UPDATE_ATT_ANGLE, 1);
     setTaskEnabled(TASK_LED, 1);
     setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
     setTaskEnabled(TASK_USART_DEBUG, 1);

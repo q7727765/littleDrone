@@ -132,8 +132,8 @@ u8 NRF24L01_RxPacket(u8 *rxbuf)
 	sta=NRF24L01_Read_Reg(STATUS);  //读取状态寄存器的值    	 
 
 	NRF24L01_Write_Reg(NRF_WRITE_REG+STATUS,sta); //清除TX_DS或MAX_RT中断标志
-	Send0x(sta);
-	_n();
+//	Send0x(sta);
+//	_n();
 	if(sta&RX_OK)//接收到数据
 	{
 		NRF24L01_Read_Buf(RD_RX_PLOAD,rxbuf,RX_PLOAD_WIDTH);//读取数据

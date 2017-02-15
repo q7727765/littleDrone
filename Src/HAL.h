@@ -63,7 +63,11 @@ enum rc_e{
 
 //typedef void (*rcUpdateFunPtr)(void);
 typedef struct rc_s {
-	uint16_t value[8];		//通道值。真正要传过去飞机的值。（1000~2000）
+	float thr;
+	float rol;
+	float pit;
+	float yaw;
+	int16_t value[8];		//通道值。真正要传过去飞机的值。（1000~2000）
 	int8_t	 direct[8];		//通道方向。（-1：反向。1：正向）
 	int16_t  trim[4];		//通道微调。左负右正
 //	rcUpdateFunPtr rc_update;

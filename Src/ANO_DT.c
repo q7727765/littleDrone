@@ -20,6 +20,9 @@
 #include "math.h"
 #include "main.h"
 #include "stm32f1xx_hal.h"
+#include "control.h"
+#include "HAL.h"
+
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
 #define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)		) )
@@ -91,16 +94,16 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_status)
 	{
 		f.send_status = 0;
-		ANO_DT_Send_Status(-imu.roll,imu.pitch,imu.yaw,0,0,ARMED);//last ARMED
+		ANO_DT_Send_Status(-imu.roll,imu.pitch,imu.yaw,0,0,!motorLock);//last ARMED
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_senser)
 	{
 		f.send_senser = 0;
 		ANO_DT_Send_Senser(imu.accb[X]*1000,imu.accb[Y]*1000,imu.accb[Z]*1000,
-							(imu.gyro[X]- imu.gyroOffset[X])*1000,
-							(imu.gyro[Y]- imu.gyroOffset[Y])*1000,
-							(imu.gyro[Z]- imu.gyroOffset[Z])*1000,
+							(imu.gyro[X]- 1*imu.gyroOffset[X])*180.0f/M_PI_F,
+							(imu.gyro[Y]- 1*imu.gyroOffset[Y])*180.0f/M_PI_F,
+							(imu.gyro[Z]- 1*imu.gyroOffset[Z])*180.0f/M_PI_F,
 							imu.magRaw[0],imu.magRaw[1],imu.magRaw[2],0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
@@ -116,10 +119,10 @@ void ANO_DT_Data_Exchange(void)
 	{
 		f.send_motopwm = 0;
 		ANO_DT_Send_MotoPWM(
-				(u16)*(motor.value[0]),
-				(u16)*(motor.value[1]),
-				(u16)*(motor.value[2]),
-				(u16)*(motor.value[3]),
+				Motor[0],
+				Motor[1],
+				Motor[2],
+				Motor[3],
 				0,0,0,0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
@@ -133,17 +136,17 @@ void ANO_DT_Data_Exchange(void)
 	{
 
 		f.send_pid1 = 0;
-		ANO_DT_Send_PID(1,PID_ROL.P,PID_ROL.I,PID_ROL.D,
-											PID_PIT.P,PID_PIT.I,PID_PIT.D,
-											PID_YAW.P,PID_YAW.I,PID_YAW.D);
+		ANO_DT_Send_PID(1,roll_rate_PID.P,roll_rate_PID.I,roll_rate_PID.D,
+							pitch_rate_PID.P,pitch_rate_PID.I,pitch_rate_PID.D,
+							yaw_rate_PID.P,yaw_rate_PID.I,yaw_rate_PID.D);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_pid2)
 	{
 		f.send_pid2 = 0;
-		ANO_DT_Send_PID(2,0,0,0,
-											0,0,0,
-											0,0,0);
+		ANO_DT_Send_PID(2,roll_angle_PID.P,roll_angle_PID.I,roll_angle_PID.D,
+							pitch_angle_PID.P,pitch_angle_PID.I,pitch_angle_PID.D,
+							yaw_angle_PID.P,yaw_angle_PID.I,yaw_angle_PID.D);
 	}
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_pid3)
@@ -304,31 +307,31 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 	//发送PID1
 	if(*(data_buf+2)==0X10)								//PID1
     {
-        PID_ROL.P  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
-        PID_ROL.I  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
-        PID_ROL.D  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
-        PID_PIT.P = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
-        PID_PIT.I = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
-        PID_PIT.D = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
-        PID_YAW.P = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
-        PID_YAW.I = 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
-        PID_YAW.D = 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+        roll_rate_PID.P  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
+        roll_rate_PID.I  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
+        roll_rate_PID.D  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
+        pitch_rate_PID.P = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
+        pitch_rate_PID.I = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
+        pitch_rate_PID.D = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
+        yaw_rate_PID.P = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
+        yaw_rate_PID.I = 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
+        yaw_rate_PID.D = 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
         ANO_DT_Send_Check(*(data_buf+2),sum);
 		Param_SavePID();
     }
     if(*(data_buf+2)==0X11)								//PID2
     {
-//        ctrl_1.PID[PID4].kp 	= 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
-//        ctrl_1.PID[PID4].ki 	= 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
-//        ctrl_1.PID[PID4].kd 	= 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
-//        ctrl_1.PID[PID5].kp 	= 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
-//        ctrl_1.PID[PID5].ki 	= 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
-//        ctrl_1.PID[PID5].kd 	= 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
-//        ctrl_1.PID[PID6].kp	  = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
-//        ctrl_1.PID[PID6].ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
-//        ctrl_1.PID[PID6].kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
-//        ANO_DT_Send_Check(*(data_buf+2),sum);
-//				Param_SavePID();
+        roll_angle_PID.P  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
+        roll_angle_PID.I  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
+        roll_angle_PID.D  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
+        pitch_angle_PID.P = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
+        pitch_angle_PID.I = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
+        pitch_angle_PID.D = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
+        yaw_angle_PID.P = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
+        yaw_angle_PID.I = 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
+        yaw_angle_PID.D = 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+        ANO_DT_Send_Check(*(data_buf+2),sum);
+		Param_SavePID();
     }
     if(*(data_buf+2)==0X12)								//PID3
     {

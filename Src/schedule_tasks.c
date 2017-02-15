@@ -20,6 +20,7 @@
 #include "control.h"
 #include "nrf24l01.h"
 #include "led.h"
+#include "maths.h"
 
 uint32_t baroPressureSumtt = 0;
 extern int32_t baroPressure;
@@ -34,16 +35,39 @@ extern u8 mpu6050_buffer[14];					//iic读取后存放数据
 extern ADC_HandleTypeDef hadc1;
 battery_t battery;
 
+union _dat{
+	uint16_t full;
+	uint8_t  byte[2];
+}d_temp;
+
 void taskUsartDebug(void)
 {
 
 	ANO_DT_Data_Exchange();
 
 }
-void taskUpdateMPU6050(void)
+
+void taskUpdateAttiAngle(void)
 {
+	static uint32_t t0,t1;
+	static uint32_t old;
 
+	old = t0;
+	t0 = micros();
 
+	CtrlAttiAng();
+
+	t1 = micros();
+
+	//外环计算时间
+	d_temp.full = (uint16_t)(t1 - t0) * 100;
+	str0[10] = d_temp.byte[1];
+	str0[11] = d_temp.byte[0];
+
+	//外环周期
+	d_temp.full = (uint16_t)(t0 - old);
+	str0[12] = d_temp.byte[1];
+	str0[13] = d_temp.byte[0];
 }
 
 void taskUpdateMAG(void)
@@ -51,14 +75,8 @@ void taskUpdateMAG(void)
 	mag.read(mag_data);
 
 }
+
 attitude_t tar_attitude;
-
-
-
-union _dat{
-	uint16_t full;
-	uint8_t  byte[2];
-}d_temp;
 
 void taskUpdateAttitude(void)
 {
@@ -86,47 +104,46 @@ void taskUpdateAttitude(void)
 	t2 = micros();
 #endif
 
-
+	CtrlAttiRate();
 
 #if _debug_taskUpdateAttitude
 	t3 = micros();
 #endif
 
-	tar_attitude.pitch = (rc.value[rc_pit_num] - 1500) / 25.0;
-	tar_attitude.roll  = (rc.value[rc_rol_num] - 1500) / 25.0 ;
-	tar_attitude.yaw   = (rc.value[rc_yaw_num] - 1500) / 25.0;
+	CtrlMotor();
 
 #if _debug_taskUpdateAttitude
 	t4 = micros();
 #endif
 
-	CONTROL(imu.roll  ,
-			imu.pitch ,
-			imu.yaw   ,
-			-tar_attitude.roll  ,
-			-tar_attitude.pitch,
-			-tar_attitude.yaw);
-
 #if _debug_taskUpdateAttitude
 
 	t5 = micros();
 
-	//imu数据采集时间
+	//imu数据采集和姿态计算
 	d_temp.full = (uint16_t)(t2 - t1);
 	str0[0] = d_temp.byte[1];
 	str0[1] = d_temp.byte[0];
 
-	//四元数姿态融合
-	d_temp.full = (uint16_t)(t5 - t1);
+	//pid控制
+	d_temp.full = (uint16_t)(t3 - t2)*100;
 	str0[2] = d_temp.byte[1];
 	str0[3] = d_temp.byte[0];
 
-	//两次任务执行间隔
-	d_temp.full = (uint16_t)(t1 - old);
+	//输出到电机
+	d_temp.full = (uint16_t)(t4 - t3)*100;
 	str0[4] = d_temp.byte[1];
 	str0[5] = d_temp.byte[0];
 
+	//内环计算时间
+	d_temp.full = (uint16_t)(t5 - t1);
+	str0[6] = d_temp.byte[1];
+	str0[7] = d_temp.byte[0];
 
+	//两次任务执行间隔
+	d_temp.full = (uint16_t)(t1 - old);
+	str0[8] = d_temp.byte[1];
+	str0[9] = d_temp.byte[0];
 #endif
 }
 
@@ -137,17 +154,44 @@ void taskPIDLoop(void)
 
 void taskUpdateRC(void)
 {
+	static uint32_t t0,t1;
+	static uint32_t old;
+
+	old = t0;
+	t0 = micros();
+
 	NRF24L01_RxPacket((u8*)rc.value);
+
+	rc.value[rc_thr_num] = constrain(rc.value[rc_thr_num] + 0,1000,2000);
+	rc.value[rc_yaw_num] = constrain(rc.value[rc_yaw_num] + 0,1000,2000);
+	rc.value[rc_pit_num] = constrain(rc.value[rc_pit_num] + 0,1000,2000);
+	rc.value[rc_rol_num] = constrain(rc.value[rc_rol_num] + 0,1000,2000);
+
+	rc.thr = rc.value[rc_thr_num]-1000;
+	rc.yaw = YAW_RATE_MAX * dbScaleLinear((rc.value[rc_yaw_num] - 1500),500,APP_YAW_DB);
+	rc.pit = -Angle_Max * dbScaleLinear((rc.value[rc_pit_num] - 1500),500,APP_PR_DB);
+	rc.rol = -Angle_Max * dbScaleLinear((rc.value[rc_rol_num] - 1500),500,APP_PR_DB);
 
 	if(rc.value[rc_push_num] == 1000){
 		imu.caliPass = 0;
 	}
 
 	if(rc.value[rc_aux2_num] == 2000){
-		ARMED = 1;
+		motorLock = 0;
 	}else{
-		ARMED = 0;
+		motorLock = 1;
 	}
+
+	t1 = micros();
+	//外环计算时间
+	d_temp.full = (uint16_t)(t1 - t0)*100;
+	str0[14] = d_temp.byte[1];
+	str0[15] = d_temp.byte[0];
+
+	//外环周期
+	d_temp.full = (uint16_t)(t0 - old)/10;
+	str0[16] = d_temp.byte[1];
+	str0[17] = d_temp.byte[0];
 
 }
 

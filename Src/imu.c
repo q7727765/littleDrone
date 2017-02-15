@@ -330,6 +330,9 @@ void ReadIMUSensorHandle(void)
 		imu.accb[1]=LPF2pApply_2(imu.accRaw[1]-imu.accOffset[1]);
 		imu.accb[2]=LPF2pApply_3(imu.accRaw[2]-imu.accOffset[2]);
 
+//		imu.gyro[0]=LPF2pApply_4(imu.gyroRaw[0]-imu.gyroOffset[0]);
+//		imu.gyro[1]=LPF2pApply_5(imu.gyroRaw[1]-imu.gyroOffset[1]);
+//		imu.gyro[2]=LPF2pApply_6(imu.gyroRaw[2]-imu.gyroOffset[2]);
 		imu.gyro[0]=LPF2pApply_4(imu.gyroRaw[0]);
 		imu.gyro[1]=LPF2pApply_5(imu.gyroRaw[1]);
 		imu.gyro[2]=LPF2pApply_6(imu.gyroRaw[2]);
@@ -337,8 +340,8 @@ void ReadIMUSensorHandle(void)
 
 }
 
-#define so3_comp_params_Kp 8.8f
-#define so3_comp_params_Ki  0.01f
+#define so3_comp_params_Kp 4.0f
+#define so3_comp_params_Ki  0.05f
 
  
 //º¯ÊýÃû£ºIMUSO3Thread(void)

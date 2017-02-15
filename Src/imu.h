@@ -4,17 +4,24 @@
 #include <stdint.h>
 
 
-#define IMU_SAMPLE_RATE 			250.0f	//imu采样率（HZ）//1000.0f/(float)DMP_CALC_PRD
+#define IMU_SAMPLE_RATE 			400.0f	//imu采样率（HZ）//1000.0f/(float)DMP_CALC_PRD
 #define IMU_FILTER_CUTOFF_FREQ	30.0f
 
 //校准时间
-#define ACC_CALC_TIME  3000//ms
+#define ACC_CALC_TIME  2000//ms
 #define GYRO_CALC_TIME   2000000l	//us
 
 typedef float  quad[4];
 typedef float  vector3f[3];	//不可作为返回值，指针
 typedef float  matrix3f[3][3];
 
+typedef struct float_xyz
+{
+    float X;
+    float Y;
+    float Z;
+
+}S_FLOAT_XYZ;
 
 typedef struct mat3_tt
 {
