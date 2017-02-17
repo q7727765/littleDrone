@@ -340,8 +340,8 @@ void ReadIMUSensorHandle(void)
 
 }
 
-#define so3_comp_params_Kp 4.0f
-#define so3_comp_params_Ki  0.05f
+#define so3_comp_params_Kp 3.0f
+#define so3_comp_params_Ki  0.01f
 
  
 //º¯ÊýÃû£ºIMUSO3Thread(void)

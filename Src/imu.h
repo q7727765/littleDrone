@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 
-#define IMU_SAMPLE_RATE 			400.0f	//imu采样率（HZ）//1000.0f/(float)DMP_CALC_PRD
+#define IMU_SAMPLE_RATE 			666.67f	//imu采样率（HZ）//1000.0f/(float)DMP_CALC_PRD
 #define IMU_FILTER_CUTOFF_FREQ	30.0f
 
 //校准时间

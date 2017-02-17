@@ -47,7 +47,7 @@ cfTask_t cfTasks[] = {
     [TASK_UPDATE_ATT_ANGLE] = {
         .taskName = "UPDATE_ATT_ANGLE",
         .taskFunc = taskUpdateAttiAngle,
-        .desiredPeriod = 10000,
+        .desiredPeriod = 3000,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
@@ -61,7 +61,7 @@ cfTask_t cfTasks[] = {
     [TASK_UPDATE_ATTITUDE] = {
         .taskName = "UPDATE_ATTITUDE",
         .taskFunc = taskUpdateAttitude,
-        .desiredPeriod = 2500,
+        .desiredPeriod = 1500,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
@@ -96,7 +96,7 @@ cfTask_t cfTasks[] = {
     [TASK_UPDATE_RC] = {
         .taskName = "UPDATE_RC",
         .taskFunc = taskUpdateRC,
-        .desiredPeriod = 20000,
+        .desiredPeriod = 10000,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 };

@@ -91,7 +91,7 @@ void MPU_Init_Gyro(void)
 	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X00);	//唤醒MPU6050 
 	MPU_Set_Gyro_Fsr(3);					//陀螺仪传感器,±2000dps
 
-	MPU_Set_LPF(20);
+	MPU_Set_LPF(42);
 	//MPU_Set_Rate(50);						//设置采样率50Hz
 	MPU_Write_Byte(MPU_INT_EN_REG,0X00);	//关闭所有中断
 	MPU_Write_Byte(MPU_USER_CTRL_REG,0X00);	//I2C主模式关闭
@@ -100,8 +100,8 @@ void MPU_Init_Gyro(void)
 			0 << 7 | 0 << 6 | 0 << 5 | 0 << 4 | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0);	//INT引脚低电平有效
 
 	MPU_Write_Byte(MPU_PWR_MGMT2_REG,0X00);	//加速度与陀螺仪都工作
-	//MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X03);	//设置CLKSEL,PLL X轴为参考
-	MPU_Set_Rate(50);						//设置采样率为50Hz
+	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X03);	//设置CLKSEL,PLL Z轴为参考
+	//MPU_Set_Rate(50);						//设置采样率为50Hz
 
 }
 

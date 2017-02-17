@@ -469,7 +469,7 @@ void CtrlMotor(void)
 		float  cosTilt = imu.accb[2] / CONSTANTS_ONE_G;
 
 		altCtrlMode = MANUAL;
-
+//		Thro = rc.thr;
 		if(altCtrlMode==MANUAL)
 		{
 			DIF_ACC.Z =  imu.accb[2] - CONSTANTS_ONE_G;
