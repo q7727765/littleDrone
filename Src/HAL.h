@@ -117,3 +117,4 @@ extern void detectGyro();
 extern void detectMag();
 extern void detectBaro();
 extern uint32_t recalculateBarometerTotal(uint8_t baroSampleCount, uint32_t pressureTotal, int32_t newPressureReading);
+extern void mag_calibration(void);

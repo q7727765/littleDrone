@@ -38,6 +38,7 @@ static uint8_t bFilterInit = 0;
 imu_t imu={
 		.caliPass = 1,
 		.ready = 1,
+		.magCaliPass = 1
 };
 
 //函数名：invSqrt(void)
@@ -340,7 +341,7 @@ void ReadIMUSensorHandle(void)
 
 }
 
-#define so3_comp_params_Kp 3.0f
+#define so3_comp_params_Kp 5.0f//3是可以飞的
 #define so3_comp_params_Ki  0.01f
 
  
@@ -409,6 +410,10 @@ void IMUSO3Thread(void)
 	acc_temp[0] = -imu.accb[0];
 	acc_temp[1] = -imu.accb[1];
 	acc_temp[2] = -imu.accb[2];
+
+//	mag_temp[0] = (float)imu.magRaw[0];
+//	mag_temp[1] = (float)imu.magRaw[1];
+//	mag_temp[2] = (float)imu.magRaw[2];
 
 		// NOTE : Accelerometer is reversed.
 		// Because proper mount of PX4 will give you a reversed accelerometer readings.

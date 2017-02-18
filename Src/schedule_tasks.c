@@ -72,8 +72,25 @@ void taskUpdateAttiAngle(void)
 
 void taskUpdateMAG(void)
 {
-	mag.read(mag_data);
+	static uint32_t t0,old;
 
+	old = t0;
+	t0 = micros();
+
+	d_temp.full = (uint16_t)((t0 - old) / 10);
+	str0[22] = d_temp.byte[1];
+	str0[23] = d_temp.byte[0];
+
+	mag.read(imu.magADC);
+
+	if(imu.magCaliPass == 0){
+		led.model = ON;
+		mag_calibration();
+	}
+
+	imu.magRaw[X] = (imu.magADC[X] - imu.magOffset[X]);
+	imu.magRaw[Y] = (imu.magADC[Y] - imu.magOffset[Y]);
+	imu.magRaw[Z] = (imu.magADC[Z] - imu.magOffset[Z]);
 }
 
 attitude_t tar_attitude;
@@ -180,6 +197,10 @@ void taskUpdateRC(void)
 		motorLock = 0;
 	}else{
 		motorLock = 1;
+	}
+
+	if(rc.value[rc_aux1_num] == 2000){
+		imu.magCaliPass = 0;
 	}
 
 	t1 = micros();

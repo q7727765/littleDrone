@@ -94,7 +94,7 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_status)
 	{
 		f.send_status = 0;
-		ANO_DT_Send_Status(-imu.roll,imu.pitch,imu.yaw,0,0,!motorLock);//last ARMED
+		ANO_DT_Send_Status(-imu.roll,imu.pitch,-imu.yaw,0,0,!motorLock);//last ARMED
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_senser)
@@ -104,7 +104,7 @@ void ANO_DT_Data_Exchange(void)
 							(imu.gyro[X]- 1*imu.gyroOffset[X])*180.0f/M_PI_F,
 							(imu.gyro[Y]- 1*imu.gyroOffset[Y])*180.0f/M_PI_F,
 							(imu.gyro[Z]- 1*imu.gyroOffset[Z])*180.0f/M_PI_F,
-							imu.magRaw[0],imu.magRaw[1],imu.magRaw[2],0);
+							imu.magRaw[X],imu.magRaw[Y],imu.magRaw[Z],0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_rcdata)

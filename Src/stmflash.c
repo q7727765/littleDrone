@@ -4,42 +4,47 @@
 #include "mpu6050.h"
 #include "control.h"
 #include "ANO_DT.h"
-u32 VirtAddVarTab[] = {
-		0x1EE00, 0x1EE02, 0x1EE04,
-		0x1EE06, 0x1EE08, 0x1EE0A,
-		0x1EE1C, 0x1EE1E, 0x1EE20,
-		0x1EE22, 0x1EE24, 0x1EE26,
-		0x1EE28, 0x1EE2A, 0x1EE2C,
-		0x1EE2E, 0x1EE30, 0x1EE32,
-		0x1EE34, 0x1EE36, 0x1EE38,
-		0x1EE3A, 0x1EE3C, 0x1EE3E,
 
+#define EE_6050_ACC_X_OFFSET_ADDR	0
+#define EE_6050_ACC_Y_OFFSET_ADDR	1
+#define EE_6050_ACC_Z_OFFSET_ADDR	2
+#define EE_6050_GYRO_X_OFFSET_ADDR	3
+#define EE_6050_GYRO_Y_OFFSET_ADDR	4
+#define EE_6050_GYRO_Z_OFFSET_ADDR	5
+#define EE_PID_RATE_ROLL_P			6
+#define EE_PID_RATE_ROLL_I			7
+#define EE_PID_RATE_ROLL_D			8
+#define EE_PID_RATE_PIT_P			9
+#define EE_PID_RATE_PIT_I			10
+#define EE_PID_RATE_PIT_D			11
+#define EE_PID_RATE_YAW_P			12
+#define EE_PID_RATE_YAW_I			13
+#define EE_PID_RATE_YAW_D			14
+#define EE_PID_ANGLE_ROLL_P			15
+#define EE_PID_ANGLE_ROLL_I			16
+#define EE_PID_ANGLE_ROLL_D			17
+#define EE_PID_ANGLE_PIT_P			18
+#define EE_PID_ANGLE_PIT_I			19
+#define EE_PID_ANGLE_PIT_D			20
+#define EE_PID_ANGLE_YAW_P			21
+#define EE_PID_ANGLE_YAW_I			22
+#define EE_PID_ANGLE_YAW_D			23
+#define EE_MAG_X_OFFSET_ADDR		24
+#define EE_MAG_Y_OFFSET_ADDR		25
+#define EE_MAG_Z_OFFSET_ADDR		26
+
+u32 VirtAddVarTab[] = {
+		0x1EE00, 0x1EE02, 0x1EE04,//acc_offset(XYZ)
+		0x1EE06, 0x1EE08, 0x1EE0A,//gyro_offset(XYZ)
+		0x1EE1C, 0x1EE1E, 0x1EE20,//rate_rol(P I D)
+		0x1EE22, 0x1EE24, 0x1EE26,//rate_pit(P I D)
+		0x1EE28, 0x1EE2A, 0x1EE2C,//rate_yaw(P I D)
+		0x1EE2E, 0x1EE30, 0x1EE32,//ang_rol(P I D)
+		0x1EE34, 0x1EE36, 0x1EE38,//ang_pit(P I D)
+		0x1EE3A, 0x1EE3C, 0x1EE3E,//ang_yaw(P I D)
+		0x1EE40, 0x1EE42, 0x1EE44,//mag_offset(XYZ)
 };
 
-//#define EE_6050_ACC_X_OFFSET_ADDR	0
-//#define EE_6050_ACC_Y_OFFSET_ADDR	1
-//#define EE_6050_ACC_Z_OFFSET_ADDR	2
-//#define EE_6050_GYRO_X_OFFSET_ADDR	3
-//#define EE_6050_GYRO_Y_OFFSET_ADDR	4
-//#define EE_6050_GYRO_Z_OFFSET_ADDR	5
-//#define EE_PID_ROL_P	6
-//#define EE_PID_ROL_I	7
-//#define EE_PID_ROL_D	8
-//#define EE_PID_PIT_P	9
-//#define EE_PID_PIT_I	10
-//#define EE_PID_PIT_D	11
-//#define EE_PID_YAW_P	12
-//#define EE_PID_YAW_I	13
-//#define EE_PID_YAW_D	14																
-//#define EE_PID_ANGLE_ROLL_P	15
-//#define EE_PID_ANGLE_ROLL_I	16
-//#define EE_PID_ANGLE_ROLL_D	17
-//#define EE_PID_ANGLE_PIT_P	18
-//#define EE_PID_ANGLE_PIT_I	19
-//#define EE_PID_ANGLE_PIT_D	20
-//#define EE_PID_ANGLE_YAW_P	21
-//#define EE_PID_ANGLE_YAW_I	22
-//#define EE_PID_ANGLE_YAW_D	23
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK战舰STM32开发板
@@ -131,6 +136,23 @@ void EE_READ_GYRO_OFFSET(void)
 	imu.gyroOffset[Y] = gyro_offset[1] / 1000.f;
 	imu.gyroOffset[Z] = gyro_offset[2] / 1000.f;
 }
+
+void EE_SAVE_MAG_OFFSET(void)
+{
+	EE_WriteVariable(VirtAddVarTab[EE_MAG_X_OFFSET_ADDR], imu.magOffset[X]);
+	EE_WriteVariable(VirtAddVarTab[EE_MAG_Y_OFFSET_ADDR], imu.magOffset[Y]);
+	EE_WriteVariable(VirtAddVarTab[EE_MAG_Z_OFFSET_ADDR], imu.magOffset[Z]);
+
+}
+
+void EE_READ_MAG_OFFSET(void)
+{
+	EE_ReadVariable(VirtAddVarTab[EE_MAG_X_OFFSET_ADDR], &imu.magOffset[X]);
+	EE_ReadVariable(VirtAddVarTab[EE_MAG_Y_OFFSET_ADDR], &imu.magOffset[Y]);
+	EE_ReadVariable(VirtAddVarTab[EE_MAG_Z_OFFSET_ADDR], &imu.magOffset[Z]);
+}
+
+
 void EE_SAVE_PID(void)
 {
 	u16 _temp;

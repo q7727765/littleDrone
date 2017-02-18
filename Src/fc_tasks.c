@@ -55,7 +55,7 @@ cfTask_t cfTasks[] = {
         .taskName = "UPDATE_MAG",
         .taskFunc = taskUpdateMAG,
         .desiredPeriod = 100000,
-        .staticPriority = TASK_PRIORITY_HIGH,
+        .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
     [TASK_UPDATE_ATTITUDE] = {
@@ -109,7 +109,7 @@ void configureScheduler(void)
     setTaskEnabled(TASK_LED, 1);
     setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
     setTaskEnabled(TASK_USART_DEBUG, 1);
-    setTaskEnabled(TASK_UPDATE_MAG, 0);
+    setTaskEnabled(TASK_UPDATE_MAG, 1);
     setTaskEnabled(TASK_PID_LOOP, 0);
     setTaskEnabled(TASK_UPDATE_RC, 1);
     setTaskEnabled(TASK_BATTERY_MONITOR, 1);

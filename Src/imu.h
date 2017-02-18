@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 
-#define IMU_SAMPLE_RATE 			666.67f	//imu采样率（HZ）//1000.0f/(float)DMP_CALC_PRD
+#define IMU_SAMPLE_RATE 			666.666f	//imu采样率（HZ）//1000.0f/(float)DMP_CALC_PRD
 #define IMU_FILTER_CUTOFF_FREQ	30.0f
 
 //校准时间
@@ -40,15 +40,17 @@ enum{X,Y,Z};
 typedef struct IMU_tt
 {
 uint8_t caliPass;
+uint8_t magCaliPass;
 uint8_t ready;
 int16_t accADC[3];
 int16_t gyroADC[3];
 int16_t magADC[3];
 float 	accRaw[3];		//m/s^2
 float 	gyroRaw[3];		//rad/s
-float 	magRaw[3];		//
+int16_t	magRaw[3];		//
 float   accOffset[3];		//m/s^2
 float   gyroOffset[3];
+int16_t	magOffset[3];
 float   accb[3];		//filted, in body frame
 float   accg[3];
 float   gyro[3];

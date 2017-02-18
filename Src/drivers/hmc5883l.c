@@ -29,26 +29,11 @@
 
 #include <math.h>
 #include "i2c.h"
-//#include <platform.h>
-//#include "build/debug.h"
 
 #include "imu.h"
 #include "maths.h"
 #include "delay.h"
 #include "usart.h"
-//#include "config/parameter_group.h"
-//
-//#include "system.h"
-//#include "nvic.h"
-//#include "gpio.h"
-//#include "bus_i2c.h"
-//#include "light_led.h"
-//
-//#include "sensor.h"
-//#include "compass.h"
-//
-//#include "sensors/sensors.h"
-
 #include "hmc5883l.h"
 
 //#define DEBUG_MAG_DATA_READY_INTERRUPT
@@ -120,85 +105,6 @@
 static float magGain[3] = { 1.0f, 1.0f, 1.0f };
 
 static const hmc5883Config_t *hmc5883Config = NULL;
-
-void MAG_DATA_READY_EXTI_Handler(void)
-{
-//    if (EXTI_GetITStatus(hmc5883Config->exti_line) == RESET) {
-//        return;
-//    }
-//
-//    EXTI_ClearITPendingBit(hmc5883Config->exti_line);
-
-#ifdef DEBUG_MAG_DATA_READY_INTERRUPT
-    // Measure the delta between calls to the interrupt handler
-    // currently should be around 65/66 milli seconds / 15hz output rate
-    static uint32_t lastCalledAt = 0;
-    static int32_t callDelta = 0;
-
-    uint32_t now = millis();
-    callDelta = now - lastCalledAt;
-
-    //UNUSED(callDelta);
-    debug[0] = callDelta;
-
-    lastCalledAt = now;
-#endif
-}
-
-static void hmc5883lConfigureDataReadyInterruptHandling(void)
-{
-#ifdef USE_MAG_DATA_READY_SIGNAL
-
-    if (!(hmc5883Config->exti_port_source && hmc5883Config->exti_pin_source)) {
-        return;
-    }
-#ifdef STM32F10X
-    // enable AFIO for EXTI support
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-#endif
-
-#ifdef STM32F303xC
-    /* Enable SYSCFG clock otherwise the EXTI irq handlers are not called */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-#endif
-
-#ifdef STM32F10X
-    gpioExtiLineConfig(hmc5883Config->exti_port_source, hmc5883Config->exti_pin_source);
-#endif
-
-#ifdef STM32F303xC
-    gpioExtiLineConfig(hmc5883Config->exti_port_source, hmc5883Config->exti_pin_source);
-#endif
-
-#ifdef ENSURE_MAG_DATA_READY_IS_HIGH
-    uint8_t status = GPIO_ReadInputDataBit(hmc5883Config->gpioPort, hmc5883Config->gpioPin);
-    if (!status) {
-        return;
-    }
-#endif
-
-    registerExtiCallbackHandler(hmc5883Config->exti_irqn, MAG_DATA_READY_EXTI_Handler);
-
-    EXTI_ClearITPendingBit(hmc5883Config->exti_line);
-
-    EXTI_InitTypeDef EXTIInit;
-    EXTIInit.EXTI_Line = hmc5883Config->exti_line;
-    EXTIInit.EXTI_Mode = EXTI_Mode_Interrupt;
-    EXTIInit.EXTI_Trigger = EXTI_Trigger_Falling;
-    EXTIInit.EXTI_LineCmd = ENABLE;
-    EXTI_Init(&EXTIInit);
-
-    NVIC_InitTypeDef NVIC_InitStructure;
-
-    NVIC_InitStructure.NVIC_IRQChannel = hmc5883Config->exti_irqn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_PRIORITY_BASE(NVIC_PRIO_MAG_DATA_READY);
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = NVIC_PRIORITY_SUB(NVIC_PRIO_MAG_DATA_READY);
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-#endif
-}
-
-
 
 bool hmc5883lDetect(mag_t* mag)
 {
@@ -275,7 +181,7 @@ void hmc5883lInit(void)
 
     // leave test mode
     IIC_Write_Reg(MAG_ADDRESS, HMC58X3_R_CONFA, 0x70);   // Configuration Register A  -- 0 11 100 00  num samples: 8 ; output rate: 15Hz ; normal measurement mode
-    IIC_Write_Reg(MAG_ADDRESS, HMC58X3_R_CONFB, 0x20);   // Configuration Register B  -- 001 00000    configuration gain 1.3Ga
+    IIC_Write_Reg(MAG_ADDRESS, HMC58X3_R_CONFB, 0x80);   // Configuration Register B  -- 001 00000    configuration gain 1.3Ga
     IIC_Write_Reg(MAG_ADDRESS, HMC58X3_R_MODE, 0x00);    // Mode register             -- 000000 00    continuous Conversion Mode
     delay_ms(100);
 
