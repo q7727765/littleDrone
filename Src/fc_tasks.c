@@ -65,11 +65,11 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
-    [TASK_PID_LOOP] = {
-        .taskName = "PID_LOOP",
-        .taskFunc = taskPIDLoop,
+    [TASK_UPDATE_BARO] = {
+        .taskName = "UPDATE_BARO",
+        .taskFunc = taskUpdateBaro,
         .desiredPeriod = 20000,
-        .staticPriority = 0,
+        .staticPriority = TASK_PRIORITY_MEDIUM,
     },
 
     [TASK_BATTERY_MONITOR] = {
@@ -110,7 +110,7 @@ void configureScheduler(void)
     setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
     setTaskEnabled(TASK_USART_DEBUG, 1);
     setTaskEnabled(TASK_UPDATE_MAG, 1);
-    setTaskEnabled(TASK_PID_LOOP, 0);
+    setTaskEnabled(TASK_UPDATE_BARO, 1);
     setTaskEnabled(TASK_UPDATE_RC, 1);
     setTaskEnabled(TASK_BATTERY_MONITOR, 1);
 

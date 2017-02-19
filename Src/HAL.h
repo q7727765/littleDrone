@@ -30,13 +30,12 @@ typedef struct mag_s {
 } mag_t;
 
 typedef struct baro_s {
-    uint16_t ut_delay;
-    uint16_t up_delay;
-    baroOpFuncPtr start_ut;
-    baroOpFuncPtr get_ut;
-    baroOpFuncPtr start_up;
-    baroOpFuncPtr get_up;
-    baroCalculateFuncPtr calculate;
+    sensorInitFuncPtr init;                                 // initialize function
+
+    float pressure;
+	float temperature;
+	float altitude;
+	float verticalSpeed;
 } baro_t;
 
 typedef struct motor_s {
@@ -115,6 +114,4 @@ void motor_out(int16_t m1,int16_t m2,int16_t m3,int16_t m4);
 extern void detectAcc();
 extern void detectGyro();
 extern void detectMag();
-extern void detectBaro();
-extern uint32_t recalculateBarometerTotal(uint8_t baroSampleCount, uint32_t pressureTotal, int32_t newPressureReading);
 extern void mag_calibration(void);

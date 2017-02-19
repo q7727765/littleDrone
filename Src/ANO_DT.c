@@ -22,6 +22,7 @@
 #include "stm32f1xx_hal.h"
 #include "control.h"
 #include "HAL.h"
+#include "ms5611.h"
 
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
@@ -94,7 +95,7 @@ void ANO_DT_Data_Exchange(void)
 	if(f.send_status)
 	{
 		f.send_status = 0;
-		ANO_DT_Send_Status(-imu.roll,imu.pitch,-imu.yaw,0,0,!motorLock);//last ARMED
+		ANO_DT_Send_Status(-imu.roll,imu.pitch,-imu.yaw,baro.altitude*100,0,!motorLock);//last ARMED
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_senser)

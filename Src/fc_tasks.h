@@ -27,7 +27,7 @@ typedef enum {
 
 	TASK_UPDATE_MAG,
 
-	TASK_PID_LOOP,
+	TASK_UPDATE_BARO,
 
 	TASK_UPDATE_RC,
 
@@ -59,7 +59,7 @@ void configureScheduler(void);
 void taskUpdateAttitude(void);
 void taskUsartDebug(void);
 void taskUpdateMAG(void);
-void taskPIDLoop(void);
+void taskUpdateBaro(void);
 void taskUpdateRC(void);
 void taskBatteryMoniter(void);
 

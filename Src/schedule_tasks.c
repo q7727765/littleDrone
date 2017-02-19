@@ -22,23 +22,15 @@
 #include "led.h"
 #include "maths.h"
 
-uint32_t baroPressureSumtt = 0;
-extern int32_t baroPressure;
-extern int32_t baroTemperature;
-extern baro_t baro;
-int16_t mag_data[3] = {0};
-uint8_t ms5611_buf[3];
-extern mag_t mag;
-extern u8 mpu6050_buffer[14];					//iic读取后存放数据
-
 
 extern ADC_HandleTypeDef hadc1;
 battery_t battery;
 
-union _dat{
+union _dat16{
 	uint16_t full;
 	uint8_t  byte[2];
 }d_temp;
+
 
 void taskUsartDebug(void)
 {
@@ -142,7 +134,7 @@ void taskUpdateAttitude(void)
 	str0[0] = d_temp.byte[1];
 	str0[1] = d_temp.byte[0];
 
-	//pid控制
+	//内环pid控制
 	d_temp.full = (uint16_t)(t3 - t2)*100;
 	str0[2] = d_temp.byte[1];
 	str0[3] = d_temp.byte[0];
@@ -152,7 +144,7 @@ void taskUpdateAttitude(void)
 	str0[4] = d_temp.byte[1];
 	str0[5] = d_temp.byte[0];
 
-	//内环计算时间
+	//整个任务计算时间
 	d_temp.full = (uint16_t)(t5 - t1);
 	str0[6] = d_temp.byte[1];
 	str0[7] = d_temp.byte[0];
@@ -164,8 +156,19 @@ void taskUpdateAttitude(void)
 #endif
 }
 
-void taskPIDLoop(void)
+void taskUpdateBaro(void)
 {
+	static uint32_t t0,old;
+
+	old = t0;
+	t0 = micros();
+
+	d_temp.full = (uint16_t)((t0 - old) / 10);
+	str0[24] = d_temp.byte[1];
+	str0[25] = d_temp.byte[0];
+
+	MS5611_ThreadNew();
+
 
 }
 

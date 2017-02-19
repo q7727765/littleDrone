@@ -94,11 +94,15 @@ void init(void)
 	detectGyro();
 	detectAcc();
 	detectMag();
-	detectBaro();
+
 
 	gyro.init();
 	acc.init();
 	mag.init();
+	MS5611_Init();
+	WaitBaroInitOffset();
+
+
 	EE_READ_PID();
 	EE_READ_ACC_OFFSET();
 	EE_READ_GYRO_OFFSET();
@@ -125,6 +129,7 @@ void init(void)
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
+
 }
 
 
@@ -169,6 +174,7 @@ int main(void)
 	while (1) {
 
 		scheduler();
+
 	}
 
 }
