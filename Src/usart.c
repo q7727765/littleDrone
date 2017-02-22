@@ -91,6 +91,20 @@ void USART1_IRQHandler(void)
 
 
 }
+
+void USART3_IRQHandler(void)
+{
+	u8 res;
+
+	if(USART3->SR&(1<<5))//接收到数据
+	{
+		res=USART3->DR;
+		ANO_DT_Data_Receive_Prepare(res);
+//		SendChar("asd\r\n");
+	}
+
+
+}
 #endif
 //初始化IO 串口1
 //pclk2:PCLK2时钟频率(Mhz)
@@ -133,7 +147,10 @@ void SendData(u8 *data,u8 length)
 	{
 		USART1->DR=data[i];
 		while((USART1->SR&0X40)==0);
+		USART3->DR=data[i];
+		while((USART3->SR&0X40)==0);
 	}
+
 }
 
 void SendChar(char *s)//字符串一定要以'\0'结尾

@@ -49,6 +49,8 @@
 #include "stmflash.h"
 #include "nrf24l01.h"
 #include "filter.h"
+#include "stm32f103xb.h"
+
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
@@ -141,7 +143,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	uart_init(72,115200);
+//	uart_init(72,115200);
 	delay_init();
   /* USER CODE END 1 */
 
@@ -156,6 +158,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
 	MX_GPIO_Init();
+	MX_USART1_UART_Init();//这个初始化一定要放在	MX_GPIO_Init()后面
+	MX_USART3_UART_Init();
+	USART1->CR1|=1<<8;    //PE中断使能
+	USART1->CR1|=1<<5;    //接收缓冲区非空中断使能
+	MY_NVIC_Init(3,2,USART1_IRQn,2);//组2，最低优先级
+	USART3->CR1|=1<<8;    //PE中断使能
+	USART3->CR1|=1<<5;    //接收缓冲区非空中断使能
+	MY_NVIC_Init(3,3,USART3_IRQn,2);//组2，最低优先级
+
 	MX_ADC1_Init();
 	MX_TIM2_Init();
 	MX_SPI2_Init();
@@ -379,7 +390,7 @@ static void MX_USART3_UART_Init(void)
 {
 
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 38400;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;

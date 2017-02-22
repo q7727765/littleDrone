@@ -328,9 +328,6 @@ void MS5611_ThreadNew(void)
 				Current_delay = MS5611_Delay_us[MS5611Temp_OSR] ;//转换时间
 				Start_Convert_Time = micros(); //计时开始
 				Now_doing = CTemperatureing;//下一个状态
-
-				SendChar("start temp\n");
-				_n();
  		break;
 		
 		case CTemperatureing:  //正在转换中
@@ -342,8 +339,6 @@ void MS5611_ThreadNew(void)
 				Current_delay = MS5611_Delay_us[MS5611Press_OSR];//转换时间
 				Start_Convert_Time = micros();//计时开始
 				Now_doing = SCPressureing;//下一个状态
-				SendChar("start press\n");
-				_n();
 			}
 			break;
  
@@ -358,8 +353,6 @@ void MS5611_ThreadNew(void)
 				Current_delay = MS5611_Delay_us[MS5611Temp_OSR] ;//转换时间
 				Start_Convert_Time = micros(); //计时开始
 				Now_doing = CTemperatureing;//下一个状态
-				SendChar("start temp\n");
-								_n();
 			}
 			break;
 		default: 
