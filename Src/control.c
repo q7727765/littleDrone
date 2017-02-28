@@ -126,6 +126,7 @@ void CtrlAttiAng(void)
 		dt=(tPrev>0)?(t-tPrev):0;
 		tPrev=t;
 		
+		//pid外环计算周期  [first]/2+1 = 11
 		d_temp.full = (uint16_t)dt;
 		str0[20] = d_temp.byte[1];
 		str0[21] = d_temp.byte[0];
@@ -172,6 +173,7 @@ void CtrlAttiRate(void)
 	dt=(tPrev>0)?(t-tPrev):0;
 	tPrev=t;
 		
+	//pid内环更新周期 [first]/2+1 = 10
 	d_temp.full = (uint16_t)dt;
 	str0[18] = d_temp.byte[1];
 	str0[19] = d_temp.byte[0];
@@ -469,18 +471,18 @@ void CtrlMotor(void)
 		float  cosTilt = imu.accb[2] / CONSTANTS_ONE_G;
 
 		altCtrlMode = MANUAL;
-//		Thro = rc.thr;
-		if(altCtrlMode==MANUAL)
-		{
-			DIF_ACC.Z =  imu.accb[2] - CONSTANTS_ONE_G;
-			Thro = rc.thr;
-			cosTilt=imu.DCMgb[2][2];
-			Thro=Thro/cosTilt;
-		}else{
-			Thro=(-thrustZSp) * 1000;// /imu.DCMgb[2][2];  //倾角补偿后效果不错，有时过猛
-			if(Thro>1000)
-				Thro=1000;
-		}
+		Thro = rc.thr;
+//		if(altCtrlMode==MANUAL)
+//		{
+//			DIF_ACC.Z =  imu.accb[2] - CONSTANTS_ONE_G;
+//			Thro = rc.thr;
+//			cosTilt=imu.DCMgb[2][2];
+//			Thro=Thro/cosTilt;
+//		}else{
+//			Thro=(-thrustZSp) * 1000;// /imu.DCMgb[2][2];  //倾角补偿后效果不错，有时过猛
+//			if(Thro>1000)
+//				Thro=1000;
+//		}
 
 		//将输出值融合到四个电机
 		Motor[3] = (int16_t)(Thro - Pitch - Roll - Yaw );    //M3

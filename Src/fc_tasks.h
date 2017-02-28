@@ -37,16 +37,6 @@ typedef enum {
 
 	TASK_LED,
 
-    TASK_BATTERY,
-
-    TASK_RX,
-
-    TASK_GPS,
-
-    TASK_COMPASS,
-
-    TASK_BARO,
-
     /* Count of real tasks */
     TASK_COUNT
 } cfTaskId_e;

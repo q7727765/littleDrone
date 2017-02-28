@@ -55,7 +55,7 @@ void ANO_DT_Data_Exchange(void)
 	static u8 rcdata_cnt 	= 30;
 	static u8 motopwm_cnt	= 35;
 	static u8 power_cnt		= 200;
-	static u8 user_cnt 		= 10;
+	static u8 user_cnt 		= 50;
 	
 	if((cnt % senser_cnt) == (senser_cnt-1))
 		f.send_senser = 1;
@@ -102,9 +102,9 @@ void ANO_DT_Data_Exchange(void)
 	{
 		f.send_senser = 0;
 		ANO_DT_Send_Senser(imu.accb[X]*1000,imu.accb[Y]*1000,imu.accb[Z]*1000,
-							(imu.gyro[X]- 1*imu.gyroOffset[X])*180.0f/M_PI_F,
-							(imu.gyro[Y]- 1*imu.gyroOffset[Y])*180.0f/M_PI_F,
-							(imu.gyro[Z]- 1*imu.gyroOffset[Z])*180.0f/M_PI_F,
+							(imu.gyro[X])*180.0f/M_PI_F,
+							(imu.gyro[Y])*180.0f/M_PI_F,
+							(imu.gyro[Z])*180.0f/M_PI_F,
 							imu.magRaw[X],imu.magRaw[Y],imu.magRaw[Z],0);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////

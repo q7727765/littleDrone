@@ -331,17 +331,17 @@ void ReadIMUSensorHandle(void)
 		imu.accb[1]=LPF2pApply_2(imu.accRaw[1]-imu.accOffset[1]);
 		imu.accb[2]=LPF2pApply_3(imu.accRaw[2]-imu.accOffset[2]);
 
-//		imu.gyro[0]=LPF2pApply_4(imu.gyroRaw[0]-imu.gyroOffset[0]);
-//		imu.gyro[1]=LPF2pApply_5(imu.gyroRaw[1]-imu.gyroOffset[1]);
-//		imu.gyro[2]=LPF2pApply_6(imu.gyroRaw[2]-imu.gyroOffset[2]);
-		imu.gyro[0]=LPF2pApply_4(imu.gyroRaw[0]);
-		imu.gyro[1]=LPF2pApply_5(imu.gyroRaw[1]);
-		imu.gyro[2]=LPF2pApply_6(imu.gyroRaw[2]);
+		imu.gyro[0]=LPF2pApply_4(imu.gyroRaw[0]-imu.gyroOffset[0]);
+		imu.gyro[1]=LPF2pApply_5(imu.gyroRaw[1]-imu.gyroOffset[1]);
+		imu.gyro[2]=LPF2pApply_6(imu.gyroRaw[2]-imu.gyroOffset[2]);
+//		imu.gyro[0]=LPF2pApply_4(imu.gyroRaw[0]);
+//		imu.gyro[1]=LPF2pApply_5(imu.gyroRaw[1]);
+//		imu.gyro[2]=LPF2pApply_6(imu.gyroRaw[2]);
 
 
 }
 
-#define so3_comp_params_Kp 5.0f//3是可以飞的
+#define so3_comp_params_Kp 3.0f//3是可以飞的
 #define so3_comp_params_Ki  0.01f
 
  
@@ -375,37 +375,37 @@ void IMUSO3Thread(void)
 	
 	ReadIMUSensorHandle();
 
-	if(!imu.ready)
-	{
-		 if(startTime==0)
-				startTime=now;
-				
-			gyro_offsets_sum[0] += imu.gyroRaw[0];
-			gyro_offsets_sum[1] += imu.gyroRaw[1];
-			gyro_offsets_sum[2] += imu.gyroRaw[2];
-			offset_count++;
-			
-			if(now > startTime + GYRO_CALC_TIME)
-			{
-					imu.gyroOffset[0] = gyro_offsets_sum[0]/offset_count;
-					imu.gyroOffset[1] = gyro_offsets_sum[1]/offset_count;
-					imu.gyroOffset[2] = gyro_offsets_sum[2]/offset_count;
-					
-					offset_count=0;
-					gyro_offsets_sum[0]=0;gyro_offsets_sum[1]=0;gyro_offsets_sum[2]=0;
-					
-					imu.ready = 1;
-					startTime=0;
-					
-					EE_SAVE_GYRO_OFFSET();
-			}
-			return;
-	}
+//	if(!imu.ready)
+//	{
+//		 if(startTime==0)
+//				startTime=now;
+//
+//			gyro_offsets_sum[0] += imu.gyroRaw[0];
+//			gyro_offsets_sum[1] += imu.gyroRaw[1];
+//			gyro_offsets_sum[2] += imu.gyroRaw[2];
+//			offset_count++;
+//
+//			if(now > startTime + GYRO_CALC_TIME)
+//			{
+//					imu.gyroOffset[0] = gyro_offsets_sum[0]/offset_count;
+//					imu.gyroOffset[1] = gyro_offsets_sum[1]/offset_count;
+//					imu.gyroOffset[2] = gyro_offsets_sum[2]/offset_count;
+//
+//					offset_count=0;
+//					gyro_offsets_sum[0]=0;gyro_offsets_sum[1]=0;gyro_offsets_sum[2]=0;
+//
+//					imu.ready = 1;
+//					startTime=0;
+//
+//					EE_SAVE_GYRO_OFFSET();
+//			}
+//			return;
+//	}
 	
 
-	gyro_temp[0] = imu.gyro[0] - imu.gyroOffset[0];
-	gyro_temp[1] = imu.gyro[1] - imu.gyroOffset[1];
-	gyro_temp[2] = imu.gyro[2] - imu.gyroOffset[2];
+	gyro_temp[0] = imu.gyro[0];
+	gyro_temp[1] = imu.gyro[1];
+	gyro_temp[2] = imu.gyro[2];
 
 	acc_temp[0] = -imu.accb[0];
 	acc_temp[1] = -imu.accb[1];

@@ -101,8 +101,8 @@ void init(void)
 	gyro.init();
 	acc.init();
 	mag.init();
-	MS5611_Init();
-	WaitBaroInitOffset();
+	//MS5611_Init();
+	//WaitBaroInitOffset();
 
 
 	EE_READ_PID();

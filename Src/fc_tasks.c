@@ -47,7 +47,7 @@ cfTask_t cfTasks[] = {
     [TASK_UPDATE_ATT_ANGLE] = {
         .taskName = "UPDATE_ATT_ANGLE",
         .taskFunc = taskUpdateAttiAngle,
-        .desiredPeriod = 3000,
+        .desiredPeriod = 4000,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
@@ -61,7 +61,7 @@ cfTask_t cfTasks[] = {
     [TASK_UPDATE_ATTITUDE] = {
         .taskName = "UPDATE_ATTITUDE",
         .taskFunc = taskUpdateAttitude,
-        .desiredPeriod = 1500,
+        .desiredPeriod = 2000,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
@@ -109,8 +109,8 @@ void configureScheduler(void)
     setTaskEnabled(TASK_LED, 1);
     setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
     setTaskEnabled(TASK_USART_DEBUG, 1);
-    setTaskEnabled(TASK_UPDATE_MAG, 1);
-    setTaskEnabled(TASK_UPDATE_BARO, 1);
+    setTaskEnabled(TASK_UPDATE_MAG, 0);
+    setTaskEnabled(TASK_UPDATE_BARO, 0);
     setTaskEnabled(TASK_UPDATE_RC, 1);
     setTaskEnabled(TASK_BATTERY_MONITOR, 1);
 

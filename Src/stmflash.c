@@ -198,6 +198,13 @@ void EE_READ_PID(void)
 {
 	u16 _temp;
 
+	roll_rate_PID.iLimit = 300;
+	pitch_rate_PID.iLimit = 300;
+	yaw_rate_PID.iLimit = 300;
+	roll_angle_PID.iLimit = 300;
+	pitch_angle_PID.iLimit = 300;
+	yaw_angle_PID.iLimit = 300;
+
 	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_ROLL_P],&_temp);
 	roll_rate_PID.P = (float)_temp / 1000;
 	EE_ReadVariable(VirtAddVarTab[EE_PID_RATE_ROLL_I],&_temp);
