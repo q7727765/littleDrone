@@ -72,9 +72,9 @@ u32 VirtAddVarTab[] = {
 
 void Para_ResetToFactorySetup()
 {
-	roll_rate_PID.P  = 0.4; roll_rate_PID.I  = 0.15; roll_rate_PID.D  = 0.010;
+	roll_rate_PID.P  = 0.68; roll_rate_PID.I  = 0.15; roll_rate_PID.D  = 0.010;
 
-	pitch_rate_PID.P = 0.4 ;pitch_rate_PID.I = 0.15; pitch_rate_PID.D = 0.010;
+	pitch_rate_PID.P = 0.68 ;pitch_rate_PID.I = 0.15; pitch_rate_PID.D = 0.010;
 
 	yaw_rate_PID.P   = 8.0; yaw_rate_PID.I   = 0.8; yaw_rate_PID.D   = 0;
 

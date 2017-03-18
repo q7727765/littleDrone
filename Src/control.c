@@ -466,7 +466,7 @@ float altLand;
 //输入：无
 //输出: 4个电机的PWM输出
 //描述：输出PWM，控制电机，本函数会被主循环中100Hz循环调用
-#define RANGE 200
+#define RANGE 1000
 void CtrlMotor(void)
 {
 		float  cosTilt = imu.accb[2] / CONSTANTS_ONE_G;
