@@ -179,11 +179,21 @@ void taskUpdateRC(void)
 	static uint32_t t0,t1;
 	static uint32_t old;
 	static rc_t oldrc;
+	static uint16_t lost_rc_time = 0;
 
 	old = t0;
 	t0 = micros();
 
-	if(NRF24L01_RxPacket((u8*)rc.value) !=0)return;
+	if(NRF24L01_RxPacket((u8*)rc.value) !=0){
+		lost_rc_time ++;
+		if(lost_rc_time > 100){
+			rc.value[rc_aux2_num] = 1000;
+			motorLock = 1;
+		}
+		return;
+	}else {
+		lost_rc_time = 0;
+	}
 
 
 	if(rc.value[rc_check_pin1] == '@' &&
