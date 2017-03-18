@@ -10,7 +10,7 @@
 #define APP_YAW_DB	 70 //dead band
 #define APP_PR_DB		 50
 //定义飞机最大倾斜角度
-#define  Angle_Max  30.0
+#define  Angle_Max  40.0
 #define  YAW_RATE_MAX  180.0f/M_PI_F		//deg/s  
 //纠正姿态误差，可以用来抵抗重心偏移等带来的初始不平衡
 //#define  Rool_error_init   7      //如果飞机起飞朝左偏，Rool_error_init朝正向增大修改;朝右偏，Rool_error_init朝负向增大修改

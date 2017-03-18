@@ -341,7 +341,7 @@ void ReadIMUSensorHandle(void)
 
 }
 
-#define so3_comp_params_Kp 3.0f//3是可以飞的
+#define so3_comp_params_Kp 1.0f//3是可以飞的
 #define so3_comp_params_Ki  0.01f
 
  

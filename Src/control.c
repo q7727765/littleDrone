@@ -466,12 +466,16 @@ float altLand;
 //输入：无
 //输出: 4个电机的PWM输出
 //描述：输出PWM，控制电机，本函数会被主循环中100Hz循环调用
+#define RANGE 150
 void CtrlMotor(void)
 {
 		float  cosTilt = imu.accb[2] / CONSTANTS_ONE_G;
 
+		float oldThro,oldPitch,oldRoll,oldYaw;
 		altCtrlMode = MANUAL;
-		Thro = rc.thr;
+		Thro = rc.thr * 0.8;
+		if(Thro>800)Thro = 800;
+
 //		if(altCtrlMode==MANUAL)
 //		{
 //			DIF_ACC.Z =  imu.accb[2] - CONSTANTS_ONE_G;
@@ -483,6 +487,25 @@ void CtrlMotor(void)
 //			if(Thro>1000)
 //				Thro=1000;
 //		}
+
+
+//		if(Pitch<RANGE&&Pitch>-RANGE){
+//			oldPitch = Pitch;
+//		}else{
+//			Pitch = oldPitch;
+//		}
+//
+//		if(Roll<RANGE&&Roll>-RANGE){
+//			oldRoll = Roll;
+//		}else{
+//			Roll = oldRoll;
+//		}
+
+		if(Pitch>RANGE)Pitch = RANGE;
+		else if(Pitch<-RANGE)Pitch = -RANGE;
+		if(Roll>RANGE)Roll = RANGE;
+		else if(Roll<-RANGE)Roll = -RANGE;
+
 
 		//将输出值融合到四个电机
 		Motor[3] = (int16_t)(Thro - Pitch - Roll - Yaw );    //M3

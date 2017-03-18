@@ -1,4 +1,3 @@
-#include "usart.h"
 /**
   ******************************************************************************
   * File Name          : stm32f1xx_hal_msp.c
@@ -139,8 +138,6 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
 
 void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
 {
-
-  SendChar("sadad111\r\n");
 
   GPIO_InitTypeDef GPIO_InitStruct;
   if(hspi->Instance==SPI2)

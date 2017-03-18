@@ -178,36 +178,41 @@ void taskUpdateRC(void)
 {
 	static uint32_t t0,t1;
 	static uint32_t old;
+	static rc_t oldrc;
 
 	old = t0;
 	t0 = micros();
 
-	NRF24L01_RxPacket((u8*)rc.value);
+	if(NRF24L01_RxPacket((u8*)rc.value) !=0)return;
 
-	rc.value[rc_thr_num] = constrain(rc.value[rc_thr_num] + 0,1000,2000);
-	rc.value[rc_yaw_num] = constrain(rc.value[rc_yaw_num] + 0,1000,2000);
-	rc.value[rc_pit_num] = constrain(rc.value[rc_pit_num] + 0,1000,2000);
-	rc.value[rc_rol_num] = constrain(rc.value[rc_rol_num] + 0,1000,2000);
 
-	rc.thr = rc.value[rc_thr_num]-1000;
-	rc.yaw = YAW_RATE_MAX * dbScaleLinear((rc.value[rc_yaw_num] - 1500),500,APP_YAW_DB);
-	rc.pit = -Angle_Max * dbScaleLinear((rc.value[rc_pit_num] - 1500),500,APP_PR_DB);
-	rc.rol = -Angle_Max * dbScaleLinear((rc.value[rc_rol_num] - 1500),500,APP_PR_DB);
+	if(rc.value[rc_check_pin1] == '@' &&
+			rc.value[rc_check_pin2] == '#'){
 
-	if(rc.value[rc_push_num] == 1000){
-		imu.caliPass = 0;
+		rc.value[rc_thr_num] = constrain(rc.value[rc_thr_num] + 0,1000,2000);
+		rc.value[rc_yaw_num] = constrain(rc.value[rc_yaw_num] + 0,1000,2000);
+		rc.value[rc_pit_num] = constrain(rc.value[rc_pit_num] + 0,1000,2000);
+		rc.value[rc_rol_num] = constrain(rc.value[rc_rol_num] + 0,1000,2000);
+
+		rc.thr = rc.value[rc_thr_num]-1000;
+		rc.yaw = YAW_RATE_MAX * dbScaleLinear((rc.value[rc_yaw_num] - 1500),500,APP_YAW_DB);
+		rc.pit = -Angle_Max * dbScaleLinear((rc.value[rc_pit_num] - 1500),500,APP_PR_DB);
+		rc.rol = -Angle_Max * dbScaleLinear((rc.value[rc_rol_num] - 1500),500,APP_PR_DB);
+
+		if(rc.value[rc_push_num] == 1000){
+			imu.caliPass = 0;
+		}
+
+		if(rc.value[rc_aux2_num] == 2000){
+			motorLock = 0;
+		}else{
+			motorLock = 1;
+		}
+
+		if(rc.value[rc_aux1_num] == 2000){
+			imu.magCaliPass = 0;
+		}
 	}
-
-	if(rc.value[rc_aux2_num] == 2000){
-		motorLock = 0;
-	}else{
-		motorLock = 1;
-	}
-
-	if(rc.value[rc_aux1_num] == 2000){
-		imu.magCaliPass = 0;
-	}
-
 	t1 = micros();
 	//“£øÿº∆À„ ±º‰ [first]/2+1 = 8
 	d_temp.full = (uint16_t)(t1 - t0)*100;

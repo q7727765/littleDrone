@@ -124,7 +124,10 @@ void ANO_DT_Data_Exchange(void)
 				Motor[1],
 				Motor[2],
 				Motor[3],
-				0,0,0,0);
+				rc.value[rc_thr_num],
+				rc.value[rc_yaw_num],
+				rc.value[rc_pit_num],
+				rc.value[rc_rol_num]);
 	}	
 /////////////////////////////////////////////////////////////////////////////////////
 	if(f.send_power)
@@ -157,6 +160,30 @@ void ANO_DT_Data_Exchange(void)
 											0,0,0,
 											0,0,0);
 	}
+	if(f.send_pid4)
+	{
+		f.send_pid4 = 0;
+		ANO_DT_Send_PID(4,0,0,0,
+											0,0,0,
+											0,0,0);
+	}
+	if(f.send_pid5)
+	{
+		f.send_pid5 = 0;
+		ANO_DT_Send_PID(5,0,0,0,
+											0,0,0,
+											0,0,0);
+	}
+	if(f.send_pid6)
+	{
+		f.send_pid6 = 0;
+		ANO_DT_Send_PID(6,0,0,0,
+											0,0,0,
+											0,0,0);
+	}
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
@@ -345,7 +372,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 //        ctrl_2.PID[PIDYAW].kp 	= 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
 //        ctrl_2.PID[PIDYAW].ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
 //        ctrl_2.PID[PIDYAW].kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
-//        ANO_DT_Send_Check(*(data_buf+2),sum);
+        ANO_DT_Send_Check(*(data_buf+2),sum);
 //				Param_SavePID();
     }
 	if(*(data_buf+2)==0X13)								//PID4

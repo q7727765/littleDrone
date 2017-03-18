@@ -95,12 +95,12 @@ void init(void)
 	IIC_Init();
 	detectGyro();
 	detectAcc();
-	detectMag();
+//	detectMag();
 
 
 	gyro.init();
 	acc.init();
-	mag.init();
+//	mag.init();
 	//MS5611_Init();
 	//WaitBaroInitOffset();
 

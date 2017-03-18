@@ -5,7 +5,7 @@
 
 
 #define IMU_SAMPLE_RATE 			500.0f	//imu采样率（HZ）//1000.0f/(float)DMP_CALC_PRD
-#define IMU_FILTER_CUTOFF_FREQ	20.0f
+#define IMU_FILTER_CUTOFF_FREQ	30.0f
 
 //校准时间
 #define ACC_CALC_TIME  2000//ms
