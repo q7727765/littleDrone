@@ -178,8 +178,8 @@ void ANO_DT_Data_Exchange(void)
 	{
 		f.send_pid6 = 0;
 		ANO_DT_Send_PID(6,0,0,0,
-											0,0,0,
-											0,0,0);
+						0,0,0,
+						0,0,rc_matched * 0.001);
 	}
 
 
@@ -385,6 +385,8 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 	}
 	if(*(data_buf+2)==0X15)								//PID6
 	{
+		rc_matched = ((uint8_t)(*(data_buf+20)<<8)|*(data_buf+21) );
+		EE_SAVE_RC_ADDR_AND_MATCHED();
 		ANO_DT_Send_Check(*(data_buf+2),sum);
 	}
 }

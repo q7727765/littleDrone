@@ -94,6 +94,7 @@ typedef struct battery_s{
 enum model_s{
 	ON,
 	OFF,
+	FAST_FLASH,
 	SINGLE_FLASH,
 	DOUBLE_FLASH,
 	SINGLE_FLASH_500MS,
@@ -109,8 +110,11 @@ extern mag_t mag;
 extern baro_t baro;
 extern motor_t motor;
 extern rc_t rc;
+extern uint8_t rc_matched;
 extern battery_t battery;
 
+void rc_init(void);
+void rc_match(void);
 void motor_init();
 void motor_out(int16_t m1,int16_t m2,int16_t m3,int16_t m4);
 extern void detectAcc();

@@ -4,45 +4,50 @@
 #include "mpu6050.h"
 #include "control.h"
 #include "ANO_DT.h"
+#include "HAL.h"
+#include "nrf24l01.h"
 
-#define EE_6050_ACC_X_OFFSET_ADDR	0
-#define EE_6050_ACC_Y_OFFSET_ADDR	1
-#define EE_6050_ACC_Z_OFFSET_ADDR	2
-#define EE_6050_GYRO_X_OFFSET_ADDR	3
-#define EE_6050_GYRO_Y_OFFSET_ADDR	4
-#define EE_6050_GYRO_Z_OFFSET_ADDR	5
-#define EE_PID_RATE_ROLL_P			6
-#define EE_PID_RATE_ROLL_I			7
-#define EE_PID_RATE_ROLL_D			8
-#define EE_PID_RATE_PIT_P			9
-#define EE_PID_RATE_PIT_I			10
-#define EE_PID_RATE_PIT_D			11
-#define EE_PID_RATE_YAW_P			12
-#define EE_PID_RATE_YAW_I			13
-#define EE_PID_RATE_YAW_D			14
-#define EE_PID_ANGLE_ROLL_P			15
-#define EE_PID_ANGLE_ROLL_I			16
-#define EE_PID_ANGLE_ROLL_D			17
-#define EE_PID_ANGLE_PIT_P			18
-#define EE_PID_ANGLE_PIT_I			19
-#define EE_PID_ANGLE_PIT_D			20
-#define EE_PID_ANGLE_YAW_P			21
-#define EE_PID_ANGLE_YAW_I			22
-#define EE_PID_ANGLE_YAW_D			23
-#define EE_MAG_X_OFFSET_ADDR		24
-#define EE_MAG_Y_OFFSET_ADDR		25
-#define EE_MAG_Z_OFFSET_ADDR		26
+#define EE_6050_ACC_X_OFFSET_ADDR		0
+#define EE_6050_ACC_Y_OFFSET_ADDR		1
+#define EE_6050_ACC_Z_OFFSET_ADDR		2
+#define EE_6050_GYRO_X_OFFSET_ADDR		3
+#define EE_6050_GYRO_Y_OFFSET_ADDR		4
+#define EE_6050_GYRO_Z_OFFSET_ADDR		5
+#define EE_PID_RATE_ROLL_P				6
+#define EE_PID_RATE_ROLL_I				7
+#define EE_PID_RATE_ROLL_D				8
+#define EE_PID_RATE_PIT_P				9
+#define EE_PID_RATE_PIT_I				10
+#define EE_PID_RATE_PIT_D				11
+#define EE_PID_RATE_YAW_P				12
+#define EE_PID_RATE_YAW_I				13
+#define EE_PID_RATE_YAW_D				14
+#define EE_PID_ANGLE_ROLL_P				15
+#define EE_PID_ANGLE_ROLL_I				16
+#define EE_PID_ANGLE_ROLL_D				17
+#define EE_PID_ANGLE_PIT_P				18
+#define EE_PID_ANGLE_PIT_I				19
+#define EE_PID_ANGLE_PIT_D				20
+#define EE_PID_ANGLE_YAW_P				21
+#define EE_PID_ANGLE_YAW_I				22
+#define EE_PID_ANGLE_YAW_D				23
+#define EE_MAG_X_OFFSET_ADDR			24
+#define EE_MAG_Y_OFFSET_ADDR			25
+#define EE_MAG_Z_OFFSET_ADDR			26
+#define EE_RC_ARRD_AND_MATCHED			27
+//#define EE_RC_MATCHED_SHOW_IN_PID18_D	28
 
 u32 VirtAddVarTab[] = {
-		0x1EE00, 0x1EE02, 0x1EE04,//acc_offset(XYZ)
-		0x1EE06, 0x1EE08, 0x1EE0A,//gyro_offset(XYZ)
-		0x1EE1C, 0x1EE1E, 0x1EE20,//rate_rol(P I D)
-		0x1EE22, 0x1EE24, 0x1EE26,//rate_pit(P I D)
-		0x1EE28, 0x1EE2A, 0x1EE2C,//rate_yaw(P I D)
-		0x1EE2E, 0x1EE30, 0x1EE32,//ang_rol(P I D)
-		0x1EE34, 0x1EE36, 0x1EE38,//ang_pit(P I D)
-		0x1EE3A, 0x1EE3C, 0x1EE3E,//ang_yaw(P I D)
-		0x1EE40, 0x1EE42, 0x1EE44,//mag_offset(XYZ)
+		0x1EE00, 0x1EE02, 0x1EE04,	//acc_offset(XYZ)
+		0x1EE06, 0x1EE08, 0x1EE0A,	//gyro_offset(XYZ)
+		0x1EE1C, 0x1EE1E, 0x1EE20,	//rate_rol(P I D)
+		0x1EE22, 0x1EE24, 0x1EE26,	//rate_pit(P I D)
+		0x1EE28, 0x1EE2A, 0x1EE2C,	//rate_yaw(P I D)
+		0x1EE2E, 0x1EE30, 0x1EE32,	//ang_rol(P I D)
+		0x1EE34, 0x1EE36, 0x1EE38,	//ang_pit(P I D)
+		0x1EE3A, 0x1EE3C, 0x1EE3E,	//ang_yaw(P I D)
+		0x1EE40, 0x1EE42, 0x1EE44,	//mag_offset(XYZ)
+		0x1EE46,					//高位是rc_mached,低位是RX_ARRD[4]
 };
 
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -91,8 +96,26 @@ void Para_ResetToFactorySetup()
 //	f.send_pid3 = 1;
 //	f.send_pid4 = 1;
 //	f.send_pid5 = 1;
-//	f.send_pid6 = 1;
+	f.send_pid6 = 1;
 
+}
+
+
+void EE_SAVE_RC_ADDR_AND_MATCHED()
+{
+	int16_t temp;
+
+	temp = ((int16_t)rc_matched << 8) | RX_ADDRESS[4];
+	EE_WriteVariable(VirtAddVarTab[EE_RC_ARRD_AND_MATCHED], temp);
+}
+
+void EE_READ_RC_ADDR_AND_MATCHED()
+{
+	int16_t temp;
+
+	EE_ReadVariable(VirtAddVarTab[EE_RC_ARRD_AND_MATCHED], &temp);
+	rc_matched = (uint8_t)(temp >> 8);
+	RX_ADDRESS[4] = (uint8_t)(temp && 0xff);
 }
 
 void Param_SavePID()

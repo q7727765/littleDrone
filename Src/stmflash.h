@@ -48,6 +48,8 @@ void EE_SAVE_MAG_OFFSET(void);
 void EE_READ_MAG_OFFSET(void);
 void EE_SAVE_PID(void);
 void EE_READ_PID(void);
+void EE_SAVE_RC_ADDR_AND_MATCHED();
+void EE_READ_RC_ADDR_AND_MATCHED();
 
 
 void STMFLASH_Unlock(void);					  //FLASH½âËø

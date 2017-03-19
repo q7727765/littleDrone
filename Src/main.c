@@ -95,12 +95,12 @@ void init(void)
 	IIC_Init();
 	detectGyro();
 	detectAcc();
-//	detectMag();
+	//detectMag();
 
 
 	gyro.init();
 	acc.init();
-//	mag.init();
+	//mag.init();
 	//MS5611_Init();
 	//WaitBaroInitOffset();
 
@@ -109,9 +109,10 @@ void init(void)
 	EE_READ_ACC_OFFSET();
 	EE_READ_GYRO_OFFSET();
 	EE_READ_MAG_OFFSET();
+	EE_READ_RC_ADDR_AND_MATCHED();
 
 	motor_init();
-	NRF24L01_Init();
+	rc_init();
 
 	while(NRF24L01_Check()){
 		SendChar("nrf ing\r\n");
