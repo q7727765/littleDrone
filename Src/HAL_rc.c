@@ -2,6 +2,7 @@
 #include "nrf24l01.h"
 #include "delay.h"
 #include "main.h"
+#include "usart.h"
 
 rc_t rc;
 uint8_t rc_matched = 0x55;
@@ -23,15 +24,20 @@ void rc_match(void)
 	Ts = micros();
 	do{
 		dT = micros() - Ts;
-		if(dT%100000){
+		if((dT/100000)%2){
 			HAL_GPIO_TogglePin(GPIOB, LED_SIGN_Pin);
 		}
+
 		NRF24L01_RX_Mode();
-		delay_ms(2);
+		SendChar("Finding ADDR: ");
+		SendInt(RX_ADDRESS[4]);
+		_n();
+		delay_ms(4);
 		sta = NRF24L01_Read_Reg(NRF_READ_REG + STATUS);
 
 		if((sta & 0x0E) == 0x00){
 			rc_matched = 1;
+
 		}else{
 			RX_ADDRESS[4] ++;
 			if(RX_ADDRESS[4] == 0xff){
@@ -44,6 +50,6 @@ void rc_match(void)
 //		}
 
 
-	}while(rc_matched && ((sta & 0x0E) == 0x0E));
+	}while(!rc_matched);
 
 }

@@ -224,13 +224,13 @@ void taskUpdateRC(void)
 			push_key_2000 = 0;
 		}else if(push_key_1000 && (rc.value[rc_push_num] == 1000)){
 			push_key_down_time++;
-			if(push_key_down_time > 100){//RC_TASK任务周期是10ms
+			if(push_key_down_time > 50){//RC_TASK任务周期是10ms
 				rc_matched = 0;
 			}
 		}else if(push_key_1000 && (rc.value[rc_push_num] == 2000)){
 			push_key_1000 = 0;
 			push_key_2000 = 1;
-			if(push_key_down_time > 100){//RC_TASK任务周期是10ms
+			if(push_key_down_time > 50){//RC_TASK任务周期是10ms
 
 			}else{
 				imu.caliPass = 0;

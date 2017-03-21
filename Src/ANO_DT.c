@@ -23,6 +23,7 @@
 #include "control.h"
 #include "HAL.h"
 #include "ms5611.h"
+#include "nrf24l01.h"
 
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
@@ -179,7 +180,7 @@ void ANO_DT_Data_Exchange(void)
 		f.send_pid6 = 0;
 		ANO_DT_Send_PID(6,0,0,0,
 						0,0,0,
-						0,0,rc_matched * 0.001);
+						0,(float)RX_ADDRESS[4]*0.001,(float)rc_matched * 0.001);
 	}
 
 
@@ -385,7 +386,8 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 	}
 	if(*(data_buf+2)==0X15)								//PID6
 	{
-		rc_matched = ((uint8_t)(*(data_buf+20)<<8)|*(data_buf+21) );
+		RX_ADDRESS[4] =(uint8_t)(*(data_buf+18)<<8)|*(data_buf+19);
+		rc_matched = (uint8_t)(*(data_buf+20)<<8)|*(data_buf+21);
 		EE_SAVE_RC_ADDR_AND_MATCHED();
 		ANO_DT_Send_Check(*(data_buf+2),sum);
 	}

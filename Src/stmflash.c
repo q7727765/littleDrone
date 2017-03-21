@@ -115,7 +115,7 @@ void EE_READ_RC_ADDR_AND_MATCHED()
 
 	EE_ReadVariable(VirtAddVarTab[EE_RC_ARRD_AND_MATCHED], &temp);
 	rc_matched = (uint8_t)(temp >> 8);
-	RX_ADDRESS[4] = (uint8_t)(temp && 0xff);
+	RX_ADDRESS[4] = (uint8_t)(temp & 0xff);
 }
 
 void Param_SavePID()
