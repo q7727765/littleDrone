@@ -133,7 +133,7 @@ void init(void)
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
 
 
-
+}
 
 
 /* USER CODE END 0 */
@@ -251,7 +251,7 @@ static void MX_ADC1_Init(void)
 
   ADC_ChannelConfTypeDef sConfig;
 
-    /**Common config 
+    /**Common config
     */
   hadc1.Instance = ADC1;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
@@ -265,7 +265,7 @@ static void MX_ADC1_Init(void)
     Error_Handler();
   }
 
-    /**Configure Regular Channel 
+    /**Configure Regular Channel
     */
   sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = 1;

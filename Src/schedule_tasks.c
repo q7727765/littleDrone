@@ -156,7 +156,6 @@ void taskUpdateAttitude(void)
 	str0[8] = d_temp.byte[1];
 	str0[9] = d_temp.byte[0];
 #endif
->>>>>>> new_imu
 }
 
 void taskUpdateBaro(void)
