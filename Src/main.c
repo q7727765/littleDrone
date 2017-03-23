@@ -46,6 +46,10 @@
 #include "hmc5883l.h"
 #include "ms5611.h"
 #include "HAL.h"
+#include "stmflash.h"
+#include "nrf24l01.h"
+#include "filter.h"
+#include "stm32f103xb.h"
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
@@ -91,33 +95,60 @@ void init(void)
 	IIC_Init();
 	detectGyro();
 	detectAcc();
-	detectMag();
-	detectBaro();
+	//detectMag();
+
 
 	gyro.init();
 	acc.init();
-	mag.init();
+	//mag.init();
+	//MS5611_Init();
+	//WaitBaroInitOffset();
 
-	imuInit();
-}
+	EE_READ_PID();
+	EE_READ_ACC_OFFSET();
+	EE_READ_GYRO_OFFSET();
+	EE_READ_MAG_OFFSET();
+	EE_READ_RC_ADDR_AND_MATCHED();
+
+	motor_init();
+	rc_init();
+
+	while(NRF24L01_Check()){
+		SendChar("nrf ing\r\n");
+		delay_ms(500);
+	}
+	SendChar("nrf ok\r\n");
+	NRF24L01_RX_Mode();
+
+	LPF2pSetCutoffFreq_1(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);		//30Hz
+	LPF2pSetCutoffFreq_2(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+	LPF2pSetCutoffFreq_3(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+	LPF2pSetCutoffFreq_4(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+	LPF2pSetCutoffFreq_5(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+	LPF2pSetCutoffFreq_6(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
+
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
+
 
 
 
 
 /* USER CODE END 0 */
 
-
 int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	uint32_t time;
+//	uart_init(72,115200);
+	delay_init();
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
-	JTAG_Set(0x01);
-	delay_init();
-//  uart_init(72,115200);
+
+
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
@@ -126,30 +157,33 @@ int main(void)
 
   /* Initialize all configured peripherals */
 	MX_GPIO_Init();
-	//MX_ADC1_Init();
-	//MX_TIM2_Init();
-	MX_USART1_UART_Init();
+	MX_USART1_UART_Init();//这个初始化一定要放在	MX_GPIO_Init()后面
 	MX_USART3_UART_Init();
-	//MX_SPI2_Init();
+	USART1->CR1|=1<<8;    //PE中断使能
+	USART1->CR1|=1<<5;    //接收缓冲区非空中断使能
+	MY_NVIC_Init(3,2,USART1_IRQn,2);//组2，最低优先级
+	USART3->CR1|=1<<8;    //PE中断使能
+	USART3->CR1|=1<<5;    //接收缓冲区非空中断使能
+	MY_NVIC_Init(3,3,USART3_IRQn,2);//组2，最低优先级
+
+	MX_ADC1_Init();
+	MX_TIM2_Init();
+	MX_SPI2_Init();
 
   /* USER CODE BEGIN 2 */
-
-//  HAL_GPIO_WritePin(GPIOB, LED1_Pin | LED2_Pin , GPIO_PIN_RESET);
-//  HAL_GPIO_WritePin(GPIOA, LED3_Pin | LED4_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
-
-
 	init();
-
 	configureScheduler();
+	HAL_ADC_Start(&hadc1);
+
   /* USER CODE END 2 */
-	SendChar("init_ok444\r\n");
+
+
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
 
 		scheduler();
-
 
 	}
 
@@ -221,7 +255,7 @@ static void MX_ADC1_Init(void)
     */
   hadc1.Instance = ADC1;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
@@ -235,7 +269,7 @@ static void MX_ADC1_Init(void)
     */
   sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -254,11 +288,11 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi2.Init.CRCPolynomial = 10;
+  hspi2.Init.CRCPolynomial = 7;
   if (HAL_SPI_Init(&hspi2) != HAL_OK)
   {
     Error_Handler();
@@ -274,10 +308,11 @@ static void MX_TIM2_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
   TIM_OC_InitTypeDef sConfigOC;
 
+
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+  htim2.Init.Prescaler = 2;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 0;
+  htim2.Init.Period = 1000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
@@ -354,7 +389,7 @@ static void MX_USART3_UART_Init(void)
 {
 
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 38400;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -384,6 +419,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LED4_Pin|LED3_Pin, GPIO_PIN_SET);
@@ -396,6 +432,12 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED2_Pin|LED1_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : LED4_Pin LED3_Pin */
+  GPIO_InitStruct.Pin = W_CSN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(W_CSN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED4_Pin LED3_Pin */
   GPIO_InitStruct.Pin = LED4_Pin|LED3_Pin;

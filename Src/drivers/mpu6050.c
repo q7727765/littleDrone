@@ -7,6 +7,7 @@
 #include "stdbool.h"
 #include "HAL.h"
 #include "stdint.h"
+#include "stmflash.h"
 
 
 #define MPU_HALF_RESOLUTION 256 * 8
@@ -14,11 +15,6 @@
 
 
 u8						mpu6050_buffer[14];					//iic读取后存放数据
-S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
-u8						GYRO_OFFSET_OK = 1;
-u8						ACC_OFFSET_OK = 1;
-S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
-
 
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -49,7 +45,7 @@ bool MPU6050DetectGyro(gyro_t *gyro)
 	//gyro->isDataReady = mpuIsDataReady;
 
 	// 16.4 dps/lsb scalefactor
-	gyro->scale = 1.0f / 16.4f;
+	gyro->scale = 2000.f / 32768.f;
 
 	return true;
 }
@@ -67,9 +63,9 @@ bool mpuAccRead(int16_t *data)
 {
 	u8 res;
 	res = IIC_Read_Reg_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG,6,mpu6050_buffer);
-	data[0] = ((((int16_t)mpu6050_buffer[0]) << 8) | mpu6050_buffer[1])- ACC_OFFSET.X;
-	data[1] = ((((int16_t)mpu6050_buffer[2]) << 8) | mpu6050_buffer[3])- ACC_OFFSET.Y;
-	data[2] = ((((int16_t)mpu6050_buffer[4]) << 8) | mpu6050_buffer[5])- ACC_OFFSET.Z;
+	data[0] = ((((int16_t)mpu6050_buffer[0]) << 8) | mpu6050_buffer[1]);
+	data[1] = ((((int16_t)mpu6050_buffer[2]) << 8) | mpu6050_buffer[3]);
+	data[2] = ((((int16_t)mpu6050_buffer[4]) << 8) | mpu6050_buffer[5]);
 
 	return !res;
 }
@@ -78,9 +74,9 @@ bool mpuGyroRead(int16_t *data)
 {
 	u8 res;
 	res = IIC_Read_Reg_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG+8,6,mpu6050_buffer+8);
-	data[0] = ((((int16_t)mpu6050_buffer[8]) << 8) | mpu6050_buffer[9])- GYRO_OFFSET.X;
-	data[1] = ((((int16_t)mpu6050_buffer[10]) << 8) | mpu6050_buffer[11])- GYRO_OFFSET.Y;
-	data[2] = ((((int16_t)mpu6050_buffer[12]) << 8) | mpu6050_buffer[13])- GYRO_OFFSET.X;
+	data[0] = ((((int16_t)mpu6050_buffer[8]) << 8) | mpu6050_buffer[9]);
+	data[1] = ((((int16_t)mpu6050_buffer[10]) << 8) | mpu6050_buffer[11]);
+	data[2] = ((((int16_t)mpu6050_buffer[12]) << 8) | mpu6050_buffer[13]);
 
 	return !res;
 }
@@ -88,80 +84,6 @@ bool mpuGyroRead(int16_t *data)
 void MPU6050_Read(void)
 {
 	IIC_Read_Reg_Len(MPU_ADDR,MPU_ACCEL_XOUTH_REG,14,mpu6050_buffer);
-}
-
-void MPU6050_Dataanl(void)
-{
-	MPU6050_ACC_LAST.X=((((int16_t)mpu6050_buffer[0]) << 8) | mpu6050_buffer[1]) - ACC_OFFSET.X;
-	MPU6050_ACC_LAST.Y=((((int16_t)mpu6050_buffer[2]) << 8) | mpu6050_buffer[3]) - ACC_OFFSET.Y;
-	MPU6050_ACC_LAST.Z=((((int16_t)mpu6050_buffer[4]) << 8) | mpu6050_buffer[5]) - ACC_OFFSET.Z;
-	//跳过温度ADC
-	MPU6050_GYRO_LAST.X=((((int16_t)mpu6050_buffer[8]) << 8) | mpu6050_buffer[9]) - GYRO_OFFSET.X;
-	MPU6050_GYRO_LAST.Y=((((int16_t)mpu6050_buffer[10]) << 8) | mpu6050_buffer[11]) - GYRO_OFFSET.Y;
-	MPU6050_GYRO_LAST.Z=((((int16_t)mpu6050_buffer[12]) << 8) | mpu6050_buffer[13]) - GYRO_OFFSET.Z;
-	
-	if(!GYRO_OFFSET_OK)
-	{
-		static int32_t	tempgx=0,tempgy=0,tempgz=0;
-		static uint8_t cnt_g=0;
-// 		LED1_ON;
-		if(cnt_g==0)
-		{
-			GYRO_OFFSET.X=0;
-			GYRO_OFFSET.Y=0;
-			GYRO_OFFSET.Z=0;
-			tempgx = 0;
-			tempgy = 0;
-			tempgz = 0;
-			cnt_g = 1;
-			return;
-		}
-		tempgx+= MPU6050_GYRO_LAST.X;
-		tempgy+= MPU6050_GYRO_LAST.Y;
-		tempgz+= MPU6050_GYRO_LAST.Z;
-		if(cnt_g==200)
-		{
-			GYRO_OFFSET.X=tempgx/cnt_g;
-			GYRO_OFFSET.Y=tempgy/cnt_g;
-			GYRO_OFFSET.Z=tempgz/cnt_g;
-			cnt_g = 0;
-			GYRO_OFFSET_OK = 1;
-			//EE_SAVE_GYRO_OFFSET();//保存数据+++
-			return;
-		}
-		cnt_g++;
-	}
-	if(!ACC_OFFSET_OK)
-	{
-		static int32_t	tempax=0,tempay=0,tempaz=0;
-		static uint8_t cnt_a=0;
-// 		LED1_ON;
-		if(cnt_a==0)
-		{
-			ACC_OFFSET.X = 0;
-			ACC_OFFSET.Y = 0;
-			ACC_OFFSET.Z = 0;
-			tempax = 0;
-			tempay = 0;
-			tempaz = 0;
-			cnt_a = 1;
-			return;
-		}
-		tempax+= MPU6050_ACC_LAST.X;
-		tempay+= MPU6050_ACC_LAST.Y;
-		//tempaz+= MPU6050_ACC_LAST.Z;
-		if(cnt_a==200)
-		{
-			ACC_OFFSET.X=tempax/cnt_a;
-			ACC_OFFSET.Y=tempay/cnt_a;
-			ACC_OFFSET.Z=tempaz/cnt_a;
-			cnt_a = 0;
-			ACC_OFFSET_OK = 1;
-			//EE_SAVE_ACC_OFFSET();//保存数据+++
-			return;
-		}
-		cnt_a++;		
-	}
 }
 
 
@@ -178,13 +100,13 @@ void MPU_Init_Gyro(void)
 	//MPU_Set_Rate(50);						//设置采样率50Hz
 	MPU_Write_Byte(MPU_INT_EN_REG,0X00);	//关闭所有中断
 	MPU_Write_Byte(MPU_USER_CTRL_REG,0X00);	//I2C主模式关闭
-	MPU_Write_Byte(MPU_FIFO_EN_REG,0X00);	//关闭FIFO
+//	MPU_Write_Byte(MPU_FIFO_EN_REG,0X00);	//关闭FIFO
 	MPU_Write_Byte(MPU_INTBP_CFG_REG,
 			0 << 7 | 0 << 6 | 0 << 5 | 0 << 4 | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0);	//INT引脚低电平有效
 
 	MPU_Write_Byte(MPU_PWR_MGMT2_REG,0X00);	//加速度与陀螺仪都工作
-	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X03);	//设置CLKSEL,PLL X轴为参考
-	MPU_Set_Rate(50);						//设置采样率为50Hz
+	MPU_Write_Byte(MPU_PWR_MGMT1_REG,0X03);	//设置CLKSEL,PLL Z轴为参考
+	//MPU_Set_Rate(50);						//设置采样率为50Hz
 
 }
 

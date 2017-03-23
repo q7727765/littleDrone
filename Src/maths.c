@@ -18,7 +18,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "axis.h"
+#include "imu.h"
 #include "maths.h"
 
 #if defined(FAST_TRIGONOMETRY) || defined(EVEN_FASTER_TRIGONOMETRY)

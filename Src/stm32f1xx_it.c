@@ -4,7 +4,7 @@
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -261,16 +261,16 @@ void SPI2_IRQHandler(void)
 /**
 * @brief This function handles USART3 global interrupt.
 */
-void USART3_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART3_IRQn 0 */
-
-  /* USER CODE END USART3_IRQn 0 */
-  HAL_UART_IRQHandler(&huart3);
-  /* USER CODE BEGIN USART3_IRQn 1 */
-
-  /* USER CODE END USART3_IRQn 1 */
-}
+//void USART3_IRQHandler(void)
+//{
+//  /* USER CODE BEGIN USART3_IRQn 0 */
+//
+//  /* USER CODE END USART3_IRQn 0 */
+//  HAL_UART_IRQHandler(&huart3);
+//  /* USER CODE BEGIN USART3_IRQn 1 */
+//
+//  /* USER CODE END USART3_IRQn 1 */
+//}
 
 /* USER CODE BEGIN 1 */
 

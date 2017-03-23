@@ -14,11 +14,8 @@
 
 static void I2C_delay(void)
 {
-
-   u8 i=5; //这里可以优化速度	，经测试最低到5还能写入
-   while(i)
-   {
-     i--;
+   for(u8 i=9;i--;){
+	   __ASM("NOP");
    }
 }
 
@@ -47,18 +44,18 @@ void IIC_Start(void)
 	IIC_SDA=0;//START:when CLK is high,DATA change form high to low
 	I2C_delay();
 	IIC_SCL=0;//钳住I2C总线，准备发送或接收数据
-	I2C_delay();
+	//I2C_delay();
 }
 //产生IIC停止信号
 void IIC_Stop(void)
 {
 	SDA_OUT();//sda线输出
 	IIC_SCL=0;
-	I2C_delay();
+	//I2C_delay();
 	IIC_SDA=0;//STOP:when CLK is high DATA change form low to high
 	I2C_delay();
 	IIC_SCL=1;
-	I2C_delay();
+	//I2C_delay();
 	IIC_SDA=1;//发送I2C总线结束信号
 	I2C_delay();
 }
@@ -69,7 +66,7 @@ uint8_t IIC_Wait_Ack(void)
 {
 	uint8_t ucErrTime=0;
 
-	IIC_SCL=1;I2C_delay();
+	//IIC_SCL=1;I2C_delay();
 	SDA_IN();      //SDA设置为输入
 	IIC_SDA=1;I2C_delay();
 	IIC_SCL=1;I2C_delay();
@@ -84,34 +81,34 @@ uint8_t IIC_Wait_Ack(void)
 		}
 	}
 	IIC_SCL=0;//时钟输出0
-	I2C_delay();
+	//I2C_delay();
 	return 0;
 }
 //产生ACK应答
 void IIC_Ack(void)
 {
 	IIC_SCL=0;
-	I2C_delay();
+	//I2C_delay();
 	SDA_OUT();
 	IIC_SDA=0;
 	I2C_delay();
 	IIC_SCL=1;
 	I2C_delay();
 	IIC_SCL=0;
-	I2C_delay();
+//	I2C_delay();
 }
 //不产生ACK应答
 void IIC_NAck(void)
 {
 	IIC_SCL=0;
-	I2C_delay();
+	//I2C_delay();
 	SDA_OUT();
 	IIC_SDA=1;
 	I2C_delay();
 	IIC_SCL=1;
 	I2C_delay();
 	IIC_SCL=0;
-	I2C_delay();
+	//I2C_delay();
 }
 //IIC发送一个字节
 //返回从机有无应答
@@ -122,7 +119,7 @@ void IIC_Send_Byte(uint8_t txd)
     uint8_t t;
 	SDA_OUT();
     IIC_SCL=0;//拉低时钟开始数据传输
-    I2C_delay();
+    //I2C_delay();
     for(t=0;t<8;t++)
     {
         IIC_SDA=(txd&0x80)>>7;

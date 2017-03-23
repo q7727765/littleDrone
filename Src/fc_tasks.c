@@ -44,31 +44,45 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_HIGH,
     },
 
-    [TASK_UPDATE_MPU6050] = {
-        .taskName = "UPDATE_MPU6050",
-        .taskFunc = taskUpdateMPU6050,
-        .desiredPeriod = 1000,
+    [TASK_UPDATE_ATT_ANGLE] = {
+        .taskName = "UPDATE_ATT_ANGLE",
+        .taskFunc = taskUpdateAttiAngle,
+        .desiredPeriod = 4000,
+        .staticPriority = TASK_PRIORITY_REALTIME,
+    },
+
+    [TASK_UPDATE_MAG] = {
+        .taskName = "UPDATE_MAG",
+        .taskFunc = taskUpdateMAG,
+        .desiredPeriod = 100000,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
     [TASK_UPDATE_ATTITUDE] = {
         .taskName = "UPDATE_ATTITUDE",
         .taskFunc = taskUpdateAttitude,
-        .desiredPeriod = 5000,
-        .staticPriority = TASK_PRIORITY_REALTIME_PRO,
-    },
-
-    [TASK_UPDATE_MAG] = {
-        .taskName = "UPDATE_MAG",
-        .taskFunc = taskUpdateMAG,
-        .desiredPeriod = 1000,
+        .desiredPeriod = 2000,
         .staticPriority = TASK_PRIORITY_REALTIME,
     },
 
-    [TASK_RUNNLED] = {
-        .taskName = "RUNLED",
-        .taskFunc = taskRUNLED,
-        .desiredPeriod = 500000,
+    [TASK_UPDATE_BARO] = {
+        .taskName = "UPDATE_BARO",
+        .taskFunc = taskUpdateBaro,
+        .desiredPeriod = 20000,
+        .staticPriority = TASK_PRIORITY_MEDIUM,
+    },
+
+    [TASK_BATTERY_MONITOR] = {
+        .taskName = "BATTERY_MONITOR",
+        .taskFunc = taskBatteryMoniter,
+        .desiredPeriod = 200000,
+        .staticPriority = TASK_PRIORITY_MEDIUM,
+    },
+
+    [TASK_LED] = {
+        .taskName = "LED",
+        .taskFunc = taskLED,
+        .desiredPeriod = 100000,
         .staticPriority = TASK_PRIORITY_LOW,
     },
 
@@ -79,16 +93,25 @@ cfTask_t cfTasks[] = {
         .staticPriority = TASK_PRIORITY_HIGH,
     },
 
-
+    [TASK_UPDATE_RC] = {
+        .taskName = "UPDATE_RC",
+        .taskFunc = taskUpdateRC,
+        .desiredPeriod = 10000,
+        .staticPriority = TASK_PRIORITY_REALTIME,
+    },
 };
 
 void configureScheduler(void)
 {
     schedulerInit();
     setTaskEnabled(TASK_SYSTEM, 1);
-    setTaskEnabled(TASK_UPDATE_MPU6050, 1);
-    setTaskEnabled(TASK_RUNNLED, 1);
+    setTaskEnabled(TASK_UPDATE_ATT_ANGLE, 1);
+    setTaskEnabled(TASK_LED, 1);
     setTaskEnabled(TASK_UPDATE_ATTITUDE, 1);
     setTaskEnabled(TASK_USART_DEBUG, 1);
-    setTaskEnabled(TASK_UPDATE_MAG, 1);
+    setTaskEnabled(TASK_UPDATE_MAG, 0);
+    setTaskEnabled(TASK_UPDATE_BARO, 0);
+    setTaskEnabled(TASK_UPDATE_RC, 1);
+    setTaskEnabled(TASK_BATTERY_MONITOR, 1);
+
 }

@@ -1,13 +1,8 @@
 #include "usart.h"
 #include "sys.h"
 #include <stdio.h>
+#include "ANO_DT.h"
 
-//#include "ANO_DT.h"
-//////////////////////////////////////////////////////////////////////////////////
-//如果使用ucos,则包括下面的头文件即可.
-#if SYSTEM_SUPPORT_UCOS
-#include "includes.h"					//ucos 使用
-#endif
 
 
 
@@ -42,7 +37,7 @@
 //加入以下代码,支持printf函数,而不需要选择use MicroLIB
 
 
-#if 1
+#if 0
 //#pragma import(__use_no_semihosting)
 #pragma import(__use_no_semihosting_swi)
 //标准库需要的支持函数
@@ -86,35 +81,29 @@ u16 USART_RX_STA=0;       //接收状态标记
 void USART1_IRQHandler(void)
 {
 	u8 res;
-#ifdef OS_CRITICAL_METHOD 	//如果OS_CRITICAL_METHOD定义了,说明使用ucosII了.
-	OSIntEnter();
-#endif
+
 	if(USART1->SR&(1<<5))//接收到数据
 	{
 		res=USART1->DR;
-
-	//	ANO_DT_Data_Receive_Prepare(res);++++++++
-//		if((USART_RX_STA&0x8000)==0)//接收未完成
-//		{
-//			if(USART_RX_STA&0x4000)//接收到了0x0d
-//			{
-//				if(res!=0x0a)USART_RX_STA=0;//接收错误,重新开始
-//				else USART_RX_STA|=0x8000;	//接收完成了
-//			}else //还没收到0X0D
-//			{
-//				if(res==0x0d)USART_RX_STA|=0x4000;
-//				else
-//				{
-//					USART_RX_BUF[USART_RX_STA&0X3FFF]=res;
-//					USART_RX_STA++;
-//					if(USART_RX_STA>(USART_REC_LEN-1))USART_RX_STA=0;//接收数据错误,重新开始接收
-//				}
-//			}
-//		}
+		ANO_DT_Data_Receive_Prepare(res);
+//		SendChar("asd\r\n");
 	}
-#ifdef OS_CRITICAL_METHOD 	//如果OS_CRITICAL_METHOD定义了,说明使用ucosII了.
-	OSIntExit();
-#endif
+
+
+}
+
+void USART3_IRQHandler(void)
+{
+	u8 res;
+
+	if(USART3->SR&(1<<5))//接收到数据
+	{
+		res=USART3->DR;
+		ANO_DT_Data_Receive_Prepare(res);
+//		SendChar("asd\r\n");
+	}
+
+
 }
 #endif
 //初始化IO 串口1
@@ -158,7 +147,10 @@ void SendData(u8 *data,u8 length)
 	{
 		USART1->DR=data[i];
 		while((USART1->SR&0X40)==0);
+		USART3->DR=data[i];
+		while((USART3->SR&0X40)==0);
 	}
+
 }
 
 void SendChar(char *s)//字符串一定要以'\0'结尾

@@ -17,27 +17,20 @@
 #include "HAL.h"
 #include "imu.h"
 #include "ANO_DT.h"
-#include "axis.h"
+#include "control.h"
+#include "nrf24l01.h"
+#include "led.h"
+#include "maths.h"
+#include "stmflash.h"
 
-uint32_t baroPressureSumtt = 0;
-extern int32_t baroPressure;
-extern int32_t baroTemperature;
-extern baro_t baro;
+extern ADC_HandleTypeDef hadc1;
 
+battery_t battery;
 
-int16_t gyro_data[3] = {0};
-int16_t acc_data[3] = {0};
-int16_t mag_data[3] = {0};
-
-uint8_t ms5611_data[3];
-
-extern mag_t mag;
-extern u8 mpu6050_buffer[14];					//iic读取后存放数据
-
-extern S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取值
-extern S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
-extern u8							GYRO_OFFSET_OK;
-extern u8							ACC_OFFSET_OK;
+union _dat16{
+	uint16_t full;
+	uint8_t  byte[2];
+}d_temp;
 
 
 void taskUsartDebug(void)
@@ -45,140 +38,260 @@ void taskUsartDebug(void)
 
 	ANO_DT_Data_Exchange();
 
-#if 0
-		uint8_t xl,xm;
-		int16_t x;
-
-		uint8_t sta;
-
-		static uint8_t mo = 1;
-
-		//acc & gyro
-
-		SendChar("X:");
-		SendInt(acc_data[0]);
-		_n();
-		SendChar("Y:");
-		SendInt(acc_data[1]);
-		_n();
-		SendChar("Z:");
-		SendInt(acc_data[2]);
-		_n();
-		SendChar("GX:");
-		SendInt(gyro_data[0]);
-		_n();
-		SendChar("GY:");
-		SendInt(gyro_data[1]);
-		_n();
-		SendChar("GZ:");
-		SendInt(gyro_data[2]);
-		_n();
-
-		SendChar("ANGLE_X:");
-		SendDouble(attitude.values.pitch);
-		_n();
-		SendChar("ANGLE_Y:");
-		SendDouble(attitude.values.roll);
-		_n();
-		SendChar("ANGLE_Z:");
-		SendDouble(attitude.values.yaw);
-		_n();
-
-
-	//mag
-
-
-		sta = mag.read(mag_data);
-
-		SendChar("mag_x:");
-		SendInt(mag_data[0]);
-		_n();
-		SendChar("mag_y:");
-		SendInt(mag_data[2]);
-		_n();
-		SendChar("mag_z:");
-		SendInt(mag_data[1]);
-		_n();
-
-	//baro
-
-		if(mo){
-
-		    baro.get_ut();
-		    baro.start_up();
-
-		}else{
-
-		    baro.get_up();
-		    baro.start_ut();
-		    baro.calculate(&baroPressure, &baroTemperature);
-		    baroPressureSumtt =recalculateBarometerTotal(
-		    		48,
-		    		baroPressureSumtt,
-					baroPressure);
-
-		}
-
-		mo =! mo;
-
-	    SendChar("baroPressure:");
-	    SendInt(baroPressure);
-	    _n();
-	    SendChar("baroTemperature:");
-	    SendInt(baroTemperature);
-	    _n();
-//	    SendChar("baroPressureSumtt:");
-//	    SendInt(baroPressureSumtt);
-//	    _n();
-
-	//	IIC_Write_Reg(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D1 + CMD_ADC_4096, 1); // D1 (pressure) conversion start!
-	//	sta = IIC_Read_Reg_Len(MS5611_ADDR,CMD_ADC_READ,3,ms5611_buf);
-	//	baro = ((uint32_t)ms5611_buf[0] << 16) | (uint32_t)(ms5611_buf[1] << 8) | (uint32_t)ms5611_buf[2];
-	//	SendChar("baro:");
-	//	SendInt(baro);
-	//	_n();
-#endif
 }
-void taskUpdateMPU6050(void)
+
+void taskUpdateAttiAngle(void)
 {
-	gyro.read(gyro_data);
-	acc.read(acc_data);
-	//Prepare_Data();
+	static uint32_t t0,t1;
+	static uint32_t old;
+
+	old = t0;
+	t0 = micros();
+
+	CtrlAttiAng();
+
+	t1 = micros();
+
+	//外环计算时间 [first]/2+1 = 6
+	d_temp.full = (uint16_t)(t1 - t0) * 100;
+	str0[10] = d_temp.byte[1];
+	str0[11] = d_temp.byte[0];
+
+	//外环周期 [first]/2+1 = 7
+	d_temp.full = (uint16_t)(t0 - old);
+	str0[12] = d_temp.byte[1];
+	str0[13] = d_temp.byte[0];
 }
 
 void taskUpdateMAG(void)
 {
-	mag.read(mag_data);
+	static uint32_t t0,old;
+
+	old = t0;
+	t0 = micros();
+
+	//mag更新周期  [first]/2+1 = 12
+	d_temp.full = (uint16_t)((t0 - old) / 10);
+	str0[22] = d_temp.byte[1];
+	str0[23] = d_temp.byte[0];
+
+	mag.read(imu.magADC);
+
+	if(imu.magCaliPass == 0){
+		led.model = ON;
+		mag_calibration();
+	}
+
+	imu.magRaw[X] = (imu.magADC[X] - imu.magOffset[X]);
+	imu.magRaw[Y] = (imu.magADC[Y] - imu.magOffset[Y]);
+	imu.magRaw[Z] = (imu.magADC[Z] - imu.magOffset[Z]);
 }
 
+attitude_t tar_attitude;
 
 void taskUpdateAttitude(void)
 {
-    static uint32_t previousIMUUpdateTime;
+#define _debug_taskUpdateAttitude 1
 
-	uint32_t currentTime = micros();
-	uint32_t deltaT = currentTime - previousIMUUpdateTime;
-	previousIMUUpdateTime = currentTime;
+	static uint32_t t0,t1,t2,t3,t4,t5,t6;
+	static uint32_t old;
+	old = t1;
 
-	imuMahonyAHRSupdate(deltaT * 1e-6f,
-							gyro_data[X] * gyroScale, gyro_data[Y] * gyroScale, gyro_data[Z] * gyroScale,
-	                        1, acc_data[X], acc_data[Y], acc_data[Z],
-	                        1, mag_data[X], mag_data[Y], mag_data[Z],
-	                        0, 0);
+#if _debug_taskUpdateAttitude
+	t1 = micros();
+#endif
 
-	imuUpdateEulerAngles();
+	IMUSO3Thread();
 
-	//Get_Attitude();
+	if(imu.caliPass == 0){
+		led.model = ON;
+		if(IMU_Calibrate()){
+			//gParamsSaveEEPROMRequset=1;	//请求记录到EEPROM
+			imu.caliPass=1;
+			led.model = DOUBLE_FLASH;
+		}
+	}
+#if _debug_taskUpdateAttitude
+	t2 = micros();
+#endif
+
+	CtrlAttiRate();
+
+#if _debug_taskUpdateAttitude
+	t3 = micros();
+#endif
+
+	CtrlMotor();
+
+#if _debug_taskUpdateAttitude
+	t4 = micros();
+#endif
+
+#if _debug_taskUpdateAttitude
+
+	t5 = micros();
+
+	//imu数据采集和姿态计算 [first]/2+1 = 1
+	d_temp.full = (uint16_t)(t2 - t1);
+	str0[0] = d_temp.byte[1];
+	str0[1] = d_temp.byte[0];
+
+	//内环pid控制 [first]/2+1 = 2
+	d_temp.full = (uint16_t)(t3 - t2)*100;
+	str0[2] = d_temp.byte[1];
+	str0[3] = d_temp.byte[0];
+
+	//输出到电机 [first]/2+1 = 3
+	d_temp.full = (uint16_t)(t4 - t3)*100;
+	str0[4] = d_temp.byte[1];
+	str0[5] = d_temp.byte[0];
+
+	//整个任务计算时间 [first]/2+1 = 4
+	d_temp.full = (uint16_t)(t5 - t1);
+	str0[6] = d_temp.byte[1];
+	str0[7] = d_temp.byte[0];
+
+	//两次任务执行间隔 [first]/2+1 = 5
+	d_temp.full = (uint16_t)(t1 - old);
+	str0[8] = d_temp.byte[1];
+	str0[9] = d_temp.byte[0];
+#endif
+>>>>>>> new_imu
 }
-void taskRUNLED(void)
+
+void taskUpdateBaro(void)
 {
-	static char sta = 0;
+	static uint32_t t0,old;
 
-	sta = !sta;//(sta+1)%2;
+	old = t0;
+	t0 = micros();
 
-	if(sta)
-		HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_SET);
-	else
+	//Baro更新周期 [first]/2+1 = 13
+	d_temp.full = (uint16_t)((t0 - old) / 10);
+	str0[24] = d_temp.byte[1];
+	str0[25] = d_temp.byte[0];
+
+	MS5611_ThreadNew();
+
+
+}
+void taskUpdateRC(void)
+{
+	static uint32_t t0,t1;
+	static uint32_t old;
+	static rc_t oldrc;
+	static uint16_t lost_rc_time = 0;
+	static uint8_t push_key_1000 = 0,push_key_2000 = 1;
+	static uint16_t push_key_down_time = 0;
+
+	old = t0;
+	t0 = micros();
+
+	if(rc_matched == 0){
+		EE_SAVE_RC_ADDR_AND_MATCHED();
+		rc_match();
+		EE_SAVE_RC_ADDR_AND_MATCHED();
+		//led.model = DOUBLE_FLASH;
+		return ;
+	}
+
+	if(NRF24L01_RxPacket((u8*)rc.value) !=0){
+		lost_rc_time ++;
+		if(lost_rc_time > 100){
+			rc.value[rc_aux2_num] = 1000;
+			motorLock = 1;
+		}
+		return ;
+	}else {
+		lost_rc_time = 0;
+	}
+
+
+	if(rc.value[rc_check_pin1] == '@' &&
+			rc.value[rc_check_pin2] == '#'){
+
+		rc.value[rc_thr_num] = constrain(rc.value[rc_thr_num] + 0,1000,2000);
+		rc.value[rc_yaw_num] = constrain(rc.value[rc_yaw_num] + 0,1000,2000);
+		rc.value[rc_pit_num] = constrain(rc.value[rc_pit_num] + 0,1000,2000);
+		rc.value[rc_rol_num] = constrain(rc.value[rc_rol_num] + 0,1000,2000);
+
+		rc.thr = rc.value[rc_thr_num]-1000;
+		rc.yaw = YAW_RATE_MAX * dbScaleLinear((rc.value[rc_yaw_num] - 1500),500,APP_YAW_DB);
+		rc.pit = -Angle_Max * dbScaleLinear((rc.value[rc_pit_num] - 1500),500,APP_PR_DB);
+		rc.rol = -Angle_Max * dbScaleLinear((rc.value[rc_rol_num] - 1500),500,APP_PR_DB);
+
+		if(push_key_2000 && (rc.value[rc_push_num] == 1000)){
+			push_key_1000 = 1;
+			push_key_2000 = 0;
+		}else if(push_key_1000 && (rc.value[rc_push_num] == 1000)){
+			push_key_down_time++;
+			if(push_key_down_time > 50){//RC_TASK任务周期是10ms
+				rc_matched = 0;
+			}
+		}else if(push_key_1000 && (rc.value[rc_push_num] == 2000)){
+			push_key_1000 = 0;
+			push_key_2000 = 1;
+			if(push_key_down_time > 50){//RC_TASK任务周期是10ms
+
+			}else{
+				imu.caliPass = 0;
+			}
+			push_key_down_time = 0;
+		}
+
+
+
+		if(rc.value[rc_aux2_num] == 2000){
+			motorLock = 0;
+		}else{
+			motorLock = 1;
+		}
+
+		if(rc.value[rc_aux1_num] == 2000){
+			imu.magCaliPass = 0;
+		}
+	}
+	t1 = micros();
+	//遥控计算时间 [first]/2+1 = 8
+	d_temp.full = (uint16_t)(t1 - t0)*100;
+	str0[14] = d_temp.byte[1];
+	str0[15] = d_temp.byte[0];
+
+	//遥控更新周期 [first]/2+1 = 9
+	d_temp.full = (uint16_t)(t0 - old)/10;
+	str0[16] = d_temp.byte[1];
+	str0[17] = d_temp.byte[0];
+
+}
+
+void taskBatteryMoniter(void)
+{
+	battery.scale = 2.298;
+	battery.raw_data = (uint16_t)HAL_ADC_GetValue(&hadc1);
+	battery.voltage = ((float)battery.raw_data/4096) * battery.scale * 333;
+}
+
+void taskLED(void)
+{
+
+	switch(led.model){
+	case ON:
 		HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_RESET);
+		break;
+	case OFF:
+		HAL_GPIO_WritePin(GPIOB, LED_SIGN_Pin , GPIO_PIN_SET);
+		break;
+	case FAST_FLASH:
+		break;
+	case SINGLE_FLASH:
+		break;
+	case DOUBLE_FLASH:
+		double_flash();
+		break;
+	case SINGLE_FLASH_500MS:
+		single_flash_500ms();
+		break;
+	default:;
+	}
 
 }
