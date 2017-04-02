@@ -36,6 +36,13 @@ const uint32_t taskCount = TASK_COUNT;
 cfTask_t* taskQueueArray[TASK_QUEUE_ARRAY_SIZE];
 
 //周期单位：us
+/*
+ * \brief 配置要调度的任务
+ * .taskName：任务名称
+ * .taskFunc：要调度的函数
+ * .desiredPeriod ：调度的周期（us），eg：如果为10000则每10ms调用一次.taskFunc函数
+ * .staticPriority：优先级
+ */
 cfTask_t cfTasks[] = {
     [TASK_SYSTEM] = {
         .taskName = "SYSTEM",
@@ -104,6 +111,7 @@ cfTask_t cfTasks[] = {
 void configureScheduler(void)
 {
     schedulerInit();
+    //以下均为使能对应任务的调度，如果为0则调度器不会调度。
     setTaskEnabled(TASK_SYSTEM, 1);
     setTaskEnabled(TASK_UPDATE_ATT_ANGLE, 1);
     setTaskEnabled(TASK_LED, 1);

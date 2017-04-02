@@ -92,34 +92,35 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 char id;
 void init(void)
 {
-	IIC_Init();
-	detectGyro();
-	detectAcc();
+	IIC_Init();//IIC初始化
+	detectGyro();//陀螺仪检测
+	detectAcc();//加速度计检测
 	//detectMag();
 
 
-	gyro.init();
-	acc.init();
+	gyro.init();//陀螺仪初始化
+	acc.init();//加速度计初始化
 	//mag.init();
 	//MS5611_Init();
 	//WaitBaroInitOffset();
 
-	EE_READ_PID();
-	EE_READ_ACC_OFFSET();
-	EE_READ_GYRO_OFFSET();
-	EE_READ_MAG_OFFSET();
-	EE_READ_RC_ADDR_AND_MATCHED();
+	EE_READ_PID();//从flash读取PID配置
+	EE_READ_ACC_OFFSET();//从flash读取加速度计偏移值
+	EE_READ_GYRO_OFFSET();//从flash读取陀螺仪偏移值
+	EE_READ_MAG_OFFSET();//从flash读取陀螺仪偏移值
+	EE_READ_RC_ADDR_AND_MATCHED();//读取遥控器校准状态
 
-	motor_init();
-	rc_init();
+	motor_init();//电机初始化
+	rc_init();//遥控器初始化
 
-	while(NRF24L01_Check()){
+	while(NRF24L01_Check()){//nrf自检
 		SendChar("nrf ing\r\n");
 		delay_ms(500);
 	}
 	SendChar("nrf ok\r\n");
-	NRF24L01_RX_Mode();
+	NRF24L01_RX_Mode();//nrf进入接受模式
 
+	//低通滤波器设置
 	LPF2pSetCutoffFreq_1(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);		//30Hz
 	LPF2pSetCutoffFreq_2(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
 	LPF2pSetCutoffFreq_3(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
@@ -127,6 +128,7 @@ void init(void)
 	LPF2pSetCutoffFreq_5(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
 	LPF2pSetCutoffFreq_6(IMU_SAMPLE_RATE,IMU_FILTER_CUTOFF_FREQ);
 
+	//PWM通道打开
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
@@ -143,7 +145,7 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
 //	uart_init(72,115200);
-	delay_init();
+	delay_init();//延时函数初始化
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -178,11 +180,12 @@ int main(void)
   /* USER CODE END 2 */
 
 
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-
+		//调度器开始调度。
+		//调度配置在fc_tasks.c和fc_tasks.h
+		//每个任务函数的实现在schedule_task
 		scheduler();
 
 	}

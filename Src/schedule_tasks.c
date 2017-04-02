@@ -32,14 +32,20 @@ union _dat16{
 	uint8_t  byte[2];
 }d_temp;
 
-
+/*
+ * \brief 上位机数据发送任务
+ * 周期：1ms
+ */
 void taskUsartDebug(void)
 {
 
 	ANO_DT_Data_Exchange();
 
 }
-
+/*
+ * \brief PID角度环（外环）计算任务
+ * 周期：4ms
+ */
 void taskUpdateAttiAngle(void)
 {
 	static uint32_t t0,t1;
@@ -63,6 +69,10 @@ void taskUpdateAttiAngle(void)
 	str0[13] = d_temp.byte[0];
 }
 
+/*
+ * \brief 罗盘计算函数
+ * 周期：100ms
+ */
 void taskUpdateMAG(void)
 {
 	static uint32_t t0,old;
@@ -87,6 +97,10 @@ void taskUpdateMAG(void)
 	imu.magRaw[Z] = (imu.magADC[Z] - imu.magOffset[Z]);
 }
 
+/*
+ * \brief PID角速度环（内环）计算任务
+ * 周期：2ms
+ */
 attitude_t tar_attitude;
 
 void taskUpdateAttitude(void)
@@ -101,8 +115,9 @@ void taskUpdateAttitude(void)
 	t1 = micros();
 #endif
 
-	IMUSO3Thread();
+	IMUSO3Thread();//互补滤波姿态解算函数，880us
 
+	//加速度计和陀螺仪校准
 	if(imu.caliPass == 0){
 		led.model = ON;
 		if(IMU_Calibrate()){
@@ -115,13 +130,13 @@ void taskUpdateAttitude(void)
 	t2 = micros();
 #endif
 
-	CtrlAttiRate();
+	CtrlAttiRate();//内环PID计算
 
 #if _debug_taskUpdateAttitude
 	t3 = micros();
 #endif
 
-	CtrlMotor();
+	CtrlMotor();//电机输出
 
 #if _debug_taskUpdateAttitude
 	t4 = micros();
@@ -158,6 +173,10 @@ void taskUpdateAttitude(void)
 #endif
 }
 
+/*
+ * \brief 气压计数据处理函数
+ * 周期：20ms
+ */
 void taskUpdateBaro(void)
 {
 	static uint32_t t0,old;
@@ -170,10 +189,15 @@ void taskUpdateBaro(void)
 	str0[24] = d_temp.byte[1];
 	str0[25] = d_temp.byte[0];
 
-	MS5611_ThreadNew();
+	MS5611_ThreadNew();//气压计线程
 
 
 }
+
+/*
+ * \brief 遥控器数据处理任务
+ * 周期：10ms
+ */
 void taskUpdateRC(void)
 {
 	static uint32_t t0,t1;
@@ -263,6 +287,10 @@ void taskUpdateRC(void)
 
 }
 
+/*
+ * \brief 电池电压检测任务
+ * 周期：200ms
+ */
 void taskBatteryMoniter(void)
 {
 	battery.scale = 2.298;
@@ -270,6 +298,10 @@ void taskBatteryMoniter(void)
 	battery.voltage = ((float)battery.raw_data/4096) * battery.scale * 333;
 }
 
+/*
+ * \brief led处理任务
+ * 周期：100ms
+ */
 void taskLED(void)
 {
 
