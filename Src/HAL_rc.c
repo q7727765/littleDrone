@@ -10,7 +10,7 @@ uint8_t rc_matched = 0x55;
 void rc_init(void)
 {
 	NRF24L01_Init();
-	if(HAL_GPIO_ReadPin(TXD_B_GPIO_Port,TXD_B_Pin) == 0){
+	if(HAL_GPIO_ReadPin(TXD_B_GPIO_Port,RXD_B_Pin) == 0){
 		rc_matched = 0;
 	}
 }
