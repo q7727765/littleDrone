@@ -3,7 +3,7 @@
 
 #include "stm32f103xb.h"
 
-void delay_init();
+void delay_init(void);
 static void cycleCounterInit(void);
 
 uint32_t micros(void);

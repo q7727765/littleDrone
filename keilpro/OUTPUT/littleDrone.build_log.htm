@@ -1,0 +1,338 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+D:\code\GITpro\littleDrone\keilpro\littleDrone.uvproj
+Project File Date:  04/12/2017
+
+<h2>Output:</h2>
+Build target 'Target 1'
+linking...
+Program Size: Code=68572 RO-data=1012 RW-data=1356 ZI-data=4244  
+FromELF: creating hex file...
+".\OUTPUT\littleDrone.axf" - 0 Error(s), 0 Warning(s).
+Load "D:\\code\\GITpro\\littleDrone\\keilpro\\OUTPUT\\littleDrone.axf" 
+Internal DLL Error
+Error: Flash Download failed  -  Target DLL has been cancelled
+Load "D:\\code\\GITpro\\littleDrone\\keilpro\\OUTPUT\\littleDrone.axf" 
+Set JLink Project File to "D:\code\GITpro\littleDrone\keilpro\JLinkSettings.ini"
+* JLink Info: Device "STM32F103CB" selected.
+ 
+JLink info:
+------------
+DLL: V6.12f, compiled Jan 13 2017 16:37:50
+Firmware: J-Link ARM V8 compiled Nov 28 2014 13:44:46
+Hardware: V8.00
+S/N : 799713843 
+Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFULL 
+ 
+* JLink Info: Found SWD-DP with ID 0x1BA01477
+* JLink Info: Found SWD-DP with ID 0x1BA01477
+* JLink Info: AP-IDR: 0x14770011, Type: AHB-AP
+* JLink Info: AHB-AP ROM: 0xE00FF000 (Base addr. of first ROM table)
+* JLink Info: Found Cortex-M3 r1p1, Little endian.
+* JLink Info: FPUnit: 6 code (BP) slots and 2 literal slots
+* JLink Info: CoreSight components:
+* JLink Info: ROMTbl 0 @ E00FF000
+* JLink Info: ROMTbl 0 [0]: FFF0F000, CID: B105E00D, PID: 001BB000 SCS
+* JLink Info: ROMTbl 0 [1]: FFF02000, CID: B105E00D, PID: 001BB002 DWT
+* JLink Info: ROMTbl 0 [2]: FFF03000, CID: B105E00D, PID: 000BB003 FPB
+* JLink Info: ROMTbl 0 [3]: FFF01000, CID: B105E00D, PID: 001BB001 ITM
+* JLink Info: ROMTbl 0 [4]: FFF41000, CID: B105900D, PID: 001BB923 TPIU-Lite
+ROMTableAddr = 0xE00FF003
+ 
+Target info:
+------------
+Device: STM32F103CB
+VTarget = 3.306V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
+Hardware-Breakpoints: 6
+Software-Breakpoints: 8192
+Watchpoints:          4
+JTAG speed: 4000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+</pre>
+</body>
+</html>
+tTime=0;    //us
+..\Src\imu.c(369): warning:  #177-D: variable "gyro_offsets_sum" was declared but never referenced
+        static float gyro_offsets_sum[3]={ 0.0f, 0.0f, 0.0f };// gyro_offsets[3] = { 0.0f, 0.0f, 0.0f },
+..\Src\imu.c(370): warning:  #177-D: variable "offset_count" was declared but never referenced
+        static uint16_t offset_count = 0;
+..\Src\imu.c: 3 warnings, 0 errors
+compiling led.c...
+compiling main.c...
+compiling schedule_tasks.c...
+..\Src\schedule_tasks.c(110): warning:  #177-D: variable "t0" was declared but never referenced
+        static uint32_t t0,t1,t2,t3,t4,t5,t6;
+..\Src\schedule_tasks.c(110): warning:  #177-D: variable "t6" was declared but never referenced
+        static uint32_t t0,t1,t2,t3,t4,t5,t6;
+..\Src\schedule_tasks.c(205): warning:  #177-D: variable "oldrc" was declared but never referenced
+        static rc_t oldrc;
+..\Src\schedule_tasks.c: 3 warnings, 0 errors
+compiling stmflash.c...
+..\Src\stmflash.c(116): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_RC_ARRD_AND_MATCHED], &temp);
+..\Src\stmflash.c(136): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_X_OFFSET_ADDR], &acc_offset[0]);
+..\Src\stmflash.c(137): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_Y_OFFSET_ADDR], &acc_offset[1]);
+..\Src\stmflash.c(138): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_Z_OFFSET_ADDR], &acc_offset[2]);
+..\Src\stmflash.c(154): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_X_OFFSET_ADDR], &gyro_offset[0]);
+..\Src\stmflash.c(155): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_Y_OFFSET_ADDR], &gyro_offset[1]);
+..\Src\stmflash.c(156): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_Z_OFFSET_ADDR], &gyro_offset[2]);
+..\Src\stmflash.c(173): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_X_OFFSET_ADDR], &imu.magOffset[X]);
+..\Src\stmflash.c(174): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_Y_OFFSET_ADDR], &imu.magOffset[Y]);
+..\Src\stmflash.c(175): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_Z_OFFSET_ADDR], &imu.magOffset[Z]);
+..\Src\stmflash.c: 10 warnings, 0 errors
+compiling delay.c...
+linking...
+.\OUTPUT\littleDrone.axf: Error: L6200E: Symbol d_temp multiply defined (by schedule_tasks.o and control.o).
+Not enough information to list image symbols.
+Not enough information to list the image map.
+Finished: 2 information, 0 warning and 1 error messages.
+".\OUTPUT\littleDrone.axf" - 1 Error(s), 24 Warning(s).
+Target not created
+Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\control.c: 8 warnings, 0 errors
+compiling HAL_acc.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL_acc.c: 5 warnings, 0 errors
+compiling HAL_baro.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL_baro.c: 5 warnings, 0 errors
+compiling HAL_gyro.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL_gyro.c: 5 warnings, 0 errors
+compiling HAL_mag.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\HAL_mag.c: 9 warnings, 0 errors
+compiling HAL_motor.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\HAL_motor.c: 4 warnings, 0 errors
+compiling HAL_rc.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL_rc.c(21): warning:  #177-D: variable "old_addr" was declared but never referenced
+        uint8_t old_addr = RX_ADDRESS[4];
+..\Src\HAL_rc.c: 6 warnings, 0 errors
+compiling imu.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\imu.c(356): warning:  #177-D: variable "startTime" was declared but never referenced
+        static uint32_t tPrev=0,startTime=0;    //us
+..\Src\imu.c(369): warning:  #177-D: variable "gyro_offsets_sum" was declared but never referenced
+        static float gyro_offsets_sum[3]={ 0.0f, 0.0f, 0.0f };// gyro_offsets[3] = { 0.0f, 0.0f, 0.0f },
+..\Src\imu.c(370): warning:  #177-D: variable "offset_count" was declared but never referenced
+        static uint16_t offset_count = 0;
+..\Src\imu.c: 12 warnings, 0 errors
+compiling led.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\led.c: 4 warnings, 0 errors
+compiling main.c...
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\main.c: 9 warnings, 0 errors
+compiling maths.c...
+compiling schedule_tasks.c...
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\schedule_tasks.c(110): warning:  #177-D: variable "t0" was declared but never referenced
+        static uint32_t t0,t1,t2,t3,t4,t5,t6;
+..\Src\schedule_tasks.c(110): warning:  #177-D: variable "t6" was declared but never referenced
+        static uint32_t t0,t1,t2,t3,t4,t5,t6;
+..\Src\schedule_tasks.c(205): warning:  #177-D: variable "oldrc" was declared but never referenced
+        static rc_t oldrc;
+..\Src\schedule_tasks.c: 12 warnings, 0 errors
+compiling stmflash.c...
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\stmflash.c(116): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_RC_ARRD_AND_MATCHED], &temp);
+..\Src\stmflash.c(136): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_X_OFFSET_ADDR], &acc_offset[0]);
+..\Src\stmflash.c(137): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_Y_OFFSET_ADDR], &acc_offset[1]);
+..\Src\stmflash.c(138): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_Z_OFFSET_ADDR], &acc_offset[2]);
+..\Src\stmflash.c(154): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_X_OFFSET_ADDR], &gyro_offset[0]);
+..\Src\stmflash.c(155): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_Y_OFFSET_ADDR], &gyro_offset[1]);
+..\Src\stmflash.c(156): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_Z_OFFSET_ADDR], &gyro_offset[2]);
+..\Src\stmflash.c(173): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_X_OFFSET_ADDR], &imu.magOffset[X]);
+..\Src\stmflash.c(174): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_Y_OFFSET_ADDR], &imu.magOffset[Y]);
+..\Src\stmflash.c(175): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_Z_OFFSET_ADDR], &imu.magOffset[Z]);
+..\Src\stmflash.c: 19 warnings, 0 errors
+compiling delay.c...
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\delay.c(36): error:  #20: identifier "asm" is undefined
+          asm volatile("\tnop\n");
+..\Src\delay.c(36): error:  #65: expected a ";"
+          asm volatile("\tnop\n");
+..\Src\delay.c: 1 warning, 2 errors
+".\OUTPUT\littleDrone.axf" - 2 Error(s), 137 Warning(s).
+Target not created
