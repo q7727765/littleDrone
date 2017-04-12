@@ -33,7 +33,7 @@ uint32_t micros(void)
          * If the SysTick timer expired during the previous instruction, we need to give it a little time for that
          * interrupt to be delivered before we can recheck sysTickUptime:
          */
-        asm volatile("\tnop\n");
+        __asm volatile("\tnop\n");
     } while (ms != sysTickUptime);
     return (ms * 1000) + (usTicks * 1000 - cycle_cnt) / usTicks;
 }

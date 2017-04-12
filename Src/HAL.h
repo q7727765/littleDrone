@@ -115,9 +115,9 @@ extern battery_t battery;
 
 void rc_init(void);
 void rc_match(void);
-void motor_init();
+void motor_init(void);
 void motor_out(int16_t m1,int16_t m2,int16_t m3,int16_t m4);
-extern void detectAcc();
-extern void detectGyro();
-extern void detectMag();
+extern void detectAcc(void);
+extern void detectGyro(void);
+extern void detectMag(void);
 extern void mag_calibration(void);

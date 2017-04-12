@@ -30,7 +30,7 @@ battery_t battery;
 union _dat16{
 	uint16_t full;
 	uint8_t  byte[2];
-}d_temp;
+}dd_temp;
 
 /*
  * \brief 上位机数据发送任务
@@ -59,14 +59,14 @@ void taskUpdateAttiAngle(void)
 	t1 = micros();
 
 	//外环计算时间 [first]/2+1 = 6
-	d_temp.full = (uint16_t)(t1 - t0) * 100;
-	str0[10] = d_temp.byte[1];
-	str0[11] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t1 - t0) * 100;
+	str0[10] = dd_temp.byte[1];
+	str0[11] = dd_temp.byte[0];
 
 	//外环周期 [first]/2+1 = 7
-	d_temp.full = (uint16_t)(t0 - old);
-	str0[12] = d_temp.byte[1];
-	str0[13] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t0 - old);
+	str0[12] = dd_temp.byte[1];
+	str0[13] = dd_temp.byte[0];
 }
 
 /*
@@ -81,9 +81,9 @@ void taskUpdateMAG(void)
 	t0 = micros();
 
 	//mag更新周期  [first]/2+1 = 12
-	d_temp.full = (uint16_t)((t0 - old) / 10);
-	str0[22] = d_temp.byte[1];
-	str0[23] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)((t0 - old) / 10);
+	str0[22] = dd_temp.byte[1];
+	str0[23] = dd_temp.byte[0];
 
 	mag.read(imu.magADC);
 
@@ -147,29 +147,29 @@ void taskUpdateAttitude(void)
 	t5 = micros();
 
 	//imu数据采集和姿态计算 [first]/2+1 = 1
-	d_temp.full = (uint16_t)(t2 - t1);
-	str0[0] = d_temp.byte[1];
-	str0[1] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t2 - t1);
+	str0[0] = dd_temp.byte[1];
+	str0[1] = dd_temp.byte[0];
 
 	//内环pid控制 [first]/2+1 = 2
-	d_temp.full = (uint16_t)(t3 - t2)*100;
-	str0[2] = d_temp.byte[1];
-	str0[3] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t3 - t2)*100;
+	str0[2] = dd_temp.byte[1];
+	str0[3] = dd_temp.byte[0];
 
 	//输出到电机 [first]/2+1 = 3
-	d_temp.full = (uint16_t)(t4 - t3)*100;
-	str0[4] = d_temp.byte[1];
-	str0[5] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t4 - t3)*100;
+	str0[4] = dd_temp.byte[1];
+	str0[5] = dd_temp.byte[0];
 
 	//整个任务计算时间 [first]/2+1 = 4
-	d_temp.full = (uint16_t)(t5 - t1);
-	str0[6] = d_temp.byte[1];
-	str0[7] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t5 - t1);
+	str0[6] = dd_temp.byte[1];
+	str0[7] = dd_temp.byte[0];
 
 	//两次任务执行间隔 [first]/2+1 = 5
-	d_temp.full = (uint16_t)(t1 - old);
-	str0[8] = d_temp.byte[1];
-	str0[9] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t1 - old);
+	str0[8] = dd_temp.byte[1];
+	str0[9] = dd_temp.byte[0];
 #endif
 }
 
@@ -185,9 +185,9 @@ void taskUpdateBaro(void)
 	t0 = micros();
 
 	//Baro更新周期 [first]/2+1 = 13
-	d_temp.full = (uint16_t)((t0 - old) / 10);
-	str0[24] = d_temp.byte[1];
-	str0[25] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)((t0 - old) / 10);
+	str0[24] = dd_temp.byte[1];
+	str0[25] = dd_temp.byte[0];
 
 	MS5611_ThreadNew();//气压计线程
 
@@ -276,14 +276,14 @@ void taskUpdateRC(void)
 	}
 	t1 = micros();
 	//遥控计算时间 [first]/2+1 = 8
-	d_temp.full = (uint16_t)(t1 - t0)*100;
-	str0[14] = d_temp.byte[1];
-	str0[15] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t1 - t0)*100;
+	str0[14] = dd_temp.byte[1];
+	str0[15] = dd_temp.byte[0];
 
 	//遥控更新周期 [first]/2+1 = 9
-	d_temp.full = (uint16_t)(t0 - old)/10;
-	str0[16] = d_temp.byte[1];
-	str0[17] = d_temp.byte[0];
+	dd_temp.full = (uint16_t)(t0 - old)/10;
+	str0[16] = dd_temp.byte[1];
+	str0[17] = dd_temp.byte[0];
 
 }
 

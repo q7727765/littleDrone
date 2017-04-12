@@ -35,8 +35,8 @@ typedef volatile uint8_t vu8;
 typedef volatile uint16_t vu16;
 typedef volatile uint32_t vu32;
 
-void Para_ResetToFactorySetup();
-void Param_SavePID();
+void Para_ResetToFactorySetup(void);
+void Param_SavePID(void);
 u8 EE_ReadVariable(uint32_t VirtAddress, uint16_t* Data);
 u8 EE_WriteVariable(uint32_t VirtAddress, uint16_t Data);
 
@@ -48,8 +48,8 @@ void EE_SAVE_MAG_OFFSET(void);
 void EE_READ_MAG_OFFSET(void);
 void EE_SAVE_PID(void);
 void EE_READ_PID(void);
-void EE_SAVE_RC_ADDR_AND_MATCHED();
-void EE_READ_RC_ADDR_AND_MATCHED();
+void EE_SAVE_RC_ADDR_AND_MATCHED(void);
+void EE_READ_RC_ADDR_AND_MATCHED(void);
 
 
 void STMFLASH_Unlock(void);					  //FLASH½âËø

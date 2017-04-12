@@ -1,0 +1,498 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+D:\code\GITpro\littleDrone\keilpro\littleDrone.uvproj
+Project File Date:  04/12/2017
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling fc_tasks.c...
+..\Src\fc_tasks.c(48): error:  #29: expected an expression
+          [TASK_SYSTEM].taskName = "SYSTEM",
+..\Src\fc_tasks.c(49): error:  #29: expected an expression
+          [TASK_SYSTEM].taskFunc = taskSystem,
+..\Src\fc_tasks.c(50): error:  #29: expected an expression
+          [TASK_SYSTEM].desiredPeriod = 1000000 / 10,          // 10 Hz, every 100 ms
+..\Src\fc_tasks.c(51): error:  #29: expected an expression
+          [TASK_SYSTEM].staticPriority = TASK_PRIORITY_HIGH,
+..\Src\fc_tasks.c(54): error:  #29: expected an expression
+      [TASK_UPDATE_ATT_ANGLE] = {
+..\Src\fc_tasks.c(59): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(61): error:  #29: expected an expression
+      [TASK_UPDATE_MAG] = {
+..\Src\fc_tasks.c(66): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(68): error:  #29: expected an expression
+      [TASK_UPDATE_ATTITUDE] = {
+..\Src\fc_tasks.c(73): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(75): error:  #29: expected an expression
+      [TASK_UPDATE_BARO] = {
+..\Src\fc_tasks.c(80): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(82): error:  #29: expected an expression
+      [TASK_BATTERY_MONITOR] = {
+..\Src\fc_tasks.c(87): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(89): error:  #29: expected an expression
+      [TASK_LED] = {
+..\Src\fc_tasks.c(94): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(96): error:  #29: expected an expression
+      [TASK_USART_DEBUG] = {
+..\Src\fc_tasks.c(101): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(103): error:  #29: expected an expression
+      [TASK_UPDATE_RC] = {
+..\Src\fc_tasks.c(108): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c: 8 warnings, 12 errors
+compiling imu.c...
+..\Src\imu.c(39): error:  #29: expected an expression
+                .caliPass = 1,
+..\Src\imu.c(40): error:  #29: expected an expression
+                .ready = 1,
+..\Src\imu.c(41): error:  #29: expected an expression
+                .magCaliPass = 1
+..\Src\imu.c(356): warning:  #177-D: variable "startTime" was declared but never referenced
+        static uint32_t tPrev=0,startTime=0;    //us
+..\Src\imu.c(369): warning:  #177-D: variable "gyro_offsets_sum" was declared but never referenced
+        static float gyro_offsets_sum[3]={ 0.0f, 0.0f, 0.0f };// gyro_offsets[3] = { 0.0f, 0.0f, 0.0f },
+..\Src\imu.c(370): warning:  #177-D: variable "offset_count" was declared but never referenced
+        static uint16_t offset_count = 0;
+..\Src\imu.c: 3 warnings, 3 errors
+compiling led.c...
+..\Src\led.c(14): error:  #29: expected an expression
+                .state = 1,
+..\Src\led.c(15): error:  #29: expected an expression
+                .model = SINGLE_FLASH_500MS
+..\Src\led.c: 0 warnings, 2 errors
+compiling delay.c...
+..\Src\delay.c(36): error:  #20: identifier "asm" is undefined
+          asm volatile("\tnop\n");
+..\Src\delay.c(36): error:  #65: expected a ";"
+          asm volatile("\tnop\n");
+..\Src\delay.c: 0 warnings, 2 errors
+".\OUTPUT\littleDrone.axf" - 19 Error(s), 11 Warning(s).
+Target not created
+\Src\delay.c: 0 warnings, 2 errors
+".\OUTPUT\littleDrone.axf" - 19 Error(s), 12 Warning(s).
+Target not created
+alWaitingTasks" (declared at line 41)
+      totalWaitingTasks += waitingTasks;
+..\Src\scheduler\scheduler.c(268): error:  #65: expected a ";"
+      totalWaitingTasks += waitingTasks;
+..\Src\scheduler\scheduler.c(270): error:  #77-D: this declaration has no storage class or type specifier
+      currentTask = selectedTask;
+..\Src\scheduler\scheduler.c(270): error:  #147: declaration is incompatible with "cfTask_t *currentTask" (declared at line 35)
+      currentTask = selectedTask;
+..\Src\scheduler\scheduler.c(270): error:  #20: identifier "selectedTask" is undefined
+      currentTask = selectedTask;
+..\Src\scheduler\scheduler.c(272): error:  #169: expected a declaration
+      if (selectedTask != NULL) {
+..\Src\scheduler\scheduler.c(294): warning: At end of source:  #12-D: parsing restarts here after previous syntax error
+..\Src\scheduler\scheduler.c(35): warning:  #177-D: variable "currentTask" was declared but never referenced
+  static cfTask_t *currentTask = NULL;
+..\Src\scheduler\scheduler.c(41): warning:  #177-D: variable "totalWaitingTasks" was declared but never referenced
+  static uint32_t totalWaitingTasks;
+..\Src\scheduler\scheduler.c(42): warning:  #177-D: variable "totalWaitingTasksSamples" was declared but never referenced
+  static uint32_t totalWaitingTasksSamples;
+..\Src\scheduler\scheduler.c(43): warning:  #177-D: variable "realtimeGuardInterval" was declared but never referenced
+  static uint32_t realtimeGuardInterval = REALTIME_GUARD_INTERVAL_MAX;
+..\Src\scheduler\scheduler.c(49): warning:  #550-D: variable "taskQueuePos" was set but never used
+  static int taskQueuePos = 0;
+..\Src\scheduler\scheduler.c(58): warning:  #177-D: function "queueClear" was declared but never referenced
+  STATIC_UNIT_TESTED void queueClear(void)
+..\Src\scheduler\scheduler.c(83): warning:  #177-D: function "queueAdd" was declared but never referenced
+  STATIC_UNIT_TESTED bool queueAdd(cfTask_t *task)
+..\Src\scheduler\scheduler.c(100): warning:  #177-D: function "queueRemove" was declared but never referenced
+  STATIC_UNIT_TESTED bool queueRemove(cfTask_t *task)
+..\Src\scheduler\scheduler.c: 12 warnings, 14 errors
+compiling ANO_DT.c...
+compiling control.c...
+..\Src\control.c(472): warning:  #177-D: variable "cosTilt" was declared but never referenced
+                float  cosTilt = imu.accb[2] / CONSTANTS_ONE_G;
+..\Src\control.c: 1 warning, 0 errors
+compiling fc_tasks.c...
+..\Src\fc_tasks.c(47): error:  #29: expected an expression
+      [TASK_SYSTEM] = {
+..\Src\fc_tasks.c(52): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(54): error:  #29: expected an expression
+      [TASK_UPDATE_ATT_ANGLE] = {
+..\Src\fc_tasks.c(59): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(61): error:  #29: expected an expression
+      [TASK_UPDATE_MAG] = {
+..\Src\fc_tasks.c(66): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(68): error:  #29: expected an expression
+      [TASK_UPDATE_ATTITUDE] = {
+..\Src\fc_tasks.c(73): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(75): error:  #29: expected an expression
+      [TASK_UPDATE_BARO] = {
+..\Src\fc_tasks.c(80): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(82): error:  #29: expected an expression
+      [TASK_BATTERY_MONITOR] = {
+..\Src\fc_tasks.c(87): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(89): error:  #29: expected an expression
+      [TASK_LED] = {
+..\Src\fc_tasks.c(94): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(96): error:  #29: expected an expression
+      [TASK_USART_DEBUG] = {
+..\Src\fc_tasks.c(101): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(103): error:  #29: expected an expression
+      [TASK_UPDATE_RC] = {
+..\Src\fc_tasks.c(108): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c: 9 warnings, 9 errors
+compiling filter.c...
+compiling HAL_acc.c...
+compiling HAL_baro.c...
+compiling HAL_gyro.c...
+compiling HAL_mag.c...
+compiling HAL_motor.c...
+compiling HAL_rc.c...
+..\Src\HAL_rc.c(21): warning:  #177-D: variable "old_addr" was declared but never referenced
+        uint8_t old_addr = RX_ADDRESS[4];
+..\Src\HAL_rc.c: 1 warning, 0 errors
+compiling imu.c...
+..\Src\imu.c(39): error:  #29: expected an expression
+                .caliPass = 1,
+..\Src\imu.c(40): error:  #29: expected an expression
+                .ready = 1,
+..\Src\imu.c(41): error:  #29: expected an expression
+                .magCaliPass = 1
+..\Src\imu.c(356): warning:  #177-D: variable "startTime" was declared but never referenced
+        static uint32_t tPrev=0,startTime=0;    //us
+..\Src\imu.c(369): warning:  #177-D: variable "gyro_offsets_sum" was declared but never referenced
+        static float gyro_offsets_sum[3]={ 0.0f, 0.0f, 0.0f };// gyro_offsets[3] = { 0.0f, 0.0f, 0.0f },
+..\Src\imu.c(370): warning:  #177-D: variable "offset_count" was declared but never referenced
+        static uint16_t offset_count = 0;
+..\Src\imu.c: 3 warnings, 3 errors
+compiling led.c...
+..\Src\led.c(14): error:  #29: expected an expression
+                .state = 1,
+..\Src\led.c(15): error:  #29: expected an expression
+                .model = SINGLE_FLASH_500MS
+..\Src\led.c: 0 warnings, 2 errors
+compiling main.c...
+compiling maths.c...
+..\Src\maths.c(51): error:  #268: declaration may not appear after executable statement in block
+      float x2 = x * x;
+..\Src\maths.c(287): error:  #29: expected an expression
+      for (int i = 0; i < count; i++) {
+..\Src\maths.c(287): error:  #20: identifier "i" is undefined
+      for (int i = 0; i < count; i++) {
+..\Src\maths.c: 0 warnings, 3 errors
+compiling schedule_tasks.c...
+..\Src\schedule_tasks.c(110): warning:  #177-D: variable "t0" was declared but never referenced
+        static uint32_t t0,t1,t2,t3,t4,t5,t6;
+..\Src\schedule_tasks.c(110): warning:  #177-D: variable "t6" was declared but never referenced
+        static uint32_t t0,t1,t2,t3,t4,t5,t6;
+..\Src\schedule_tasks.c(205): warning:  #177-D: variable "oldrc" was declared but never referenced
+        static rc_t oldrc;
+..\Src\schedule_tasks.c: 3 warnings, 0 errors
+compiling stmflash.c...
+..\Src\stmflash.c(116): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_RC_ARRD_AND_MATCHED], &temp);
+..\Src\stmflash.c(136): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_X_OFFSET_ADDR], &acc_offset[0]);
+..\Src\stmflash.c(137): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_Y_OFFSET_ADDR], &acc_offset[1]);
+..\Src\stmflash.c(138): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_Z_OFFSET_ADDR], &acc_offset[2]);
+..\Src\stmflash.c(154): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_X_OFFSET_ADDR], &gyro_offset[0]);
+..\Src\stmflash.c(155): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_Y_OFFSET_ADDR], &gyro_offset[1]);
+..\Src\stmflash.c(156): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_Z_OFFSET_ADDR], &gyro_offset[2]);
+..\Src\stmflash.c(173): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_X_OFFSET_ADDR], &imu.magOffset[X]);
+..\Src\stmflash.c(174): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_Y_OFFSET_ADDR], &imu.magOffset[Y]);
+..\Src\stmflash.c(175): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_Z_OFFSET_ADDR], &imu.magOffset[Z]);
+..\Src\stmflash.c: 10 warnings, 0 errors
+compiling stm32f1xx_hal_msp.c...
+compiling stm32f1xx_it.c...
+compiling system_stm32f1xx.c...
+compiling sys.c...
+compiling usart.c...
+compiling delay.c...
+..\Src\delay.c(36): error:  #20: identifier "asm" is undefined
+          asm volatile("\tnop\n");
+..\Src\delay.c(36): error:  #65: expected a ";"
+          asm volatile("\tnop\n");
+..\Src\delay.c: 0 warnings, 2 errors
+".\OUTPUT\littleDrone.axf" - 33 Error(s), 46 Warning(s).
+Target not created
+ warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(75): error:  #29: expected an expression
+      [TASK_UPDATE_BARO] = {
+..\Src\fc_tasks.c(80): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(82): error:  #29: expected an expression
+      [TASK_BATTERY_MONITOR] = {
+..\Src\fc_tasks.c(87): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(89): error:  #29: expected an expression
+      [TASK_LED] = {
+..\Src\fc_tasks.c(94): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(96): error:  #29: expected an expression
+      [TASK_USART_DEBUG] = {
+..\Src\fc_tasks.c(101): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c(103): error:  #29: expected an expression
+      [TASK_UPDATE_RC] = {
+..\Src\fc_tasks.c(108): warning:  #12-D: parsing restarts here after previous syntax error
+      },
+..\Src\fc_tasks.c: 9 warnings, 9 errors
+compiling filter.c...
+compiling HAL_acc.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL_acc.c: 5 warnings, 0 errors
+compiling HAL_baro.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL_baro.c: 5 warnings, 0 errors
+compiling HAL_gyro.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL_gyro.c: 5 warnings, 0 errors
+compiling HAL_mag.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\HAL_mag.c: 9 warnings, 0 errors
+compiling HAL_motor.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\HAL_motor.c: 4 warnings, 0 errors
+compiling HAL_rc.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL_rc.c(21): warning:  #177-D: variable "old_addr" was declared but never referenced
+        uint8_t old_addr = RX_ADDRESS[4];
+..\Src\HAL_rc.c: 6 warnings, 0 errors
+compiling imu.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\imu.c(39): error:  #29: expected an expression
+                .caliPass = 1,
+..\Src\imu.c(40): error:  #29: expected an expression
+                .ready = 1,
+..\Src\imu.c(41): error:  #29: expected an expression
+                .magCaliPass = 1
+..\Src\imu.c(356): warning:  #177-D: variable "startTime" was declared but never referenced
+        static uint32_t tPrev=0,startTime=0;    //us
+..\Src\imu.c(369): warning:  #177-D: variable "gyro_offsets_sum" was declared but never referenced
+        static float gyro_offsets_sum[3]={ 0.0f, 0.0f, 0.0f };// gyro_offsets[3] = { 0.0f, 0.0f, 0.0f },
+..\Src\imu.c(370): warning:  #177-D: variable "offset_count" was declared but never referenced
+        static uint16_t offset_count = 0;
+..\Src\imu.c: 12 warnings, 3 errors
+compiling led.c...
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\led.c(14): error:  #29: expected an expression
+                .state = 1,
+..\Src\led.c(15): error:  #29: expected an expression
+                .model = SINGLE_FLASH_500MS
+..\Src\led.c: 4 warnings, 2 errors
+compiling main.c...
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\main.c: 9 warnings, 0 errors
+compiling maths.c...
+..\Src\maths.c(51): error:  #268: declaration may not appear after executable statement in block
+      float x2 = x * x;
+..\Src\maths.c(287): error:  #29: expected an expression
+      for (int i = 0; i < count; i++) {
+..\Src\maths.c(287): error:  #20: identifier "i" is undefined
+      for (int i = 0; i < count; i++) {
+..\Src\maths.c: 0 warnings, 3 errors
+compiling schedule_tasks.c...
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Src\schedule_tasks.c(110): warning:  #177-D: variable "t0" was declared but never referenced
+        static uint32_t t0,t1,t2,t3,t4,t5,t6;
+..\Src\schedule_tasks.c(110): warning:  #177-D: variable "t6" was declared but never referenced
+        static uint32_t t0,t1,t2,t3,t4,t5,t6;
+..\Src\schedule_tasks.c(205): warning:  #177-D: variable "oldrc" was declared but never referenced
+        static rc_t oldrc;
+..\Src\schedule_tasks.c: 12 warnings, 0 errors
+compiling stmflash.c...
+..\Src\stmflash.h(38): warning:  #1295-D: Deprecated declaration Para_ResetToFactorySetup - give arg types
+  void Para_ResetToFactorySetup();
+..\Src\stmflash.h(39): warning:  #1295-D: Deprecated declaration Param_SavePID - give arg types
+  void Param_SavePID();
+..\Src\stmflash.h(51): warning:  #1295-D: Deprecated declaration EE_SAVE_RC_ADDR_AND_MATCHED - give arg types
+  void EE_SAVE_RC_ADDR_AND_MATCHED();
+..\Src\stmflash.h(52): warning:  #1295-D: Deprecated declaration EE_READ_RC_ADDR_AND_MATCHED - give arg types
+  void EE_READ_RC_ADDR_AND_MATCHED();
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\HAL.h(118): warning:  #1295-D: Deprecated declaration motor_init - give arg types
+  void motor_init();
+..\Src\HAL.h(120): warning:  #1295-D: Deprecated declaration detectAcc - give arg types
+  extern void detectAcc();
+..\Src\HAL.h(121): warning:  #1295-D: Deprecated declaration detectGyro - give arg types
+  extern void detectGyro();
+..\Src\HAL.h(122): warning:  #1295-D: Deprecated declaration detectMag - give arg types
+  extern void detectMag();
+..\Src\stmflash.c(116): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_RC_ARRD_AND_MATCHED], &temp);
+..\Src\stmflash.c(136): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_X_OFFSET_ADDR], &acc_offset[0]);
+..\Src\stmflash.c(137): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_Y_OFFSET_ADDR], &acc_offset[1]);
+..\Src\stmflash.c(138): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_ACC_Z_OFFSET_ADDR], &acc_offset[2]);
+..\Src\stmflash.c(154): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_X_OFFSET_ADDR], &gyro_offset[0]);
+..\Src\stmflash.c(155): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_Y_OFFSET_ADDR], &gyro_offset[1]);
+..\Src\stmflash.c(156): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_6050_GYRO_Z_OFFSET_ADDR], &gyro_offset[2]);
+..\Src\stmflash.c(173): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_X_OFFSET_ADDR], &imu.magOffset[X]);
+..\Src\stmflash.c(174): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_Y_OFFSET_ADDR], &imu.magOffset[Y]);
+..\Src\stmflash.c(175): warning:  #167-D: argument of type "int16_t *" is incompatible with parameter of type "uint16_t *"
+        EE_ReadVariable(VirtAddVarTab[EE_MAG_Z_OFFSET_ADDR], &imu.magOffset[Z]);
+..\Src\stmflash.c: 19 warnings, 0 errors
+compiling stm32f1xx_hal_msp.c...
+compiling stm32f1xx_it.c...
+compiling system_stm32f1xx.c...
+compiling sys.c...
+compiling usart.c...
+compiling delay.c...
+..\Inc\delay.h(6): warning:  #1295-D: Deprecated declaration delay_init - give arg types
+  void delay_init();
+..\Src\delay.c(36): error:  #20: identifier "asm" is undefined
+          asm volatile("\tnop\n");
+..\Src\delay.c(36): error:  #65: expected a ";"
+          asm volatile("\tnop\n");
+..\Src\delay.c: 1 warning, 2 errors
+assembling startup_stm32f103xb.s...
+".\OUTPUT\littleDrone.axf" - 42 Error(s), 159 Warning(s).
+Target not created
